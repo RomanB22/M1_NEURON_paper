@@ -796,6 +796,7 @@ def evolRates(popSize=30, maxGen=200):
     #from IPython import embed; embed()
 
     b = Batch(params=params, groupedParams=groupedParams, initCfg=initCfg)
+    b.method = 'evol'
 
     # Set evol alg configuration
     b.evolCfg = {
@@ -1171,10 +1172,10 @@ def setRunCfg(b, type='mpi_bulletin'):
                     'nodes': 1,
                     'coresPerNode': 96,
                     'email': 'romanbaravalle@gmail.com',
-                    'folder': '/home/rbaravalle/M1_VIPNGF/sim/',
+                    'folder': '/home/rbaravalle/M1_NEURON_paper/src',
                     'script': 'init.py',
-                    'mpiCommand': 'mpiexec',
-                    'custom': '#SBATCH --mem=128G\n#SBATCH --export=ALL\n#SBATCH --partition=compute\nsource ~/.bashrc\nsource ~/default.sh\nconda activate M1_batchTools\nexport LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/"',
+                    'mpiCommand': '\nsource ~/default.sh\nconda activate NetPyNE\nexport LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/"\nmpiexec',
+                    'custom': '#SBATCH --mem=128G\n#SBATCH --export=ALL\n#SBATCH --partition=compute',
                     'skip': True}
 
 # ----------------------------------------------------------------------------------------------
