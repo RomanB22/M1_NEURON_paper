@@ -21,11 +21,11 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 0.025
+cfg.duration = 1500
 cfg.dt = 0.025
 cfg.seeds = {'conn': 4321, 'stim': 1234, 'loc': 4321} 
 cfg.hParams = {'celsius': 34, 'v_init': -80}  
-cfg.verbose = 0
+cfg.verbose = False
 cfg.createNEURONObj = 1
 cfg.createPyStruct = 1
 cfg.connRandomSecFromList = False  # set to false for reproducibility 

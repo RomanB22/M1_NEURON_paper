@@ -350,8 +350,6 @@ def simultLongPopStims():
 
     return b
 
-
-
 # ----------------------------------------------------------------------------------------------
 # Recorded stimulation
 # ----------------------------------------------------------------------------------------------
@@ -425,8 +423,6 @@ def recordedLongPopStims():
     b = Batch(params=params, initCfg=initCfg, groupedParams=groupedParams)
 
     return b
-
-
 
 # ----------------------------------------------------------------------------------------------
 # Frequency stimulation
@@ -519,7 +515,6 @@ def localPopStims():
 
     return b
 
-
 # ----------------------------------------------------------------------------------------------
 # EPSPs via NetStim
 # ----------------------------------------------------------------------------------------------
@@ -547,7 +542,6 @@ def EPSPs():
     b = Batch(params=params, netParamsFile='netParams_cell.py', cfgFile='cfg_cell.py', initCfg=initCfg, groupedParams=groupedParams)
 
     return b
-
 
 # ----------------------------------------------------------------------------------------------
 # f-I curve
@@ -580,7 +574,6 @@ def fIcurve():
     b = Batch(params=params, netParamsFile='netParams_cell.py', cfgFile='cfg_cell.py', initCfg=initCfg, groupedParams=groupedParams)
 
     return b
-
 
 # ----------------------------------------------------------------------------------------------
 # Custom
@@ -674,11 +667,10 @@ def custom():
 
     return b
 
-
 # ----------------------------------------------------------------------------------------------
 # Evol
 # ----------------------------------------------------------------------------------------------
-def evolRates():
+def evolRates(popSize=30, maxGen=200):
     # --------------------------------------------------------
     # parameters
     params = specs.ODict()
@@ -810,14 +802,14 @@ def evolRates():
         'evolAlgorithm': 'custom',
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
         'fitnessFuncArgs': fitnessFuncArgs,
-        'pop_size': 100,
+        'pop_size': popSize,
         'num_elites': 2,
         'mutation_rate': 0.5,
         'crossover': 0.5,
         'maximize': False, # maximize fitness function?
-        'max_generations': 200,
+        'max_generations': maxGen,
         'time_sleep': 300, # 5min wait this time before checking again if sim is completed (for each generation)
-        'maxiter_wait': 64, # (5h20) max number of times to check if sim is completed (for each generation)
+        'maxiter_wait': 2*64, # (5h20) max number of times to check if sim is completed (for each generation)
         'defaultFitness': 1000, # set fitness value in case simulation time is over
         'scancelUser': 'ext_donald_doherty_actionpotenti'
     }
@@ -1170,69 +1162,27 @@ def setRunCfg(b, type='mpi_bulletin'):
             'script': 'init_cell.py',
             'mpiCommand': 'mpirun',
             'skip': True}
+        
+    elif type == 'hpc_slurm_expanse':
+        b.runCfg = {'type': 'hpc_slurm',
+                    'allocation': 'TG-MED240058',
+                    'partition': 'compute', #'large-shared',
+                    'walltime': '10:30:00',
+                    'nodes': 1,
+                    'coresPerNode': 96,
+                    'email': 'romanbaravalle@gmail.com',
+                    'folder': '/home/rbaravalle/M1_VIPNGF/sim/',
+                    'script': 'init.py',
+                    'mpiCommand': 'mpiexec',
+                    'custom': '#SBATCH --mem=128G\n#SBATCH --export=ALL\n#SBATCH --partition=compute\nsource ~/.bashrc\nsource ~/default.sh\nconda activate M1_batchTools\nexport LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/"',
+                    'skip': True}
 
-    elif type=='hpc_torque':
-        b.runCfg = {'type': 'hpc_torque',
-             'script': 'init.py',
-             'nodes': 3,
-             'ppn': 8,
-             'walltime': "12:00:00",
-             'queueName': 'longerq',
-             'sleepInterval': 5,
-             'skip': True}
-
-    elif type=='hpc_slurm_comet':
-        b.runCfg = {'type': 'hpc_slurm', 
-            'allocation': 'shs100', # bridges='ib4iflp', comet m1='shs100', comet nsg='csd403'
-            #'reservation': 'salva1',
-            'walltime': '6:00:00',
-            'nodes': 4,
-            'coresPerNode': 24,  # comet=24, bridges=28
-            'email': 'donald.doherty@actionpotential.com',
-            'folder': '/home/salvadord/m1/sim/',  # comet='/salvadord', bridges='/salvi82'
-            'script': 'init.py', 
-            'mpiCommand': 'ibrun', # comet='ibrun', bridges='mpirun'
-            'skipCustom': '_raster.png'}
-
-    elif type=='hpc_slurm_gcp':
-        b.runCfg = {'type': 'hpc_slurm', 
-            'allocation': 'default', # bridges='ib4iflp', comet m1='shs100', comet nsg='csd403', gcp='default'
-            'walltime': '24:00:00', #'48:00:00',
-            'nodes': 1,
-            'coresPerNode': 80,  # comet=24, bridges=28, gcp=32
-            'email': 'donald.doherty@actionpotential.com',
-            'folder': '/home/ext_donald_doherty_actionpotenti/sim/',  # comet,gcp='/salvadord', bridges='/salvi82'
-            'script': 'init.py', 
-            'mpiCommand': 'mpirun', # comet='ibrun', bridges,gcp='mpirun' 
-            'skipCustom': '_raster.png'}
-            #'custom': '#SBATCH --exclude=compute[17-64000]'} # only use first 16 nodes (non-preemptible for long runs )
-            # --nodelist=compute1
-
-
-    elif type=='hpc_slurm_bridges':
-        b.runCfg = {'type': 'hpc_slurm', 
-            'allocation': 'ib4iflp', # bridges='ib4iflp', comet m1='shs100', comet nsg='csd403'
-            'walltime': '06:00:00',
-            'nodes': 2,
-            'coresPerNode': 28,  # comet=24, bridges=28
-            'email': 'donald.doherty@actionpotential.com',
-            'folder': '/home/salvi82/m1/sim/',  # comet='/salvadord', bridges='/salvi82'
-            'script': 'init.py', 
-            'mpiCommand': 'mpirun', # comet='ibrun', bridges='mpirun'
-            'skip': True}
-
-4
 # ----------------------------------------------------------------------------------------------
 # Main code
 # ----------------------------------------------------------------------------------------------
-
 if __name__ == '__main__': 
-    #b = custom() 
-    b = optunaRatesCellTypes()
-    b.batchLabel = 'v104_batch3'  
-    b.saveFolder = '../data/'+b.batchLabel
-    #b.method = 'grid'
-    setRunCfg(b, 'hpc_slurm_gcp')
+    b = evolRates(popSize=2, maxGen=1)
+    b.batchLabel = 'v104_batchEvol'  
+    b.saveFolder = '../batchData/'+b.batchLabel
+    setRunCfg(b, 'mpi_bulletin')
     b.run() # run batch
-
-"""  """
