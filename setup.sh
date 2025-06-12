@@ -1,3 +1,4 @@
 unset DISPLAY
 conda activate M1_VIPNGF
 export PYTHONPATH=$PYTHONPATH:$PWD
+nrnivmodl -coreneuron ../mod/
