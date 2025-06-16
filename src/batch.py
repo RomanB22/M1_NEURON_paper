@@ -1159,10 +1159,11 @@ def setRunCfg(b, type='mpi_bulletin'):
             'export PATH=$HOME/neuronGPU/bin:$PATH \n' 
             'export PYTHONPATH=$HOME/neuronGPU/lib/python:$PYTHONPATH \n' 
             'export LD_LIBRARY_PATH="/usr/lib64/openmpi/lib/":"/opt/nvidia/hpc_sdk/Linux_x86_64/23.9/compilers/lib" \n'    
-            'mpirun -n $NSLOTS ./x86_64/special -python -mpi init.py')
-    commandCPU = ('conda activate M1_dev  \n'
+            'mpirun')
+    
+    commandCPU = ('conda activate M1  \n'
               'export LD_LIBRARY_PATH="/ddn/rbarav/miniconda3/envs/M1_dev/lib/python3.10/site-packages/mpi4py_mpich.libs" \n'    
-              'mpiexec -n $NSLOTS -hosts $(hostname) nrniv -python -mpi init.py')
+              'mpiexec')
 
     if type=='mpi_bulletin' or type=='mpi':
         b.runCfg = {'type': 'mpi_bulletin', 
@@ -1197,7 +1198,7 @@ def setRunCfg(b, type='mpi_bulletin'):
                     'log': os.getcwd() +'/' + b.batchLabel +'.log',
                     'vmem': '90G',
                     'walltime': "15:00:00",
-                    'command': commandCPU,
+                    'mpiCommand': commandCPU,
                     'queueName': 'cpu.q',
                     'skip': False}
         
@@ -1206,13 +1207,12 @@ def setRunCfg(b, type='mpi_bulletin'):
                     'jobName': 'M1_GPU',
                     'cores': 19,
                     'log': os.getcwd() +'/' + b.batchLabel +'.log',
-                    'mpiCommand': 'mpiexec',
                     'vmem': '90G',
                     'walltime': "15:00:00",
-                    'command': commandGPU,
+                    'mpiCommand': commandGPU,
+                    'nrnCommand': './x86_64/special',
                     'queueName': 'gpu.q',
-                    'skip': False}       
-
+                    'skip': False}   
 # ----------------------------------------------------------------------------------------------
 # Main code
 # ----------------------------------------------------------------------------------------------
