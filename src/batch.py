@@ -8,6 +8,7 @@ Contributors: salvadordura@gmail.com
 from netpyne.batch import Batch
 from netpyne import specs
 import numpy as np
+import os
 
 # ----------------------------------------------------------------------------------------------
 # Weight Normalization Exc
@@ -1152,6 +1153,17 @@ def optunaRatesCellTypes():
 # Run configurations
 # ----------------------------------------------------------------------------------------------
 def setRunCfg(b, type='mpi_bulletin'):
+
+    # SGE CONFIG
+    commandGPU = ('conda activate GPU  \n'
+            'export PATH=$HOME/neuronGPU/bin:$PATH \n' 
+            'export PYTHONPATH=$HOME/neuronGPU/lib/python:$PYTHONPATH \n' 
+            'export LD_LIBRARY_PATH="/usr/lib64/openmpi/lib/":"/opt/nvidia/hpc_sdk/Linux_x86_64/23.9/compilers/lib" \n'    
+            'mpirun -n $NSLOTS ./x86_64/special -python -mpi init.py')
+    commandCPU = ('conda activate M1_dev  \n'
+              'export LD_LIBRARY_PATH="/ddn/rbarav/miniconda3/envs/M1_dev/lib/python3.10/site-packages/mpi4py_mpich.libs" \n'    
+              'mpiexec -n $NSLOTS -hosts $(hostname) nrniv -python -mpi init.py')
+
     if type=='mpi_bulletin' or type=='mpi':
         b.runCfg = {'type': 'mpi_bulletin', 
             'script': 'init.py', 
@@ -1177,6 +1189,29 @@ def setRunCfg(b, type='mpi_bulletin'):
                     'mpiCommand': '\nsource ~/default.sh\nconda activate NetPyNE\nexport LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/"\nmpiexec',
                     'custom': '#SBATCH --mem=128G\n#SBATCH --export=ALL\n#SBATCH --partition=compute',
                     'skip': True}
+        
+    elif type=='hpc_sge_cpu':
+        b.runCfg = {'type': 'hpc_sge',
+                    'jobName': 'M1_CR',
+                    'cores': 19,
+                    'log': os.getcwd() +'/' + b.batchLabel +'.log',
+                    'vmem': '90G',
+                    'walltime': "15:00:00",
+                    'command': commandCPU,
+                    'queueName': 'cpu.q',
+                    'skip': False}
+        
+    elif type=='hpc_sge_gpu':
+        b.runCfg = {'type': 'hpc_sge',
+                    'jobName': 'M1_GPU',
+                    'cores': 19,
+                    'log': os.getcwd() +'/' + b.batchLabel +'.log',
+                    'mpiCommand': 'mpiexec',
+                    'vmem': '90G',
+                    'walltime': "15:00:00",
+                    'command': commandGPU,
+                    'queueName': 'gpu.q',
+                    'skip': False}       
 
 # ----------------------------------------------------------------------------------------------
 # Main code
@@ -1185,5 +1220,5 @@ if __name__ == '__main__':
     b = evolRates(popSize=2, maxGen=1)
     b.batchLabel = 'v104_batchEvol'  
     b.saveFolder = '../batchData/'+b.batchLabel
-    setRunCfg(b, 'mpi_bulletin')
+    setRunCfg(b, 'hpc_sge_gpu')
     b.run() # run batch
