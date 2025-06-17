@@ -26,8 +26,8 @@ cfg.dt = 0.025
 cfg.seeds = {'conn': 4321, 'stim': 1234, 'loc': 4321} 
 cfg.hParams = {'celsius': 34, 'v_init': -80}  
 cfg.verbose = False
-cfg.createNEURONObj = 1
-cfg.createPyStruct = 1
+cfg.createNEURONObj = True
+cfg.createPyStruct = True
 cfg.connRandomSecFromList = False  # set to false for reproducibility 
 cfg.cvode_active = False
 cfg.cvode_atol = 1e-6
@@ -36,6 +36,7 @@ cfg.printRunTime = 0.1
 cfg.printSynsAfterRule = False
 cfg.pt3dRelativeToCellLocation = True
 cfg.oneSynPerNetcon = True  # only affects conns not in subconnParams; produces identical results
+cfg.progressBar = 0
 
 cfg.includeParamsLabel = False
 cfg.printPopAvgRates = [0, cfg.duration]
@@ -44,10 +45,10 @@ cfg.checkErrors = False
 cfg.checkErrorsVerbose = False
 
 cfg.rand123GlobalIndex = None
-cfg.rand123GlobalIndex = None
-cfg.coreneuron = False #True
-cfg.random123 = False #True
-cfg.gpu = False
+cfg.coreneuron = True
+cfg.random123 = True
+cfg.gpu = True
+
 #------------------------------------------------------------------------------
 # Recording 
 #------------------------------------------------------------------------------
@@ -85,7 +86,7 @@ cfg.simLabel = 'v103_tune3'
 cfg.saveFolder = '../data/v103_manualTune'
 cfg.savePickle = False
 cfg.saveJson = True
-cfg.saveDataInclude = ['simData', 'simConfig', 'netParams']#, 'net']
+cfg.saveDataInclude = ['simData', 'simConfig', 'netParams', 'net']
 cfg.backupCfgFile = None #['cfg.py', 'backupcfg/'] 
 cfg.gatherOnlySimData = False
 cfg.saveCellSecs = False
@@ -218,7 +219,7 @@ cfg.IFullGain = 1.0  # deprecated
 #------------------------------------------------------------------------------
 # Subcellular distribution
 #------------------------------------------------------------------------------
-cfg.addSubConn = 1
+cfg.addSubConn = True
 
 #------------------------------------------------------------------------------
 # Long range inputs

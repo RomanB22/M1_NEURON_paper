@@ -865,7 +865,7 @@ def optunaRates():
     initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
     initCfg['dt'] = 0.025
 
-    initCfg['scaleDensity'] = 1.0
+    initCfg['scaleDensity'] = 0.3
 
     # cell params
     initCfg['ihGbar'] = 0.75  # ih (for quiet/sponti condition)
@@ -901,10 +901,10 @@ def optunaRates():
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
-    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
-    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
-    initCfg['recordLFP'] = None
-    initCfg[('analysis', 'plotLFP')] = False
+    # initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+    # initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    # initCfg['recordLFP'] = None
+    # initCfg[('analysis', 'plotLFP')] = False
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
@@ -1073,10 +1073,10 @@ def optunaRatesCellTypes():
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
-    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
-    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
-    initCfg['recordLFP'] = None
-    initCfg[('analysis', 'plotLFP')] = False
+    # initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+    # initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    # initCfg['recordLFP'] = None
+    # initCfg[('analysis', 'plotLFP')] = False
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
@@ -1157,10 +1157,11 @@ def setRunCfg(b, type='mpi_bulletin'):
     # SGE CONFIG
     commandGPU = ('conda activate GPU  \n'
             'export PATH=$HOME/neuronGPU/bin:$PATH \n' 
-            'export PYTHONPATH=$HOME/neuronGPU/lib/python:$PYTHONPATH \n' 
-            'export LD_LIBRARY_PATH="/usr/lib64/openmpi/lib/":"/opt/nvidia/hpc_sdk/Linux_x86_64/23.9/compilers/lib" \n'    
-            'mpirun')
-    
+            'export PYTHONPATH=$HOME/neuronGPU/lib/python:$PYTHONPATH \n'
+            'export LD_LIBRARY_PATH="/usr/lib64/openmpi/lib/":"/opt/nvidia/hpc_sdk/Linux_x86_64/23.9/compilers/lib" \n'  
+            #'export LD_LIBRARY_PATH="/ddn/rbarav/miniconda3/envs/M1_dev/lib/python3.10/site-packages/mpi4py_mpich.libs" \n'      
+            'mpiexec')
+
     commandCPU = ('conda activate M1  \n'
               'export LD_LIBRARY_PATH="/ddn/rbarav/miniconda3/envs/M1_dev/lib/python3.10/site-packages/mpi4py_mpich.libs" \n'    
               'mpiexec')
@@ -1195,7 +1196,7 @@ def setRunCfg(b, type='mpi_bulletin'):
         b.runCfg = {'type': 'hpc_sge',
                     'jobName': 'M1_CR',
                     'cores': 19,
-                    'log': os.getcwd() +'/' + b.batchLabel +'.log',
+                    'log': os.getcwd() + '/' + b.saveFolder +'.log',
                     'vmem': '90G',
                     'walltime': "15:00:00",
                     'mpiCommand': commandCPU,
@@ -1203,22 +1204,23 @@ def setRunCfg(b, type='mpi_bulletin'):
                     'skip': False}
         
     elif type=='hpc_sge_gpu':
-        b.runCfg = {'type': 'hpc_sge',
+        b.runCfg = {'type': 'hpc_sge_gpu',
                     'jobName': 'M1_GPU',
-                    'cores': 19,
-                    'log': os.getcwd() +'/' + b.batchLabel +'.log',
-                    'vmem': '90G',
-                    'walltime': "15:00:00",
+                    'cores': 1,
+                    'log': os.getcwd() + '/' + b.saveFolder +'.log',
+                    'vmem': '40G',
+                    'walltime': "4:00:00",
                     'mpiCommand': commandGPU,
                     'nrnCommand': './x86_64/special',
                     'queueName': 'gpu.q',
-                    'skip': False}   
+                    'skip': False}       
+
 # ----------------------------------------------------------------------------------------------
 # Main code
 # ----------------------------------------------------------------------------------------------
 if __name__ == '__main__': 
-    b = evolRates(popSize=2, maxGen=1)
-    b.batchLabel = 'v104_batchEvol'  
+    b = optunaRates()
+    b.batchLabel = 'optunaRates'  
     b.saveFolder = '../batchData/'+b.batchLabel
     setRunCfg(b, 'hpc_sge_gpu')
     b.run() # run batch
