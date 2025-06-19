@@ -128,7 +128,7 @@ cfg.cellmod =  {'IT2': 'HH_reduced',
 				'CT6': 'HH_reduced'}
 
 cfg.ihModel = 'migliore'  # ih model
-cfg.ihGbar = 0.75  # multiplicative factor for ih gbar in PT cells
+cfg.ihGbar = 1.0  # multiplicative factor for ih gbar in PT cells
 cfg.ihGbarZD = None # multiplicative factor for ih gbar in PT cells
 cfg.ihGbarBasal = 1.0 # 0.1 # multiplicative factor for ih gbar in PT cells
 cfg.ihlkc = 0.2 # ih leak param (used in Migliore)
@@ -163,7 +163,7 @@ cfg.distributeSynsUniformly = True
 #------------------------------------------------------------------------------
 # Network 
 #------------------------------------------------------------------------------
-cfg.singleCellPops = True  # Create pops with 1 single cell (to debug)
+cfg.singleCellPops = False  # Create pops with 1 single cell (to debug)
 cfg.weightNorm = 1  # use weight normalization
 cfg.weightNormThreshold = 4.0  # weight normalization factor threshold
 
@@ -231,7 +231,7 @@ cfg.delayLong = 5.0  # (ms)
 factor = 1
 cfg.weightLong = {'TPO': 0.5*factor, 'TVL': 0.5*factor, 'S1': 0.5*factor, 'S2': 0.5*factor, 'cM1': 0.5*factor, 'M2': 0.5*factor, 'OC': 0.5*factor}  # corresponds to unitary connection somatic EPSP (mV)
 cfg.startLong = 0  # start at 0 ms
-cfg.ratesLong = {'TPO': [0,5], 'TVL': [0,5], 'S1': [0,5], 'S2': [0,5], 'cM1': [0,5], 'M2': [0,5], 'OC': [0,5]}
+cfg.ratesLong = {'TPO': [0,5], 'TVL': [0, 2.5], 'S1': [0,5], 'S2': [0,5], 'cM1': [0,5], 'M2': [0,5], 'OC': [0,5]}
 
 
 ## input pulses

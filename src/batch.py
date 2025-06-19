@@ -1190,7 +1190,7 @@ def setRunCfg(b, type='mpi_bulletin'):
                     'nodes': 1,
                     'coresPerNode': 96,
                     'email': 'romanbaravalle@gmail.com',
-                    'folder': '/home/rbaravalle/M1_NEURON_paper/src',
+                    'folder': '/home/rbaravalle/ChannelopathiesNew/src',
                     'script': 'init.py',
                     'mpiCommand': '\nsource ~/default.sh\nconda activate NetPyNE\nexport LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/"\nmpiexec',
                     'custom': '#SBATCH --mem=128G\n#SBATCH --export=ALL\n#SBATCH --partition=compute',
@@ -1223,7 +1223,7 @@ def setRunCfg(b, type='mpi_bulletin'):
 # Main code
 # ----------------------------------------------------------------------------------------------
 if __name__ == '__main__': 
-    b = evolRates()
+    b = evolRates(maxGen=200, popSize=30)
     b.batchLabel = 'evolRatesCPU'  
     b.saveFolder = '../batchData/'+b.batchLabel
     setRunCfg(b, 'hpc_slurm_expanse')

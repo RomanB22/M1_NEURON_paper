@@ -162,6 +162,14 @@ if 'PT5B_full' not in loadCellParams:
     del netParams.cellParams['PT5B_full']['secs']['soma']['pointps']
     del netParams.cellParams['PT5B_full']['secs']['dend_0']['pointps']
 
+    # Adapt ih params based on cfg param
+    for secName in cellRule['secs']:
+        for mechName,mech in cellRule['secs'][secName]['mechs'].items():
+            if mechName in ['Ih']: 
+                mech['gIhbar'] = [g*cfg.ihGbar for g in mech['gIhbar']] if isinstance(mech['gIhbar'],list) else mech['gIhbar']*cfg.ihGbar
+                if secName.startswith('dend'): 
+                    mech['gIhbar'] *= cfg.ihGbarBasal  # modify ih conductance in soma+basal dendrites
+
     # Decrease dendritic Na
     for secName in netParams.cellParams['PT5B_full']['secs']:
        if secName.startswith('apic'):
