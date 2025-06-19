@@ -1223,7 +1223,7 @@ def setRunCfg(b, type='mpi_bulletin'):
 # Main code
 # ----------------------------------------------------------------------------------------------
 if __name__ == '__main__': 
-    b = optunaRates()
+    b = evolRates()
     b.batchLabel = 'evolRatesCPU'  
     b.saveFolder = '../batchData/'+b.batchLabel
     setRunCfg(b, 'hpc_slurm_expanse')
