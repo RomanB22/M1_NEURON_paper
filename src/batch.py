@@ -865,7 +865,7 @@ def optunaRates():
     initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
     initCfg['dt'] = 0.025
 
-    initCfg['scaleDensity'] = 0.3
+    initCfg['scaleDensity'] = 1.0
 
     # cell params
     initCfg['ihGbar'] = 0.75  # ih (for quiet/sponti condition)
@@ -901,6 +901,8 @@ def optunaRates():
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg['recordTraces'] = None
+    initCfg[('analysis', 'plotTraces')] = False
     # initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
     # initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
     # initCfg['recordLFP'] = None
@@ -1073,6 +1075,8 @@ def optunaRatesCellTypes():
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg['recordTraces'] = None
+    initCfg[('analysis', 'plotTraces')] = False
     # initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
     # initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
     # initCfg['recordLFP'] = None
@@ -1196,8 +1200,8 @@ def setRunCfg(b, type='mpi_bulletin'):
         b.runCfg = {'type': 'hpc_sge',
                     'jobName': 'M1_CR',
                     'cores': 19,
-                    'log': os.getcwd() + '/' + b.saveFolder +'.log',
-                    'vmem': '90G',
+                    # 'log': os.getcwd() + '/' + b.saveFolder +'.log',
+                    'vmem': '60G',
                     'walltime': "15:00:00",
                     'mpiCommand': commandCPU,
                     'queueName': 'cpu.q',
@@ -1208,7 +1212,7 @@ def setRunCfg(b, type='mpi_bulletin'):
                     'jobName': 'M1_GPU',
                     'cores': 1,
                     'log': os.getcwd() + '/' + b.saveFolder +'.log',
-                    'vmem': '40G',
+                    'vmem': '60G',
                     'walltime': "4:00:00",
                     'mpiCommand': commandGPU,
                     'nrnCommand': './x86_64/special',
@@ -1220,7 +1224,7 @@ def setRunCfg(b, type='mpi_bulletin'):
 # ----------------------------------------------------------------------------------------------
 if __name__ == '__main__': 
     b = optunaRates()
-    b.batchLabel = 'optunaRates'  
+    b.batchLabel = 'optunaRatesGPU'  
     b.saveFolder = '../batchData/'+b.batchLabel
     setRunCfg(b, 'hpc_sge_gpu')
     b.run() # run batch

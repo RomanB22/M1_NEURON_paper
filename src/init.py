@@ -26,7 +26,14 @@ sim.net.connectCells()            			# create connections between cells based on
 sim.net.addStims() 							# add network stimulation
 sim.setupRecording()              			# setup variables to record for each cell (spikes, V traces, etc)
 sim.runSim()                      			# run parallel Neuron simulation  
-sim.gatherData()                  			# gather spiking data and cell info from each node
+
+# Gather/save data option 1: standard
+sim.gatherData() # gather spiking data and cell info from each node
+
+# Gather/save data option 2: distributed saving across nodes 
+# sim.saveDataInNodes()
+# sim.gatherDataFromFiles()
+              			
 sim.saveData()                    			# save params, cell info and sim output to file (pickle,mat,txt,etc)#
 sim.analysis.plotData()         			# plot spike raster etc
 
