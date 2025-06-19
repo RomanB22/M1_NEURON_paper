@@ -44,10 +44,10 @@ cfg.printPopAvgRates = [0, cfg.duration]
 cfg.checkErrors = False
 cfg.checkErrorsVerbose = False
 
-cfg.rand123GlobalIndex = None
-cfg.coreneuron = True
-cfg.random123 = True
-cfg.gpu = True
+# cfg.rand123GlobalIndex = None
+# cfg.coreneuron = True
+# cfg.random123 = True
+# cfg.gpu = True
 
 #------------------------------------------------------------------------------
 # Recording 
@@ -163,7 +163,7 @@ cfg.distributeSynsUniformly = True
 #------------------------------------------------------------------------------
 # Network 
 #------------------------------------------------------------------------------
-cfg.singleCellPops = 0  # Create pops with 1 single cell (to debug)
+cfg.singleCellPops = True  # Create pops with 1 single cell (to debug)
 cfg.weightNorm = 1  # use weight normalization
 cfg.weightNormThreshold = 4.0  # weight normalization factor threshold
 
