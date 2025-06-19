@@ -678,7 +678,7 @@ def evolRates(popSize=30, maxGen=200):
 
     # long-range inputs
     params[('weightLong', 'TPO')] = [0.25, 0.75] 
-    params[('weightLong', 'TVL')] = [0.25, 0.75] 
+    params[('weightLong', 'TVL')] = [0, 0.25] 
     params[('weightLong', 'S1')] =  [0.25, 0.75] 
     params[('weightLong', 'S2')] =  [0.25, 0.75] 
     params[('weightLong', 'cM1')] = [0.25, 0.75] 
@@ -716,7 +716,7 @@ def evolRates(popSize=30, maxGen=200):
     initCfg['scaleDensity'] = 1.0
 
     # cell params
-    initCfg['ihGbar'] = 0.75  # ih (for quiet/sponti condition)
+    initCfg['ihGbar'] = 1.0  # ih (for quiet/sponti condition)
     initCfg['ihModel'] = 'migliore'  # ih model
     initCfg['ihGbarBasal'] = 1.0 # multiplicative factor for ih gbar in PT cells
     initCfg['ihlkc'] = 0.2 # ih leak param (used in Migliore)
@@ -1185,7 +1185,7 @@ def setRunCfg(b, type='mpi_bulletin'):
     elif type == 'hpc_slurm_expanse':
         b.runCfg = {'type': 'hpc_slurm',
                     'allocation': 'TG-MED240058',
-                    'partition': 'compute', #'large-shared',
+                    'partition': 'large-shared', #'large-shared',
                     'walltime': '10:30:00',
                     'nodes': 1,
                     'coresPerNode': 96,
@@ -1223,7 +1223,7 @@ def setRunCfg(b, type='mpi_bulletin'):
 # Main code
 # ----------------------------------------------------------------------------------------------
 if __name__ == '__main__': 
-    b = evolRates(maxGen=200, popSize=30)
+    b = evolRates(maxGen=200, popSize=20)
     b.batchLabel = 'evolRatesCPU'  
     b.saveFolder = '../batchData/'+b.batchLabel
     setRunCfg(b, 'hpc_slurm_expanse')
