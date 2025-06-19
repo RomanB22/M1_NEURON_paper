@@ -1224,7 +1224,7 @@ def setRunCfg(b, type='mpi_bulletin'):
 # ----------------------------------------------------------------------------------------------
 if __name__ == '__main__': 
     b = optunaRates()
-    b.batchLabel = 'optunaRatesGPU'  
+    b.batchLabel = 'evolRatesCPU'  
     b.saveFolder = '../batchData/'+b.batchLabel
-    setRunCfg(b, 'hpc_sge_gpu')
+    setRunCfg(b, 'hpc_slurm_expanse')
     b.run() # run batch
