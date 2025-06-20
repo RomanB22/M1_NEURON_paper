@@ -139,7 +139,7 @@ cfg.ihSlope = 14*2
 
 cfg.removeNa = False  # simulate TTX; set gnabar=0s
 cfg.somaNa = 5
-cfg.dendNa = 0.3
+cfg.dendNa = 0.1
 cfg.axonNa = 7
 cfg.axonRa = 0.005
 

@@ -1185,7 +1185,7 @@ def setRunCfg(b, type='mpi_bulletin'):
     elif type == 'hpc_slurm_expanse':
         b.runCfg = {'type': 'hpc_slurm',
                     'allocation': 'TG-MED240058',
-                    'partition': 'large-shared', #'large-shared',
+                    'partition': 'compute', #'large-shared',
                     'walltime': '10:30:00',
                     'nodes': 1,
                     'coresPerNode': 96,
@@ -1194,8 +1194,21 @@ def setRunCfg(b, type='mpi_bulletin'):
                     'script': 'init.py',
                     'mpiCommand': '\nsource ~/default.sh\nconda activate NetPyNE\nexport LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/"\nmpiexec',
                     'custom': '#SBATCH --mem=128G\n#SBATCH --export=ALL\n#SBATCH --partition=compute',
-                    'skip': True,
-                    'skipCustom': '_data.json'}
+                    'skip': True}
+        
+    elif type == 'hpc_slurm_Expanse_LUSTRE':
+        b.runCfg = {'type': 'hpc_slurm',
+                    'allocation': 'TG-MED240058',
+                    'partition': 'compute', #'large-shared', 'compute'
+                    'walltime': '10:30:00',
+                    'nodes': 1,
+                    'coresPerNode': 96,
+                    'email': 'romanbaravalle@gmail.com',
+                    'folder': '/home/rbaravalle/ChannelopathiesNew/src',
+                    'script': 'init.py',
+                    'mpiCommand': '\nsource ~/default.sh\nconda activate NetPyNE\nexport LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/"\nmpiexec',
+                    'custom': '#SBATCH --constraint="lustre"\n#SBATCH --mem=90G\n#SBATCH --export=ALL\n#SBATCH --partition=compute',
+                    'skip': True}
         
     elif type=='hpc_sge_cpu':
         b.runCfg = {'type': 'hpc_sge',
@@ -1206,8 +1219,7 @@ def setRunCfg(b, type='mpi_bulletin'):
                     'walltime': "15:00:00",
                     'mpiCommand': commandCPU,
                     'queueName': 'cpu.q',
-                    'skip': True,
-                    'skipCustom': '_data.json'}
+                    'skip': True}
         
     elif type=='hpc_sge_gpu':
         b.runCfg = {'type': 'hpc_sge_gpu',
@@ -1219,15 +1231,16 @@ def setRunCfg(b, type='mpi_bulletin'):
                     'mpiCommand': commandGPU,
                     'nrnCommand': './x86_64/special',
                     'queueName': 'gpu.q',
-                    'skip': True,
-                    'skipCustom': '_data.json'}   
+                    'skip': True}
 
 # ----------------------------------------------------------------------------------------------
 # Main code
 # ----------------------------------------------------------------------------------------------
 if __name__ == '__main__': 
-    b = evolRates(maxGen=200, popSize=20)
+    b = evolRates(maxGen=200, popSize=30)
     b.batchLabel = 'evolRatesCPU'  
-    b.saveFolder = '../batchData/'+b.batchLabel
-    setRunCfg(b, 'hpc_slurm_expanse')
+    LustreFolder = '/expanse/lustre/projects/shs102/rbaravalle/'
+    # b.saveFolder = '../batchData/'+b.batchLabel
+    b.saveFolder = LustreFolder+b.batchLabel
+    setRunCfg(b, 'hpc_slurm_Expanse_LUSTRE')
     b.run() # run batch
