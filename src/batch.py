@@ -1194,30 +1194,33 @@ def setRunCfg(b, type='mpi_bulletin'):
                     'script': 'init.py',
                     'mpiCommand': '\nsource ~/default.sh\nconda activate NetPyNE\nexport LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/"\nmpiexec',
                     'custom': '#SBATCH --mem=128G\n#SBATCH --export=ALL\n#SBATCH --partition=compute',
-                    'skip': True}
+                    'skip': True,
+                    'skipCustom': '_data.json'}
         
     elif type=='hpc_sge_cpu':
         b.runCfg = {'type': 'hpc_sge',
                     'jobName': 'M1_CR',
                     'cores': 19,
                     # 'log': os.getcwd() + '/' + b.saveFolder +'.log',
-                    'vmem': '60G',
+                    'vmem': '100G',
                     'walltime': "15:00:00",
                     'mpiCommand': commandCPU,
                     'queueName': 'cpu.q',
-                    'skip': False}
+                    'skip': True,
+                    'skipCustom': '_data.json'}
         
     elif type=='hpc_sge_gpu':
         b.runCfg = {'type': 'hpc_sge_gpu',
                     'jobName': 'M1_GPU',
                     'cores': 1,
                     'log': os.getcwd() + '/' + b.saveFolder +'.log',
-                    'vmem': '60G',
+                    'vmem': '100G',
                     'walltime': "4:00:00",
                     'mpiCommand': commandGPU,
                     'nrnCommand': './x86_64/special',
                     'queueName': 'gpu.q',
-                    'skip': False}       
+                    'skip': True,
+                    'skipCustom': '_data.json'}   
 
 # ----------------------------------------------------------------------------------------------
 # Main code
