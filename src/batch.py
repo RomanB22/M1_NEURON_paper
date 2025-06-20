@@ -671,7 +671,7 @@ def custom():
 # ----------------------------------------------------------------------------------------------
 # Evol
 # ----------------------------------------------------------------------------------------------
-def evolRates(popSize=30, maxGen=200):
+def evolRates(popSize=30, maxGen=200, scaleDensity=1.0):
     # --------------------------------------------------------
     # parameters
     params = specs.ODict()
@@ -713,7 +713,7 @@ def evolRates(popSize=30, maxGen=200):
     initCfg['printPopAvgRates'] = [500, 1500] 
     initCfg['dt'] = 0.025
 
-    initCfg['scaleDensity'] = 1.0
+    initCfg['scaleDensity'] = scaleDensity
 
     # cell params
     initCfg['ihGbar'] = 1.0  # ih (for quiet/sponti condition)
@@ -813,7 +813,6 @@ def evolRates(popSize=30, maxGen=200):
         'time_sleep': 300, # 5min wait this time before checking again if sim is completed (for each generation)
         'maxiter_wait': 2*64, # (5h20) max number of times to check if sim is completed (for each generation)
         'defaultFitness': 1000, # set fitness value in case simulation time is over
-        'scancelUser': 'ext_donald_doherty_actionpotenti'
     }
 
 
@@ -822,7 +821,7 @@ def evolRates(popSize=30, maxGen=200):
 # ----------------------------------------------------------------------------------------------
 # Adaptive Stochastic Descent (ASD)
 # ----------------------------------------------------------------------------------------------
-def optunaRates():
+def optunaRates(scaleDensity=1.0):
 
     # --------------------------------------------------------
     # parameters
@@ -862,10 +861,10 @@ def optunaRates():
     # initial config
     initCfg = {}
     initCfg['duration'] = 1500
-    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['printPopAvgRates'] =  [500, 1500]
     initCfg['dt'] = 0.025
 
-    initCfg['scaleDensity'] = 1.0
+    initCfg['scaleDensity'] = scaleDensity
 
     # cell params
     initCfg['ihGbar'] = 0.75  # ih (for quiet/sponti condition)
@@ -1182,10 +1181,10 @@ def setRunCfg(b, type='mpi_bulletin'):
             'mpiCommand': 'mpirun',
             'skip': True}
         
-    elif type == 'hpc_slurm_expanse':
+    elif type == 'hpc_slurm_Expanse':
         b.runCfg = {'type': 'hpc_slurm',
                     'allocation': 'TG-MED240058',
-                    'partition': 'compute', #'large-shared',
+                    'partition': 'large-shared', #'large-shared',
                     'walltime': '10:30:00',
                     'nodes': 1,
                     'coresPerNode': 96,
@@ -1193,21 +1192,21 @@ def setRunCfg(b, type='mpi_bulletin'):
                     'folder': '/home/rbaravalle/ChannelopathiesNew/src',
                     'script': 'init.py',
                     'mpiCommand': '\nsource ~/default.sh\nconda activate NetPyNE\nexport LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/"\nmpiexec',
-                    'custom': '#SBATCH --mem=128G\n#SBATCH --export=ALL\n#SBATCH --partition=compute',
+                    'custom': '#SBATCH --mem=128G\n#SBATCH --export=ALL\n#SBATCH --partition=large-shared',
                     'skip': True}
         
     elif type == 'hpc_slurm_Expanse_LUSTRE':
         b.runCfg = {'type': 'hpc_slurm',
                     'allocation': 'TG-MED240058',
-                    'partition': 'compute', #'large-shared', 'compute'
+                    'partition': 'large-shared', #'large-shared', 'compute'
                     'walltime': '10:30:00',
                     'nodes': 1,
-                    'coresPerNode': 96,
+                    'coresPerNode': 128,
                     'email': 'romanbaravalle@gmail.com',
                     'folder': '/home/rbaravalle/ChannelopathiesNew/src',
                     'script': 'init.py',
                     'mpiCommand': '\nsource ~/default.sh\nconda activate NetPyNE\nexport LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/"\nmpiexec',
-                    'custom': '#SBATCH --constraint="lustre"\n#SBATCH --mem=90G\n#SBATCH --export=ALL\n#SBATCH --partition=compute',
+                    'custom': '#SBATCH --constraint="lustre"\n#SBATCH --mem=128G\n#SBATCH --export=ALL\n#SBATCH --partition=large-shared',
                     'skip': True}
         
     elif type=='hpc_sge_cpu':
@@ -1237,10 +1236,16 @@ def setRunCfg(b, type='mpi_bulletin'):
 # Main code
 # ----------------------------------------------------------------------------------------------
 if __name__ == '__main__': 
-    b = evolRates(maxGen=200, popSize=30)
-    b.batchLabel = 'evolRatesCPU'  
-    LustreFolder = '/expanse/lustre/projects/shs102/rbaravalle/'
-    # b.saveFolder = '../batchData/'+b.batchLabel
-    b.saveFolder = LustreFolder+b.batchLabel
-    setRunCfg(b, 'hpc_slurm_Expanse_LUSTRE')
+    # b = evolRates(maxGen=100, popSize=10, scaleDensity=1.0)
+    # b.batchLabel = 'evolRatesCPU'  
+    # LustreFolder = '/expanse/lustre/projects/shs102/rbaravalle/'
+    # b.saveFolder = LustreFolder+b.batchLabel
+    # RunCfg = 'hpc_slurm_Expanse_LUSTRE'
+
+    b = optunaRates(scaleDensity=1.0)
+    b.batchLabel = 'optunaRatesCPU'  
+    b.saveFolder = '../batchData/'+b.batchLabel
+    RunCfg = 'hpc_slurm_Expanse'
+
+    setRunCfg(b, RunCfg)
     b.run() # run batch
