@@ -786,6 +786,7 @@ def evolRates(popSize=30, maxGen=200, scaleDensity=1.0):
         import numpy as np
         pops = kwargs['pops']
         maxFitness = kwargs['maxFitness']
+
         popFitness = [min(np.exp(abs(v['target'] - simData['popRates'][k])/v['width']), maxFitness) 
                 if simData['popRates'][k] > v['min'] else maxFitness for k,v in pops.items()]
         fitness = np.mean(popFitness)
@@ -900,10 +901,10 @@ def optunaRates(scaleDensity=1.0):
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
-    initCfg['recordTraces'] = None
-    initCfg[('analysis', 'plotTraces')] = False
-    # initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
-    # initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    # initCfg['recordTraces'] = None
+    # initCfg[('analysis', 'plotTraces')] = False
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
     # initCfg['recordLFP'] = None
     # initCfg[('analysis', 'plotLFP')] = False
 
@@ -944,21 +945,13 @@ def optunaRates(scaleDensity=1.0):
         import numpy as np
         pops = kwargs['pops']
         maxFitness = kwargs['maxFitness']
-        tranges = kwargs['tranges']
 
-        popFitnessAll = []
-
-        for trange in tranges:
-            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
-                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
-        
-        popFitness = np.mean(np.array(popFitnessAll), axis=0)
-        
+        popFitness = [min(np.exp(abs(v['target'] - simData['popRates'][k])/v['width']), maxFitness) 
+                if simData['popRates'][k] > v['min'] else maxFitness for k,v in pops.items()]
         fitness = np.mean(popFitness)
 
-        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
-        print('  ' + popInfo)
-
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f'%(p, simData['popRates'][p], popFitness[i]) for i,p in enumerate(pops)])
+        print('  '+popInfo)
         return fitness
         
     # create Batch object with paramaters to modify, and specifying files to use
@@ -1026,7 +1019,7 @@ def optunaRatesCellTypes():
     # initial config
     initCfg = {}
     initCfg['duration'] = 1500
-    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['printPopAvgRates'] = [500, 1500]
     initCfg['dt'] = 0.025
 
     initCfg['scaleDensity'] = 1.0
@@ -1074,10 +1067,10 @@ def optunaRatesCellTypes():
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
-    initCfg['recordTraces'] = None
-    initCfg[('analysis', 'plotTraces')] = False
-    # initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
-    # initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    # initCfg['recordTraces'] = None
+    # initCfg[('analysis', 'plotTraces')] = False
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
     # initCfg['recordLFP'] = None
     # initCfg[('analysis', 'plotLFP')] = False
 
