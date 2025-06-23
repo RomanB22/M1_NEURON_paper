@@ -1242,10 +1242,10 @@ if __name__ == '__main__':
     # b.saveFolder = LustreFolder+b.batchLabel
     # RunCfg = 'hpc_slurm_Expanse_LUSTRE'
 
-    b = optunaRates(scaleDensity=1.0)
-    b.batchLabel = 'optunaRatesCPU'  
+    b = optunaRates(scaleDensity=0.3)
+    b.batchLabel = 'optunaRatesGPU'  
     b.saveFolder = '../batchData/'+b.batchLabel
-    RunCfg = 'hpc_slurm_Expanse'
+    RunCfg = 'hpc_sge_gpu'
 
     setRunCfg(b, RunCfg)
     b.run() # run batch
