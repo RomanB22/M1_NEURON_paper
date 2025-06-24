@@ -137,7 +137,7 @@ proc current_balancein() {
   finitialize($1)
   fcurrent()
 
-  printf("Balancing each compartment to %d mV\n", $1)
+  //printf("Balancing each compartment to %d mV\n", $1)
 
   forsec incell_list{
    for (x) {

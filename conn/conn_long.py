@@ -213,7 +213,7 @@ def plotPies():
 
     fracsTitles = {'EI':'Exc vs inh inputs', 'ELL': 'Exc long-range vs local inputs', 'ILL': 'Inh long-range vs local inputs', 'L':'Long-range inputs'} 
     
-    print (fracs)
+    # print (fracs)
 
     for k in fracs.keys():
         fracLabel,frac = fracLabels[k],fracs[k]
@@ -225,7 +225,7 @@ def plotPies():
         labels = fracLabel
 
         ## RED/BLUE for E/I!!
-        print (k)
+        # print (k)
         if k=='EI':
              colors = [colorList[4], colorList[1]]
         else:

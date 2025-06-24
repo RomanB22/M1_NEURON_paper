@@ -1027,7 +1027,7 @@ def optunaRates(scaleDensity=1.0):
     initCfg['scaleDensity'] = scaleDensity
 
     # cell params
-    initCfg['ihGbar'] = 0.75  # ih (for quiet/sponti condition)
+    initCfg['ihGbar'] = 1.0  # ih (for quiet/sponti condition)
     initCfg['ihModel'] = 'migliore'  # ih model
     initCfg['ihGbarBasal'] = 1.0 # multiplicative factor for ih gbar in PT cells
     initCfg['ihlkc'] = 0.2 # ih leak param (used in Migliore)
@@ -1037,14 +1037,14 @@ def optunaRates(scaleDensity=1.0):
     initCfg['ihSlope'] = 28  # ih leak param (used in Migliore)
 
     initCfg['somaNa'] = 5.0  # somatic Na conduct
-    initCfg['dendNa'] = 0.3  # dendritic Na conduct (reduced to avoid dend spikes) 
+    initCfg['dendNa'] = 1.0  # dendritic Na conduct (reduced to avoid dend spikes) 
     initCfg['axonNa'] = 7   # axon Na conduct (increased to compensate) 
     initCfg['axonRa'] = 0.005
     initCfg['gpas'] = 0.5
     initCfg['epas'] = 0.9
 
     # long-range input params
-    initCfg['numCellsLong'] = 1000
+    initCfg['numCellsLong'] = int(1000*scaleDensity)
     initCfg[('pulse', 'pop')] = 'None'
     initCfg[('pulse', 'start')] = 1000.0
     initCfg[('pulse', 'end')] = 1100.0
@@ -1336,7 +1336,7 @@ def setRunCfg(b, type='mpi_bulletin'):
     elif type == 'hpc_slurm_Expanse':
         b.runCfg = {'type': 'hpc_slurm',
                     'allocation': 'TG-MED240058',
-                    'partition': 'large-shared', #'large-shared',
+                    'partition': 'compute', #'large-shared',
                     'walltime': '10:30:00',
                     'nodes': 1,
                     'coresPerNode': 96,
@@ -1344,7 +1344,7 @@ def setRunCfg(b, type='mpi_bulletin'):
                     'folder': '/home/rbaravalle/ChannelopathiesNew/src',
                     'script': 'init.py',
                     'mpiCommand': '\nsource ~/default.sh\nconda activate NetPyNE\nexport LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/"\nmpiexec',
-                    'custom': '#SBATCH --mem=128G\n#SBATCH --export=ALL\n#SBATCH --partition=large-shared',
+                    'custom': '#SBATCH --mem=128G\n#SBATCH --export=ALL\n#SBATCH --partition=compute',
                     'skip': True}
         
     elif type == 'hpc_slurm_Expanse_LUSTRE':
@@ -1353,7 +1353,7 @@ def setRunCfg(b, type='mpi_bulletin'):
                     'partition': 'large-shared', #'large-shared', 'compute'
                     'walltime': '10:30:00',
                     'nodes': 1,
-                    'coresPerNode': 128,
+                    'coresPerNode': 96,
                     'email': 'romanbaravalle@gmail.com',
                     'folder': '/home/rbaravalle/ChannelopathiesNew/src',
                     'script': 'init.py',
@@ -1393,6 +1393,11 @@ if __name__ == '__main__':
     # LustreFolder = '/expanse/lustre/projects/shs102/rbaravalle/'
     # b.saveFolder = LustreFolder+b.batchLabel
     # RunCfg = 'hpc_slurm_Expanse_LUSTRE'
+
+    # b = optunaRates(scaleDensity=1.0)
+    # b.batchLabel = 'optunaRatesCPU_2'  
+    # b.saveFolder = '../batchData/'+b.batchLabel
+    # RunCfg = 'hpc_slurm_Expanse'
 
     b = optunaRates(scaleDensity=0.3)
     b.batchLabel = 'optunaRatesGPU'  

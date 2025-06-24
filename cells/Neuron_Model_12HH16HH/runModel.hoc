@@ -36,8 +36,8 @@ objref recSites
 recSites = new SectionList()
 outFPre = "./volts/orig_step"
 access root.sec
-print "**********************"
-print secname()
+//print "**********************"
+//print secname()
 root.sec recSites.append()
 
 

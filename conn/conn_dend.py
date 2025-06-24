@@ -200,7 +200,7 @@ def extractColor(colorbarFile, figFile, figDim, checkColorRange=True, show=False
             #print i,j,x,y
             if x > xlen or y > ylen: continue
             color = fig[x, y][0:3] # if have alpha channel will be 4d
-            print color
+            # print color
             dist = [np.linalg.norm(np.array(color)-np.array(cbcol)) for cbcol in cbarColors]
             minDist = min(dist)
             if checkColorRange:

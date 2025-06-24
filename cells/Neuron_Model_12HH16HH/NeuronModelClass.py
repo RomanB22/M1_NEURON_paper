@@ -56,9 +56,9 @@ class NeuronModel:
 
         os.chdir(mod_dir)
         self.h = h  # NEURON h
-        print(f'running model at {os.getcwd()} run dir is {run_dir}')
-        print(f'There is {nav16} of WT nav16')
-        print(f'There is {nav12} of WT nav12')
+        # print(f'running model at {os.getcwd()} run dir is {run_dir}')
+        # print(f'There is {nav16} of WT nav16')
+        # print(f'There is {nav12} of WT nav12')
         h.load_file("runModel.hoc")
 
         self.soma_ref = h.root.sec
@@ -116,8 +116,8 @@ class NeuronModel:
         ##Add update_mech_from_dict and update_param_value here #####
         ##TF052124 need to comment out update_mech_from_dict if using HH model -- Fixed this issue##
         if update:
-            print("UPDATING ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
-            print(eval('h.psection()'))
+            # print("UPDATING ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+            # print(eval('h.psection()'))
             # print(eval('h.cell.axon[0].psection()'))
             update_param_value(self, ['SKv3_1'], 'mtaumul', 6)  ##TF041924 ORIGINAL val=6
             multiply_param(self, ['SKv3_1'], 'mtaumul', 0.85)  ##TF083024 updated for hh model
@@ -132,13 +132,13 @@ class NeuronModel:
             self.h.working()
             p_fn_na12 = f'{params_folder}{na12name}.txt'
             p_fn_na12_mech = f'{params_folder}{na12mut_name}.txt'
-            print(f'using wt_file params {na12name}')
+            # print(f'using wt_file params {na12name}')
             self.na12_p = update_mech_from_dict(self, p_fn_na12, self.na12wt_mech)  ###
-            print(eval("h.psection()"))
-            print(f'using mut_file params {na12mut_name}')
+            # print(eval("h.psection()"))
+            # print(f'using mut_file params {na12mut_name}')
             self.na12_pmech = update_mech_from_dict(self, p_fn_na12_mech,
                                                     self.na12mut_mech)  # update_mech_from_dict(mdl,dict_fn,mechs,input_dict = False) 2nd arg (dict) updates 3rd (mech) ###
-            print(eval("h.psection()"))
+            # print(eval("h.psection()"))
 
             # Updates gbar in na12 and na12mut mechs with value in nav12. Updates all gbars in all sections including all segments in AIS
             update_mod_param(self, ['na12', 'na12mut'], nav12)
@@ -150,20 +150,20 @@ class NeuronModel:
             p_fn_na16 = f'{params_folder}{na16name}.txt'
             p_fn_na16_mech = f'{params_folder}{na16mut_name}.txt'
 
-            print(f'using na16wt_file params {na16name}')
+            # print(f'using na16wt_file params {na16name}')
             self.na16_p = update_mech_from_dict(self, p_fn_na16, self.na16wt_mech)  ###
-            print(eval("h.psection()"))
+            # print(eval("h.psection()"))
             ##TF030624 Can load file below and run h.printValsWT to debug if mod file is getting updated or not
             # h.load_file("/global/homes/t/tfenton/Neuron_general-2/Neuron_Model_12HMM16HH/printSh.hoc")
             # h.printValsWT16()
 
-            print(f'using na16mut_file params {na16mut_name}')
+            # print(f'using na16mut_file params {na16mut_name}')
             self.na16_pmech = update_mech_from_dict(self, p_fn_na16_mech, self.na16mut_mech)  ###
-            print(eval("h.psection()"))
+            # print(eval("h.psection()"))
 
             update_mod_param(self, ['na16', 'na16mut'], nav16)
 
-            print(eval("h.psection()"))
+            # print(eval("h.psection()"))
 
     # Function for determining and plotting the distribution of Na channels in axon.
     def chandensities(
@@ -177,19 +177,19 @@ class NeuronModel:
 
         for sec in h.cell.axon:
             for seg in sec:
-                print(seg)
+                # print(seg)
                 section = f'h.distance.{seg}'
                 distance = h.distance(0, seg)
-                print(f'Distance_SEG{distance}')
+                # print(f'Distance_SEG{distance}')
                 distances.append(distance)
                 sections.append(section)
 
                 na12_gbar = seg.gbar_na12
-                print(na12_gbar)
+                # print(na12_gbar)
                 na12_densities.append(na12_gbar)
 
                 na16_gbar = seg.gbar_na16
-                print(na16_gbar)
+                # print(na16_gbar)
                 na16_densities.append(na16_gbar)
 
                 na12mut_gbar = seg.gbar_na12mut
@@ -198,9 +198,9 @@ class NeuronModel:
                 na16mut_gbar = seg.gbar_na16mut
                 na16mut_densities.append(na16mut_gbar)
 
-        print(distances)
-        print(na12_densities)
-        print(na16_densities)
+        # print(distances)
+        # print(na12_densities)
+        # print(na16_densities)
 
         # Save data to dataframes to write to csv.
         df1 = pd.DataFrame(distances)
@@ -433,7 +433,7 @@ class NeuronModel:
                                                                                                       ionic_type=ionic_type)
                       for ionic_type in ionic_types}
         # print(f"ionic_vars : {ionic_vars}") ####commented 12/11/23 TF
-        print(f"############################## Timesteps____________{timesteps}")
+        # print(f"############################## Timesteps____________{timesteps}")
         for i in range(timesteps):
 
             Vm[i] = eval(volt_var)
@@ -447,8 +447,8 @@ class NeuronModel:
                     ionic[ionic_type][i] = eval(ionic_vars[ionic_type])
                     # print(str(ionic_type) + "------" + str(i) + "-----" + str(eval(ionic_vars[ionic_type]))) ###for debugging
             except Exception as e:
-                print(e)
-                print("Check the config files for the correct Attribute")
+                # print(e)
+                # print("Check the config files for the correct Attribute")
                 sys.exit(1)
 
             stim[i] = h.st.amp

@@ -732,8 +732,8 @@ if saveMat:
 '''
 
 # print(bins[('W+AS', 'IT', 'L2/3,4')])
-print(bins[('W+AS', 'IT', 'L5A,5B')])
-print(bins[('W+AS', 'PT', 'L5B')])
+# print(bins[('W+AS', 'IT', 'L5A,5B')])
+# print(bins[('W+AS', 'PT', 'L5B')])
 # print(bins[('W+AS', 'IT', 'L6')])
 # print(bins[('W+AS', 'CT', 'L6')])
 

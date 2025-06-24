@@ -43,8 +43,8 @@ with open(datafile, 'rb') as f:
  
 density['Tsai09'] = [round(mean([tsaiDens[i][1] for i in range(len(tsaiDens)) if layer[0] < tsaiDens[i][0] <= layer[1]])*1e5) 
 					for layer in layers] 
-print(density['Tsai09'])
-print(mean(np.array(tsaiDens)[:,1]))
+# print(density['Tsai09'])
+# print(mean(np.array(tsaiDens)[:,1]))
 
 
 #L4dens = (density['Tsai09'][0]+density['Tsai09'][1])/2
@@ -111,7 +111,7 @@ density[('M1','VIP')] =    [(density[('M1','I')][i])*(VIP[i]) for i in range(len
 density[('M1','nonVIP')] = [(density[('M1','I')][i])*(nonVIP[i]) for i in range(len(nonVIP))]
 
 
-print(density)
+# print(density)
 
 with open('popColors.pkl', 'rb') as fileObj: popColors = pickle.load(fileObj)['popColors']  # load popColors
 
@@ -137,8 +137,8 @@ if plotPies:
 		tot = float(sum(pops.values()))
 		fracs = [round(float(pop)/tot*100) for pop in pops.values()]
 		fracs_full = [float(pop)/tot*100 for pop in pops.values()]
-		print(layer)
-		print(fracs, fracs_full)
+		# print(layer)
+		# print(fracs, fracs_full)
 		#explode=(0, 0.05, 0, 0)
 		# if layer=='6':
 		# 	colors = [ 'gold', 'purple', 'red', 'green']

@@ -22,7 +22,8 @@ vs = h.VecStim()
 vs.play(spt)
 
 def pr():
-  print (h.t)
+  1	
+  :print (h.t)
 
 nc = h.NetCon(vs, None)
 nc.record(pr)
