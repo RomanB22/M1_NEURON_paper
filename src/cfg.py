@@ -45,9 +45,9 @@ cfg.checkErrors = False
 cfg.checkErrorsVerbose = False
 cfg.validateNetParams = True
 
-# cfg.rand123GlobalIndex = None
-# cfg.coreneuron = True
-# cfg.random123 = True
+cfg.rand123GlobalIndex = None
+cfg.coreneuron = True
+cfg.random123 = True
 # cfg.gpu = True
 
 #------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ cfg.recordTraces = {'V_soma': {'sec':'soma', 'loc':0.5, 'var':'v'}}#,
 
 cfg.recordStim = False
 cfg.recordTime = False  
-cfg.recordStep = 0.1
+cfg.recordStep = cfg.dt # To avoid some numerical errors sometimes
 
 
 #------------------------------------------------------------------------------
