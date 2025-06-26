@@ -45,9 +45,9 @@ cfg.checkErrors = False
 cfg.checkErrorsVerbose = False
 cfg.validateNetParams = True
 
-cfg.rand123GlobalIndex = None
-cfg.coreneuron = True
-cfg.random123 = True
+# cfg.rand123GlobalIndex = None
+# cfg.coreneuron = True
+# cfg.random123 = True
 # cfg.gpu = True
 
 #------------------------------------------------------------------------------
