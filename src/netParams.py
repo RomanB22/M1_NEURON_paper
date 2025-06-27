@@ -8,7 +8,7 @@ Contributors: salvadordura@gmail.com
 """
 
 from netpyne import specs
-import pickle, json
+import pickle, json, csv
 
 netParams = specs.NetParams()   # object of class NetParams to store the network parameters
 
@@ -122,8 +122,32 @@ for label, p in reducedCells.items():  # create cell rules that were not loaded
 #------------------------------------------------------------------------------
 ## PT5B full cell model params (700+ comps)
 if 'PT5B_full' not in loadCellParams:
-    # import cell model from NEURON/Python code
-    netParams.importCellParams('PT5B_full', '../cells/Neuron_Model_12HH16HH/Na12HH16HHModel_TF.py', 'Na12Model_TF' )
+    def csv_to_dict(filepath):
+        result = {}
+        with open(filepath, mode='r', newline='') as file:
+            reader = csv.DictReader(file)
+            fieldnames = reader.fieldnames
+            key_field = fieldnames[0]  # Use the first column as key
+            for row in reader:
+                key = row[key_field]
+                value = {k: v for k, v in row.items() if k != key_field}
+                result[key] = value
+        return result
+    ###
+    #Load CSV with Mutant Params
+    if cfg.loadmutantParams == True:
+        print("Loading mutant params: ", cfg.variant)
+    else:
+        cfg.variant = 'WT'
+
+    variants = csv_to_dict('../cells/MutantParameters_updated_062725.csv')
+    sorted_variant =  dict(sorted(variants[cfg.variant].items()))
+    for key, value in sorted_variant.items():
+        sorted_variant[key] = float(value)
+    with open('../cells/Neuron_Model_12HH16HH/params/na12annaTFHH2mut.txt', 'w') as f:
+            json.dump(sorted_variant, f)
+    ###
+    netParams.importCellParams('PT5B_full', '../cells/Neuron_Model_12HH16HH/Na12HH16HHModel_TF.py', 'Na12Model_TF')
 
     # rename soma to conform to netpyne standard
     netParams.renameCellParamsSec(label='PT5B_full', oldSec='soma_0', newSec='soma')
@@ -179,6 +203,12 @@ if 'PT5B_full' not in loadCellParams:
     #set weight normalization
     netParams.addCellParamsWeightNorm('PT5B_full', '../conn/PT5B_full_weightNorm.pkl',
                                      threshold=cfg.weightNormThreshold)
+    
+    # Test that mutant is being loaded!
+    # for secName in netParams.cellParams['PT5B_full']['secs']:
+    #     print(netParams.cellParams['PT5B_full']['secs'][secName]['mechs']['na12'])
+    #     print(netParams.cellParams['PT5B_full']['secs'][secName]['mechs']['na12mut'])
+    # quit()
 
     # save to json with all the above modifications so easier/faster to load
     if saveCellParams: netParams.saveCellParamsRule(label='PT5B_full', fileName='../cells/Na12HH16HH_TF.json')

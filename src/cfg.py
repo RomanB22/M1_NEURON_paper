@@ -59,7 +59,7 @@ allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2',
            'IT5B', 'PT5B', 'PV5B', 'SOM5B','VIP5B','NGF5B',
            'IT6','CT6','PV6','SOM6','VIP6','NGF6']
 cfg.cellsrec = 1
-if cfg.cellsrec == 0:  cfg.recordCells = ['all'] # record all cells
+if cfg.cellsrec == 0:  cfg.recordCells = ['all'] # all record all cells
 elif cfg.cellsrec == 1: cfg.recordCells = [(pop,0) for pop in allpops] # record one cell of each pop
 elif cfg.cellsrec == 2: cfg.recordCells = [('IT2',10), ('IT5A',10), ('PT5B',10), ('PV5B',10), ('SOM5B',10)] # record selected cells
 elif cfg.cellsrec == 3: cfg.recordCells = [(pop,50) for pop in ['IT5A', 'PT5B']]+[('PT5B',x) for x in [393,579,19,104]] #,214,1138,799]] # record selected cells # record selected cells
@@ -67,7 +67,8 @@ elif cfg.cellsrec == 4: cfg.recordCells = [(pop,50) for pop in ['IT2', 'IT4', 'I
 										+ [('IT5A',x) for x in [393,447,579,19,104]] \
 										+ [('PT5B',x) for x in [393,447,579,19,104,214,1138,979,799]] # record selected cells
  
-cfg.recordTraces = {'V_soma': {'sec':'soma', 'loc':0.5, 'var':'v'}}#,
+cfg.recordTraces = {'V_soma': {'sec':'soma', 'loc':0.5, 'var':'v'},
+                    'V_axon0': {'sec':'axon_0', 'loc':0.5, 'var':'v'}}#,
 					# 'V_apic_23': {'sec':'apic_23', 'loc':0.5, 'var':'v', 'conds':{'pop': 'PT5B'}},
 					# 'V_apic_26': {'sec':'apic_26', 'loc':0.5, 'var':'v', 'conds':{'pop': 'PT5B'}},
 					# 'V_dend_5': {'sec':'dend_5', 'loc':0.5, 'var':'v', 'conds':{'pop': 'PT5B'}}}
@@ -83,11 +84,11 @@ cfg.recordStep = cfg.dt # To avoid some numerical errors sometimes
 #------------------------------------------------------------------------------
 # Saving
 #------------------------------------------------------------------------------
-cfg.simLabel = 'v103_tune3'
+cfg.simLabel = 'v103_tune1'
 cfg.saveFolder = '../data/v103_manualTune'
 cfg.savePickle = False
 cfg.saveJson = True
-cfg.saveDataInclude = ['simData', 'simConfig'] #, 'netParams', 'net']
+cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] #, 'net']
 cfg.backupCfgFile = None #['cfg.py', 'backupcfg/'] 
 cfg.gatherOnlySimData = False
 cfg.saveCellSecs = False
@@ -142,6 +143,9 @@ cfg.dendNa = 1.0
 cfg.axonNa = 7
 cfg.axonRa = 0.005
 
+cfg.loadmutantParams = True
+cfg.variant = 'M1879T'
+
 cfg.gpas = 0.5  # multiplicative factor for pas g in PT cells
 cfg.epas = 0.9  # multiplicative factor for pas e in PT cells
 
@@ -162,7 +166,7 @@ cfg.distributeSynsUniformly = True
 #------------------------------------------------------------------------------
 # Network 
 #------------------------------------------------------------------------------
-cfg.singleCellPops = False  # Create pops with 1 single cell (to debug)
+cfg.singleCellPops = True  # Create pops with 1 single cell (to debug)
 cfg.weightNorm = 1  # use weight normalization
 cfg.weightNormThreshold = 4.0  # weight normalization factor threshold
 

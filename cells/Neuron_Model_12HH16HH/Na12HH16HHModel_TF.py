@@ -19,13 +19,12 @@ import datetime
 ###########################################
 
 class Na12Model_TF:
-    def __init__(self, na12name='na12HH', mut_name='na12HH', na12mechs=['na12', 'na12mut'],
-                 na16name='na16HH', na16mut_name='na16HH', na16mechs=['na16', 'na16'],
-                 params_folder='./Neuron_Model_12HH16HH/params/', plots_folder='./Plots/', pfx='testprefix',
-                 update=None, fac=None,
+    def __init__(self, na12name='na12annaTFHH2', mut_name='na12annaTFHH2mut', na12mechs=['na12', 'na12mut'],
+                 na16name='na16HH_TF2', na16mut_name='na16HH_TF2', na16mechs=['na16', 'na16'],
+                 params_folder='../cells/Neuron_Model_12HH16HH/params/', plots_folder='./Plots/', pfx='testprefix',
+                 update=True, fac=None,
                  K=1,
                  dend_nav12=1,
-
                  ## Parameters for New model 030425
                  ais_nav12_fac=5.76,
                  ais_nav16_fac=1.08,
@@ -229,7 +228,7 @@ class Na12Model_TF:
 
     # __________added this function to get overexp and ttx to work
     def make_mut(self, mut_mech, p_fn_na12_mech):
-        # print(f'updating mut {mut_mech} with {p_fn_na12_mech}')
+        print(f'updating mut {mut_mech} with {p_fn_na12_mech}')
         self.na12_pmech = update_mech_from_dict(self.l5mdl, p_fn_na12_mech, self.mut_mech)
 
     # ______________________________________________________________#
@@ -294,8 +293,8 @@ class Na12Model_TF:
         vlength = len(Vm)
         tlength = len(t)
 
-        # print(f'tlength is {tlength}')
-        # print(f'vlength is {vlength}')
+        print(f'tlength is {tlength}')
+        print(f'vlength is {vlength}')
 
         axs.plot(t, Vm, label='Vm', color=clr, linewidth=0.5)
         axs.plot(wt_t[0:tlength], wt_Vm[0:vlength], label='WT_Vm', color='black', linewidth=0.5, alpha=0.8)
@@ -471,8 +470,8 @@ class Na12Model_TF:
         soma_spikes = get_spike_times(self.volt_soma, self.t)
         axon_spikes = get_spike_times(self.extra_vms['axon'], self.t)
         ais_spikes = get_spike_times(self.extra_vms['ais'], self.t)
-        # for i in range(len(soma_spikes)):
-        #     print(f'spike #{i} soma - {soma_spikes[i]}, ais - {ais_spikes[i]}, axon - {axon_spikes[i]}')
+        for i in range(len(soma_spikes)):
+            print(f'spike #{i} soma - {soma_spikes[i]}, ais - {ais_spikes[i]}, axon - {axon_spikes[i]}')
 
     ##_______________________Added to enable run of TTX and overexpression functions
     def plot_model_FI_Vs_dvdt(self, vs_amp, wt_Vm, wt_t, sim_config, fnpre='', wt_fi=None, wt2_data=None, start=0,
@@ -513,12 +512,12 @@ class Na12Model_TF:
             # Attempting wt and het on same plot
             fig_volts3, axs = plt.subplots(2, figsize=(cm_to_in(8), cm_to_in(15)))
             self.plot_wtvmut_stim(wt_Vm=wt_Vm, wt_t=wt_t, axs=axs[0], stim_amp=curr_amp, dt=dt, sim_config=sim_config)
-            # print(wt_Vm)
-            # print(len(wt_Vm))
-            # print(wt_t)
-            # print(len(wt_t))
-            # print(self.volt_soma)
-            # print(len(self.volt_soma))
+            print(wt_Vm)
+            print(len(wt_Vm))
+            print(wt_t)
+            print(len(wt_t))
+            print(self.volt_soma)
+            print(len(self.volt_soma))
             plot_dvdt_from_volts_wtvmut(self.volt_soma, wt_Vm, dt, axs[1])
             fn4 = f'{self.plot_folder}/{fnpre}{curr_amp}_wtvmut.pdf'
             fig_volts3.savefig(fn4)
@@ -547,7 +546,7 @@ class Na12Model_TF:
                             fn='ficurve'):  # start=0,end=0.6,nruns=14 (change wt_data from None to add WT line), add in wt2_data for another line
         fis = get_fi_curve(self.l5mdl, start, end, nruns, dt=0.1, wt_data=wt_data, wt2_data=wt2_data, ax1=ax1, fig=fig,
                            fn=f'{self.plot_folder}/{fn}.pdf')  # add in wt2_data for another line
-        # print(fis)
+        print(fis)
         with open(f'{self.plot_folder}/{fn}-FI-list.txt', 'w') as file:
             file.write(','.join(str(fi) for fi in fis))
         file.close()
@@ -563,12 +562,12 @@ class Na12Model_TF:
             fig_volts3, axs = plt.subplots(2, figsize=(cm_to_in(8), cm_to_in(15)))
             self.plot_wtvmut_stim(wt_Vm=wt_Vm, wt_t=wt_t, axs=axs[0], stim_amp=curr_amp, dt=dt, sim_config=sim_config,
                                   het_Vm=het_Vm, het_t=het_t)
-            # print(wt_Vm)
-            # print(len(wt_Vm))
-            # print(wt_t)
-            # print(len(wt_t))
-            # print(self.volt_soma)
-            # print(len(self.volt_soma))
+            print(wt_Vm)
+            print(len(wt_Vm))
+            print(wt_t)
+            print(len(wt_t))
+            print(self.volt_soma)
+            print(len(self.volt_soma))
             plot_dvdt_from_volts_wtvmut(self.volt_soma, wt_Vm, dt, axs[1], het_Vm=het_Vm)
             fn4 = f'{self.plot_folder}/{fnpre}_{curr_amp}_wtvmut.pdf'
             fig_volts3.savefig(fn4)
@@ -611,7 +610,7 @@ class Na12Model_TF:
             text_file.write(f"na12mechs: {na12mechs}\n") if na12mechs is not None else None
             text_file.write(f"na16mechs: {na16mechs}\n") if na16mechs is not None else None
             text_file.write(f"params_folder: {params_folder}\n") if params_folder is not None else None
-            # text_file.write(f"plots_folder: {plots_folder}\n") if plots_folder is not None else None
+            text_file.write(f"plots_folder: {plots_folder}\n") if plots_folder is not None else None
 
         # save2text(weights, best_hof, evaluator.init_WT, evaluator.mutant_data, channel_name,csv_file, mutant, cp_file, wild_type_params,objective_names)
 
@@ -628,13 +627,13 @@ def overexp(na12name, mut_name, plots_folder, wt_fac, mut_fac, mutTXT=None, plot
         # wt_fi = sim.plot_model_FI_Vs_dvdt([0.3,0.5,1,1.5,2,2.5,3],fnpre=f'{fnpre}_FI_')
     else:
         wt_fi = []
-    # print(f'wt_fi is {wt_fi}')
+    print(f'wt_fi is {wt_fi}')
     if mut_fac:
         sim.make_mut(na12mechs[1],
                      f'{params_folder}{mutTXT}')  # updates mech (Arg[1]) with new mod params dict (Arg[2])
-        # print('making mut')
+        print('making mut')
         update_mod_param(sim.l5mdl, ['na16mut'], mut_fac)  # Adds multiplier to updated mod/mech parameters
-        # print('updated mod params')
+        print('updated mod params')
         sim.l5mdl.h.finitialize()
         if plot_wt:
             sim.plot_model_FI_Vs_dvdt([0.5, 1, 2], wt_fi=wt_fi, fnpre=f'{fnpre}mutX{mut_fac}_')
@@ -869,7 +868,7 @@ def dvdt_all_plot(al1='na12_orig1', al2='na12_R850P_5may', stim_amp=0.5, stim_du
     axs.set_title(f'stim {stim_amp}, al1: {al1}, al2: {al2}', fontsize=9)
     axs.legend()
     fn = f'./Plots/Tim/{al2}_{stim_amp}_{stim_dur}.pdf'
-    # fig_volts.savefig(fn)
+    fig_volts.savefig(fn)
 
 
 # sim = Na12Model_TF('na12_orig1', 'na12_orig1')
