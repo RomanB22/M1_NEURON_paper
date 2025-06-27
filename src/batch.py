@@ -688,6 +688,9 @@ def evolRates(popSize=30, maxGen=200, scaleDensity=1.0):
     # EEgain
     params['EEGain'] = [0.5, 1.5] 
 
+    # dend Na for PT5B
+    params['dendNa'] = [0.1, 1.0]
+
     # IEgain
     ## L2/3+4
     params[('IEweights',0)] =  [0.5, 1.5]
@@ -836,6 +839,9 @@ def optunaRatesTotal(scaleDensity=1.0):
     params[('weightLong', 'cM1')] = [0.25, 0.75]
     params[('weightLong', 'M2')] =  [0.25, 0.75]
     params[('weightLong', 'OC')] =  [0.25, 0.75]
+
+    # dend Na for PT5B
+    params['dendNa'] = [0.1, 1.0]
 
     # E->I gain per cell
     params[('EICellTypeGain', 'PV')] = [0.1, 4.0]
@@ -999,6 +1005,9 @@ def optunaRates(scaleDensity=1.0):
     # EEgain
     params['EEGain'] = [0.5, 1.5]
 
+    # dend Na for PT5B
+    params['dendNa'] = [0.1, 1.0]
+
     # IEgain
     ## L2/3+4
     params[('IEweights',0)] =  [0.5, 1.5]
@@ -1023,6 +1032,7 @@ def optunaRates(scaleDensity=1.0):
     initCfg['duration'] = 1500
     initCfg['printPopAvgRates'] =  [500, 1500]
     initCfg['dt'] = 0.025
+    initCfg['recordStep'] = initCfg['dt'] # For consistency with coreNEURON
 
     initCfg['scaleDensity'] = scaleDensity
 
@@ -1124,7 +1134,7 @@ def optunaRates(scaleDensity=1.0):
         'maxFitness': fitnessFuncArgs['maxFitness'],
         'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
         'maxtime':      None,    #    Maximum time allowed, in seconds
-        'time_sleep': 10*60, # 5min wait this time before checking again if sim is completed (for each generation)
+        'time_sleep': 5*60, # 5min wait this time before checking again if sim is completed (for each generation)
         'maxiter_wait': 10*24, # (5h20) max number of times to check if sim is completed (for each generation)
         'popsize': 1  # unused - run with mpi 
     }
@@ -1364,19 +1374,20 @@ def setRunCfg(b, type='mpi_bulletin'):
     elif type=='hpc_sge_cpu':
         b.runCfg = {'type': 'hpc_sge',
                     'jobName': 'M1_CR',
-                    'cores': 19,
-                    # 'log': os.getcwd() + '/' + b.saveFolder +'.log',
+                    'cores': 40,
+                    'log': os.getcwd() + '/' + b.saveFolder +'/' + b.method,
                     'vmem': '100G',
-                    'walltime': "15:00:00",
+                    'walltime': "10:00:00",
                     'mpiCommand': commandCPU,
+                    # 'nrnCommand': './x86_64/special',
                     'queueName': 'cpu.q',
                     'skip': True}
         
     elif type=='hpc_sge_gpu':
         b.runCfg = {'type': 'hpc_sge_gpu',
                     'jobName': 'M1_GPU',
-                    'cores': 1,
-                    'log': os.getcwd() + '/' + b.saveFolder +'.log',
+                    'cores': 5,
+                    'log': os.getcwd() + '/' + b.saveFolder +'/' + b.method,
                     'vmem': '100G',
                     'walltime': "4:00:00",
                     'mpiCommand': commandGPU,
@@ -1399,10 +1410,10 @@ if __name__ == '__main__':
     # b.saveFolder = '../batchData/'+b.batchLabel
     # RunCfg = 'hpc_slurm_Expanse'
 
-    b = optunaRates(scaleDensity=0.3)
-    b.batchLabel = 'optunaRatesGPU'  
+    b = optunaRates(scaleDensity=1.0)
+    b.batchLabel = 'optunaRatesCPU'  
     b.saveFolder = '../batchData/'+b.batchLabel
-    RunCfg = 'hpc_sge_gpu'
+    RunCfg = 'hpc_sge_cpu'
 
     setRunCfg(b, RunCfg)
     b.run() # run batch
