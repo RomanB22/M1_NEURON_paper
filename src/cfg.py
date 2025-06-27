@@ -58,8 +58,8 @@ allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2',
            'IT5A', 'PV5A', 'SOM5A','VIP5A','NGF5A',
            'IT5B', 'PT5B', 'PV5B', 'SOM5B','VIP5B','NGF5B',
            'IT6','CT6','PV6','SOM6','VIP6','NGF6']
-cfg.cellsrec = 1
-if cfg.cellsrec == 0:  cfg.recordCells = ['all'] # all record all cells
+cfg.cellsrec = 0
+if cfg.cellsrec == 0:  cfg.recordCells = ['PT5B'] # all record all cells
 elif cfg.cellsrec == 1: cfg.recordCells = [(pop,0) for pop in allpops] # record one cell of each pop
 elif cfg.cellsrec == 2: cfg.recordCells = [('IT2',10), ('IT5A',10), ('PT5B',10), ('PV5B',10), ('SOM5B',10)] # record selected cells
 elif cfg.cellsrec == 3: cfg.recordCells = [(pop,50) for pop in ['IT5A', 'PT5B']]+[('PT5B',x) for x in [393,579,19,104]] #,214,1138,799]] # record selected cells # record selected cells
@@ -80,15 +80,22 @@ cfg.recordStim = False
 cfg.recordTime = False  
 cfg.recordStep = cfg.dt # To avoid some numerical errors sometimes
 
+#------------------------------------------------------------------------------
+# Variants and specifics of Tim's PT5B model
+#------------------------------------------------------------------------------
+
+cfg.dendNa = 1.0
+cfg.loadmutantParams = True
+cfg.variant = 'L1666F' # L1666F, E1211K, D195G, R853Q, K1422E, M1879T
 
 #------------------------------------------------------------------------------
 # Saving
 #------------------------------------------------------------------------------
-cfg.simLabel = 'v103_tune1'
+cfg.simLabel = 'v103_tune_%s' % cfg.variant if cfg.loadmutantParams else 'v103_tune_WT'
 cfg.saveFolder = '../data/v103_manualTune'
 cfg.savePickle = False
 cfg.saveJson = True
-cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] #, 'net']
+cfg.saveDataInclude = ['simData', 'simConfig'] #, 'netParams'] #, 'net']
 cfg.backupCfgFile = None #['cfg.py', 'backupcfg/'] 
 cfg.gatherOnlySimData = False
 cfg.saveCellSecs = False
@@ -139,12 +146,10 @@ cfg.ihSlope = 14*2
 
 cfg.removeNa = False  # simulate TTX; set gnabar=0s
 cfg.somaNa = 5
-cfg.dendNa = 1.0
 cfg.axonNa = 7
 cfg.axonRa = 0.005
 
-cfg.loadmutantParams = True
-cfg.variant = 'M1879T'
+
 
 cfg.gpas = 0.5  # multiplicative factor for pas g in PT cells
 cfg.epas = 0.9  # multiplicative factor for pas e in PT cells
