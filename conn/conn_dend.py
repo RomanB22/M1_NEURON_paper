@@ -79,7 +79,7 @@ def alignGrid (cell, gridY, fixedSomaY=-735):
         somaX, somaY, _ = sim.net._posFromLoc(cell.secs[somaLabel]['hSec'], 0.5) # get cell pos move method to Cell!
         gridY = [y+(somaY-fixedSomaY) for y in gridY] # adjust grid so cell soma is at fixedSomaY
     else:
-        print 'Cannot find soma in cell'
+        # print 'Cannot find soma in cell'
         sys.exit()
     return gridY
 
@@ -98,7 +98,8 @@ def weightNormGrid (cell, gridY, spacing):
                         wnormCounter[i] += 1
                         wnormGrid[i] += wnorm
         else:
-            print secName+ ' has no weightNorm'
+            1
+            # print secName+ ' has no weightNorm'
     wnormGrid = [wn/wc if wc>0 else 0 for wn,wc in zip(wnormGrid,wnormCounter)]
     return wnormGrid
 
@@ -184,11 +185,11 @@ def extractColor(colorbarFile, figFile, figDim, checkColorRange=True, show=False
     # cbarmin = min([np.mean(c) for c in cbarColors])
     # cbarmax = max([np.mean(c) for c in cbarColors])
 
-    print 'Extracting figure values...'
+    # print 'Extracting figure values...'
     fig_image = Image.open(figFile) #Can be many different formats.
     fig = fig_image.load()
     xlen,ylen=fig_image.size #Get the width and hight of the image for iterating over
-    print xlen,ylen, figDim[0], figDim[1]
+    print xlen,ylen, figDim[0], figDim[1]/
     xstep = float(xlen) / figDim[0]
     ystep = float(ylen) / figDim[1]
     

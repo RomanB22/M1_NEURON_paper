@@ -91,7 +91,7 @@ cfg.recordStep = cfg.dt # To avoid some numerical errors sometimes
 
 cfg.dendNa = 1.0
 cfg.loadmutantParams = True
-cfg.variant = 'L1666F' # L1666F, E1211K, D195G, R853Q, K1422E, M1879T
+cfg.variant = 'M1879T' # L1666F, E1211K, D195G, R853Q, K1422E, M1879T
 
 #------------------------------------------------------------------------------
 # Saving
@@ -176,7 +176,7 @@ cfg.distributeSynsUniformly = True
 #------------------------------------------------------------------------------
 # Network 
 #------------------------------------------------------------------------------
-cfg.singleCellPops = False  # Create pops with 1 single cell (to debug)
+cfg.singleCellPops = True  # Create pops with 1 single cell (to debug)
 cfg.weightNorm = 1  # use weight normalization
 cfg.weightNormThreshold = 4.0  # weight normalization factor threshold
 

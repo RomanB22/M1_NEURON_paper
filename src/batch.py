@@ -685,11 +685,11 @@ def evolRates(popSize=30, maxGen=200, scaleDensity=1.0):
     params[('weightLong', 'M2')] =  [0.25, 0.75] 
     params[('weightLong', 'OC')] =  [0.25, 0.75]	
 
+    # dend Na for PT5B
+    params['dendNa'] = [0.01, 0.5]
+
     # EEgain
     params['EEGain'] = [0.5, 1.5] 
-
-    # dend Na for PT5B
-    params['dendNa'] = [0.1, 1.0]
 
     # IEgain
     ## L2/3+4
@@ -841,7 +841,7 @@ def optunaRatesTotal(scaleDensity=1.0):
     params[('weightLong', 'OC')] =  [0.25, 0.75]
 
     # dend Na for PT5B
-    params['dendNa'] = [0.1, 1.0]
+    params['dendNa'] = [0.01, 0.5]
 
     # E->I gain per cell
     params[('EICellTypeGain', 'PV')] = [0.1, 4.0]

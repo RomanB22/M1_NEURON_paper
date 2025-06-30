@@ -172,7 +172,7 @@ BREAKPOINT {
 		g = Gn / (Gn+KD)
 	} else {
 		if(!warn){
-			printf("gabab.mod WARN: G = %g too large\n", G)		
+			:printf("gabab.mod WARN: G = %g too large\n", G)		
 			warn = 1
 		}
 		g = 1
