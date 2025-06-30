@@ -51,12 +51,12 @@ class NeuronModel:
                       ):
         run_dir = os.getcwd()
 
-        os.chdir(mod_dir)
+        # os.chdir(mod_dir)
         self.h = h  # NEURON h
         # print(f'running model at {os.getcwd()} run dir is {run_dir}')
         # print (f'There is {nav16} of WT nav16')
         # print(f'There is {nav12} of WT nav12')
-        h.load_file("runModel.hoc")
+        h.load_file(mod_dir+"runModel.hoc")
 
         # Load morphology.hoc and set morphology index TESTING TF040725
         # h.load_file("morphology.hoc")
@@ -162,7 +162,7 @@ class NeuronModel:
         # h.printValsWT16()
         # h.printValsMUT16()
             
-        os.chdir(run_dir)
+        # os.chdir(run_dir)
 
         
     

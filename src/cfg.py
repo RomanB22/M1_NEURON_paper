@@ -83,20 +83,38 @@ cfg.recordStep = cfg.dt # To avoid some numerical errors sometimes
 #------------------------------------------------------------------------------
 # Drug Effects
 #------------------------------------------------------------------------------
+cfg.treatment = False
+cfg.sodiumMechs = ['na12', 'na12mut', 'Nafx', 'nax', 'na16mut', 'Nafcr', 'ch_Navngf', 'na16', 'na16mut', 'nap'] # Look at the suffix in the modfiles
+cfg.LVACaMechs = ['Ca_LVAst', 'cat', 'catt', 'catcb']
+cfg.variables = ['gbar', 'gnafbar', 'gmax'] # Name of the variable/s to modify
+cfg.drugEffect = 0.5 # Multiplicative factor
 
+# IT2_reduced dict_keys(['cadad', 'cal', 'can', 'cat', 'ih', 'kBK', 'kap', 'kdr', 'nax', 'pas'])
+# IT4_reduced dict_keys(['cadad', 'cal', 'can', 'cat', 'ih', 'kBK', 'kap', 'kdr', 'nax', 'pas'])
+# IT5A_reduced dict_keys(['cadad', 'cal', 'can', 'cat', 'ih', 'kBK', 'kap', 'kdr', 'nax', 'pas'])
+# IT5B_reduced dict_keys(['cadad', 'cal', 'can', 'cat', 'ih', 'kBK', 'kap', 'kdr', 'nax', 'pas'])
+# PT5B_reduced dict_keys(['cadad', 'cal', 'can', 'ih', 'kBK', 'kap', 'kdmc', 'kdr', 'nax', 'pas'])
+# IT6_reduced dict_keys(['cadad', 'cal', 'can', 'cat', 'ih', 'kBK', 'kap', 'kdr', 'nax', 'pas'])
+# CT6_reduced dict_keys(['cadad', 'cal', 'can', 'cat', 'ih', 'kBK', 'kap', 'kdr', 'nax', 'pas'])
+# SOM_reduced dict_keys(['Nafx', 'cadyn', 'catcb', 'hin', 'kapcb', 'kdrin', 'pas'])
+# IT5A_full dict_keys(['cadad', 'cal', 'can', 'cat', 'ican', 'ih', 'kBK', 'kap', 'kdr', 'nap', 'nax', 'pas'])
+# PT5B_full dict_keys(['CaDynamics_E2', 'Ca_HVA', 'Ca_LVAst', 'Ih', 'SK_E2', 'SKv3_1', 'na12', 'na12mut', 'na16', 'na16mut', 'pas'])
+# PV_reduced dict_keys(['IKsin', 'Nafx', 'cadyn', 'canin', 'hin', 'kapin', 'kctin', 'kdrin', 'pas'])
+# VIP_reduced dict_keys(['IKscr', 'Nafcr', 'cadyn', 'cancr', 'iCcr', 'kdrcr', 'pas'])
+# NGF_reduced dict_keys(['ch_CavL', 'ch_CavN', 'ch_KCaS', 'ch_Kdrfastngf', 'ch_KvAngf', 'ch_KvCaB', 'ch_Navngf', 'hd', 'iconc_Ca', 'pas'])
 
 #------------------------------------------------------------------------------
 # Variants and specifics of Tim's PT5B model
 #------------------------------------------------------------------------------
 
-cfg.dendNa = 1.0
+cfg.dendNa = 0.1
 cfg.loadmutantParams = False
-cfg.variant = 'M1879T' # L1666F, E1211K, D195G, R853Q, K1422E, M1879T
+cfg.variant = 'WT' # L1666F, E1211K, D195G, R853Q, K1422E, M1879T, WT
 
 #------------------------------------------------------------------------------
 # Saving
 #------------------------------------------------------------------------------
-cfg.simLabel = 'v103_tune_%s' % cfg.variant if cfg.loadmutantParams else 'v103_tune_WT'
+cfg.simLabel = 'v103_tune_%s_treatment_%s' % (cfg.variant, str(cfg.treatment)) if cfg.loadmutantParams else 'v103_tune_WT_treatment%s' % str(cfg.treatment)
 cfg.saveFolder = '../data/v103_manualTune'
 cfg.savePickle = False
 cfg.saveJson = True

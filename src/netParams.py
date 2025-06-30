@@ -61,10 +61,11 @@ netParams.correctBorder = {'threshold': [cfg.correctBorderThreshold, cfg.correct
 
 #------------------------------------------------------------------------------
 ## Load cell rules previously saved using netpyne format
-cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced',
-    'IT6_reduced', 'CT6_reduced', 'SOM_reduced', 'IT5A_full']#  'PV_reduced', 'VIP_reduced', 'NGF_reduced','PT5B_full'] #  # list of cell rules to load from file
+cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 
+                   'IT6_reduced', 'CT6_reduced', 'SOM_reduced', 'IT5A_full',  'PV_reduced', 
+                   'VIP_reduced', 'NGF_reduced'] #  # list of cell rules to load from file. All but 'PT5B_full'
 loadCellParams = cellParamLabels
-saveCellParams = False #True
+saveCellParams = False
 
 for ruleLabel in loadCellParams:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='../cells/' + ruleLabel + '_cellParams.pkl')
@@ -121,6 +122,7 @@ for label, p in reducedCells.items():  # create cell rules that were not loaded
 
 #------------------------------------------------------------------------------
 ## PT5B full cell model params (700+ comps)
+# THERE IS A BUG HERE, IF YOU LOAD THE PT5B MODEL FROM TIM, IT WILL NOT CLEAN IT AFTER IMPORTING IT TO NETPYNE, ADDING IT TO THE NEXT MODELS
 if 'PT5B_full' not in loadCellParams:
     def csv_to_dict(filepath):
         result = {}
@@ -147,9 +149,7 @@ if 'PT5B_full' not in loadCellParams:
     with open('../cells/Neuron_Model_12HH16HH/params/na12annaTFHH2mut.txt', 'w') as f:
             json.dump(sorted_variant, f)
     ###
-    netParams.importCellParams('PT5B_full', '../cells/Neuron_Model_12HH16HH/Na12HH_Model_TF.py', 'Na12Model_TF')
-    # Na12HH16HHModel_TF
-    # Na12HH_Model_TF
+    netParams.importCellParams(label='PT5B_full',fileName='../cells/Neuron_Model_12HH16HH/Na12HH_Model_TF.py', cellName='Na12Model_TF')
 
     # rename soma to conform to netpyne standard
     netParams.renameCellParamsSec(label='PT5B_full', oldSec='soma_0', newSec='soma')
@@ -166,6 +166,8 @@ if 'PT5B_full' not in loadCellParams:
 
     # define cell conds
     cellRule['conds'] = {'cellModel': 'HH_full', 'cellType': 'PT'}
+
+    # print(cellRule['conds'], cellRule['secs'].keys())
 
     # clean secLists from Tim's code
     cellRule['secLists'] = {}
@@ -185,8 +187,9 @@ if 'PT5B_full' not in loadCellParams:
         if sec in cellRule['secLists']['perisom']:  # fixed logic
             cellRule['secLists']['perisom'].remove(sec)
 
-    del netParams.cellParams['PT5B_full']['secs']['soma']['pointps']
-    del netParams.cellParams['PT5B_full']['secs']['dend_0']['pointps']
+    # # cellRule has to be used as a pointer for any operation, if not will throw an error
+    # del cellRule['secs']['soma']['pointps']
+    # del cellRule['secs']['dend_0']['pointps']
 
     # Adapt ih params based on cfg param
     for secName in cellRule['secs']:
@@ -197,19 +200,19 @@ if 'PT5B_full' not in loadCellParams:
                     mech['gIhbar'] *= cfg.ihGbarBasal  # modify ih conductance in soma+basal dendrites
 
     # Decrease dendritic Na
-    for secName in netParams.cellParams['PT5B_full']['secs']:
+    for secName in cellRule['secs']:
        if secName.startswith('apic'):
-            netParams.cellParams['PT5B_full']['secs'][secName]['mechs']['na12']['gbar'] *= cfg.dendNa
-            netParams.cellParams['PT5B_full']['secs'][secName]['mechs']['na12mut']['gbar'] *= cfg.dendNa
+            cellRule['secs'][secName]['mechs']['na12']['gbar'] *= cfg.dendNa
+            cellRule['secs'][secName]['mechs']['na12mut']['gbar'] *= cfg.dendNa
 
     #set weight normalization
     netParams.addCellParamsWeightNorm('PT5B_full', '../conn/PT5B_full_weightNorm.pkl',
                                      threshold=cfg.weightNormThreshold)
     
     # Test that mutant is being loaded!
-    # for secName in netParams.cellParams['PT5B_full']['secs']:
-    #     print(netParams.cellParams['PT5B_full']['secs'][secName]['mechs']['na12'])
-    #     print(netParams.cellParams['PT5B_full']['secs'][secName]['mechs']['na12mut'])
+    # for secName in cellRule['secs']:
+    #     print(cellRule['secs'][secName]['mechs']['na12'])
+    #     print(cellRule['secs'][secName]['mechs']['na12mut'])
     # quit()
 
     # save to json with all the above modifications so easier/faster to load
@@ -217,8 +220,10 @@ if 'PT5B_full' not in loadCellParams:
 #------------------------------------------------------------------------------
 ## IT5A full cell model params (700+ comps)
 if 'IT5A_full' not in loadCellParams:
-    cellRule = netParams.importCellParams(label='IT5A_full', conds={'cellType': 'IT', 'cellModel': 'HH_full', 'ynorm': layer['5A']},
-      fileName='./cells/ITcell.py', cellName='ITcell', cellArgs={'params': 'BS1579'}, somaAtOrigin=True)
+    netParams.importCellParams(label='IT5A_full', conds={'cellType': 'IT', 'cellModel': 'HH_full', 'ynorm': layer['5A']},
+      fileName='../cells/ITcell.py', cellName='ITcell', cellArgs={'params': 'BS1579'}, somaAtOrigin=True)
+    # set variable so easier to work with below
+    cellRule = netParams.cellParams['IT5A_full']
     netParams.renameCellParamsSec(label='IT5A_full', oldSec='soma_0', newSec='soma')
     netParams.addCellParamsWeightNorm('IT5A_full', '../conn/IT_full_BS1579_weightNorm.pkl', threshold=cfg.weightNormThreshold) # add weightNorm before renaming soma_0
     netParams.addCellParamsSecList(label='IT5A_full', secListName='perisom', somaDist=[0, 50])  # sections within 50 um of soma
@@ -244,8 +249,11 @@ if 'IT5A_full' not in loadCellParams:
 #------------------------------------------------------------------------------
 ## PV cell params (3-comp)
 if 'PV_reduced' not in loadCellParams:
-    cellRule = netParams.importCellParams(label='PV_reduced', conds={'cellType':'PV', 'cellModel':'HH_reduced'}, 
+    netParams.importCellParams(label='PV_reduced', conds={'cellType':'PV', 'cellModel':'HH_reduced'}, 
       fileName='../cells/FS3.hoc', cellName='FScell1', cellInstance = True)
+    # set variable so easier to work with below
+    cellRule = netParams.cellParams['PV_reduced']
+    print(cellRule['conds'], cellRule['secs'].keys())
     cellRule['secLists']['spiny'] = ['soma', 'dend']
     netParams.addCellParamsWeightNorm('PV_reduced', '../conn/PV_reduced_weightNorm.pkl', threshold=cfg.weightNormThreshold)
     # cellRule['secs']['soma']['weightNorm'][0] *= 1.5
@@ -255,8 +263,11 @@ if 'PV_reduced' not in loadCellParams:
 #------------------------------------------------------------------------------
 ## SOM cell params (3-comp)
 if 'SOM_reduced' not in loadCellParams:
-    cellRule = netParams.importCellParams(label='SOM_reduced', conds={'cellType':'SOM', 'cellModel':'HH_reduced'}, 
+    netParams.importCellParams(label='SOM_reduced', conds={'cellType':'SOM', 'cellModel':'HH_reduced'}, 
       fileName='../cells/LTS3.hoc', cellName='LTScell1', cellInstance = True)
+    # set variable so easier to work with below
+    cellRule = netParams.cellParams['SOM_reduced']
+    print(cellRule['conds'], cellRule['secs'].keys())
     cellRule['secLists']['spiny'] = ['soma', 'dend']
     netParams.addCellParamsWeightNorm('SOM_reduced', '../conn/SOM_reduced_weightNorm.pkl', threshold=cfg.weightNormThreshold)
     if saveCellParams: netParams.saveCellParamsRule(label='SOM_reduced', fileName='../cells/SOM_reduced_cellParams.pkl')
@@ -265,7 +276,10 @@ if 'SOM_reduced' not in loadCellParams:
 #------------------------------------------------------------------------------
 ## VIP cell params (5-comp)
 if 'VIP_reduced' not in loadCellParams:
-    cellRule = netParams.importCellParams(label='VIP_reduced', conds={'cellType': 'VIP', 'cellModel': 'HH_reduced'}, fileName='../cells/vipcr_cell.hoc',         cellName='VIPCRCell_EDITED', importSynMechs = True)
+    netParams.importCellParams(label='VIP_reduced', conds={'cellType': 'VIP', 'cellModel': 'HH_reduced'}, fileName='../cells/vipcr_cell.hoc',         cellName='VIPCRCell_EDITED', importSynMechs = True)
+    # set variable so easier to work with below
+    cellRule = netParams.cellParams['VIP_reduced']
+    print(cellRule['conds'], cellRule['secs'].keys())
     cellRule['secLists']['spiny'] = ['soma', 'rad1', 'rad2', 'ori1', 'ori2']
     netParams.addCellParamsWeightNorm('VIP_reduced', '../conn/VIP_reduced_weightNorm.pkl', threshold=cfg.weightNormThreshold)
     if saveCellParams: netParams.saveCellParamsRule(label='VIP_reduced', fileName='../cells/VIP_reduced_cellParams.pkl')
@@ -274,13 +288,65 @@ if 'VIP_reduced' not in loadCellParams:
 #------------------------------------------------------------------------------
 ## NGF cell params (1-comp)
 if 'NGF_reduced' not in loadCellParams:
-    cellRule = netParams.importCellParams(label='NGF_reduced', conds={'cellType': 'NGF', 'cellModel': 'HH_reduced'}, fileName='../cells/ngf_cell.hoc', cellName='ngfcell', importSynMechs = True)
+    netParams.importCellParams(label='NGF_reduced', conds={'cellType': 'NGF', 'cellModel': 'HH_reduced'}, fileName='../cells/ngf_cell.hoc', cellName='ngfcell', importSynMechs = True)
+    # set variable so easier to work with below
+    cellRule = netParams.cellParams['NGF_reduced']
+    print(cellRule['conds'], cellRule['secs'].keys())
+    quit()
     cellRule['secLists']['spiny'] = ['soma', 'dend']
     netParams.addCellParamsWeightNorm('NGF_reduced', '../conn/NGF_reduced_weightNorm.pkl', threshold=cfg.weightNormThreshold)
     cellRule['secs']['soma']['weightNorm'][0] *= 1.5
     cellRule['secs']['soma']['weightNorm'][0] *= 1.5
     if saveCellParams: netParams.saveCellParamsRule(label='NGF_reduced', fileName='../cells/NGF_reduced_cellParams.pkl')
 
+#------------------------------------------------------------------------------
+# Drug Effects
+#------------------------------------------------------------------------------
+if cfg.treatment:
+    def drugTreatment(cellType='PT5B_full', secs=['all'], mechs=['na12', 'na12mut'], variables = cfg.variables):
+        import numpy as np
+        for secName, sec in netParams.cellParams[cellType]['secs'].items():
+            if secs==['all']:
+                for mechName, mechAux in sec['mechs'].items():
+                    if mechName in mechs:
+                        # print(cellType, secName, mechName, mechAux.keys())
+                        for varName, var in mechAux.items():
+                            if varName in variables:
+                                vector = np.array(netParams.cellParams[cellType]['secs'][secName]['mechs'][mechName][varName])
+                                # print(secName, mechName, vector)
+                                vector *= cfg.drugEffect
+                                netParams.cellParams[cellType]['secs'][secName]['mechs'][mechName][varName] = vector.tolist()
+                                # print(secName, mechName, vector)
+            else: 
+                for i in secs:
+                    if secName==i:
+                        for mechName, mechAux in sec['mechs'].items():
+                            if mechName in mechs:
+                                # print(cellType, secName, mechName, mechAux.keys())
+                                for varName, var in mechAux.items():
+                                    if varName in variables:
+                                        vector = np.array(netParams.cellParams[cellType]['secs'][secName]['mechs'][mechName][varName])
+                                        # print(secName, mechName, vector)
+                                        vector *= cfg.drugEffect
+                                        netParams.cellParams[cellType]['secs'][secName]['mechs'][mechName][varName] = vector.tolist()
+                                        # print(secName, mechName, vector)
+                # else:
+                #     print(f"Section {secName} not found in list {secs}. Skipping...")
+    # [print(netParams.cellParams['PV_reduced']['secs'].keys())]  # print cell params to check
+    drugTreatment(cellType='IT2_reduced', secs=['all'], mechs=cfg.sodiumMechs, variables = cfg.variables)
+    drugTreatment(cellType='IT4_reduced', secs=['all'], mechs=cfg.sodiumMechs, variables = cfg.variables)
+    drugTreatment(cellType='IT5A_reduced', secs=['all'], mechs=cfg.sodiumMechs, variables = cfg.variables)
+    drugTreatment(cellType='IT5B_reduced', secs=['all'], mechs=cfg.sodiumMechs, variables = cfg.variables)
+    drugTreatment(cellType='PT5B_reduced', secs=['all'], mechs=cfg.sodiumMechs, variables = cfg.variables)
+    drugTreatment(cellType='IT6_reduced', secs=['all'], mechs=cfg.sodiumMechs, variables = cfg.variables)
+    drugTreatment(cellType='CT6_reduced', secs=['all'], mechs=cfg.sodiumMechs, variables = cfg.variables)
+    drugTreatment(cellType='SOM_reduced', secs=['all'], mechs=cfg.sodiumMechs, variables = cfg.variables)
+    drugTreatment(cellType='IT5A_full', secs=['all'], mechs=cfg.sodiumMechs, variables = cfg.variables)
+    drugTreatment(cellType='PT5B_full', secs=['all'], mechs=cfg.sodiumMechs, variables = cfg.variables)
+    # drugTreatment(cellType='PT5B_full', secs=['soma', 'axon_0', 'axon_1'], mechs=cfg.sodiumMechs, variables = cfg.variables)
+    drugTreatment(cellType='PV_reduced', secs=['all'], mechs=cfg.sodiumMechs, variables = cfg.variables)
+    drugTreatment(cellType='VIP_reduced', secs=['all'], mechs=cfg.sodiumMechs, variables = cfg.variables)
+    drugTreatment(cellType='NGF_reduced', secs=['all'], mechs=cfg.sodiumMechs, variables = cfg.variables)
 
 #------------------------------------------------------------------------------
 # Population parameters
