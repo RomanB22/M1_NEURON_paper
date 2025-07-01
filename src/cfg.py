@@ -67,8 +67,8 @@ elif cfg.cellsrec == 4: cfg.recordCells = [(pop,50) for pop in ['IT2', 'IT4', 'I
 										+ [('IT5A',x) for x in [393,447,579,19,104]] \
 										+ [('PT5B',x) for x in [393,447,579,19,104,214,1138,979,799]] # record selected cells
  
-cfg.recordTraces = {'V_soma': {'sec':'soma', 'loc':0.5, 'var':'v'},
-                    'V_axon0': {'sec':'axon_0', 'loc':0.5, 'var':'v'}}#,
+cfg.recordTraces = {'V_soma': {'sec':'soma', 'loc':0.5, 'var':'v'}}#,
+                    # 'V_axon0': {'sec':'axon_0', 'loc':0.5, 'var':'v'}}#,
 					# 'V_apic_23': {'sec':'apic_23', 'loc':0.5, 'var':'v', 'conds':{'pop': 'PT5B'}},
 					# 'V_apic_26': {'sec':'apic_26', 'loc':0.5, 'var':'v', 'conds':{'pop': 'PT5B'}},
 					# 'V_dend_5': {'sec':'dend_5', 'loc':0.5, 'var':'v', 'conds':{'pop': 'PT5B'}}}
