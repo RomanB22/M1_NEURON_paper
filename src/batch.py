@@ -1351,7 +1351,7 @@ def setRunCfg(b, type='mpi_bulletin'):
                     'nodes': 1,
                     'coresPerNode': 96,
                     'email': 'romanbaravalle@gmail.com',
-                    'folder': '/home/rbaravalle/ChannelopathiesNew/src',
+                    'folder': '/home/rbaravalle/ChannelopathiesLastNoPrint/src',
                     'script': 'init.py',
                     'mpiCommand': '\nsource ~/default.sh\nconda activate NetPyNE\nexport LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/"\nmpiexec',
                     'custom': '#SBATCH --mem=128G\n#SBATCH --export=ALL\n#SBATCH --partition=compute',
@@ -1365,7 +1365,7 @@ def setRunCfg(b, type='mpi_bulletin'):
                     'nodes': 1,
                     'coresPerNode': 96,
                     'email': 'romanbaravalle@gmail.com',
-                    'folder': '/home/rbaravalle/ChannelopathiesNew/src',
+                    'folder': '/home/rbaravalle/ChannelopathiesLastNoPrint/src',
                     'script': 'init.py',
                     'mpiCommand': '\nsource ~/default.sh\nconda activate NetPyNE\nexport LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/"\nmpiexec',
                     'custom': '#SBATCH --constraint="lustre"\n#SBATCH --mem=128G\n#SBATCH --export=ALL\n#SBATCH --partition=large-shared',
@@ -1406,7 +1406,7 @@ if __name__ == '__main__':
     # RunCfg = 'hpc_slurm_Expanse_LUSTRE'
 
     # b = optunaRates(scaleDensity=1.0)
-    # b.batchLabel = 'optunaRatesCPU_2'  
+    # b.batchLabel = 'optunaRatesCPU'  
     # b.saveFolder = '../batchData/'+b.batchLabel
     # RunCfg = 'hpc_slurm_Expanse'
 
