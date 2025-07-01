@@ -63,13 +63,16 @@ netParams.correctBorder = {'threshold': [cfg.correctBorderThreshold, cfg.correct
 ## Load cell rules previously saved using netpyne format
 cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 
                    'IT6_reduced', 'CT6_reduced', 'SOM_reduced', 'IT5A_full',  'PV_reduced', 
-                   'VIP_reduced', 'NGF_reduced'] #  # list of cell rules to load from file. All but 'PT5B_full'
+                   'VIP_reduced', 'NGF_reduced', 'PT5B_full']   # list of cell rules to load from file. 
+                                                                # All but 'PT5B_full'. If putting more than PT5B, be aware of BUG
 loadCellParams = cellParamLabels
 saveCellParams = False
 
 for ruleLabel in loadCellParams:
-    netParams.loadCellParamsRule(label=ruleLabel, fileName='../cells/' + ruleLabel + '_cellParams.pkl')
-
+    if ruleLabel!='PT5B_full':  # PT5B_full is loaded separately below. TODO: Only works for loading UCDavis model, not original
+        netParams.loadCellParamsRule(label=ruleLabel, fileName='../cells/' + ruleLabel + '_cellParams.pkl')
+    else:
+        netParams.loadCellParamsRule(label='PT5B_full', fileName='../cells/Na12HH16HH_TF.json')
 
 #------------------------------------------------------------------------------
 # Specification of cell rules not previously loaded
@@ -217,6 +220,7 @@ if 'PT5B_full' not in loadCellParams:
 
     # save to json with all the above modifications so easier/faster to load
     if saveCellParams: netParams.saveCellParamsRule(label='PT5B_full', fileName='../cells/Na12HH16HH_TF.json')
+
 #------------------------------------------------------------------------------
 ## IT5A full cell model params (700+ comps)
 if 'IT5A_full' not in loadCellParams:
