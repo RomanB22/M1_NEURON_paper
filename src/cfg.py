@@ -58,8 +58,8 @@ allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2',
            'IT5A', 'PV5A', 'SOM5A','VIP5A','NGF5A',
            'IT5B', 'PT5B', 'PV5B', 'SOM5B','VIP5B','NGF5B',
            'IT6','CT6','PV6','SOM6','VIP6','NGF6']
-cfg.cellsrec = 0
-if cfg.cellsrec == 0:  cfg.recordCells = ['PT5B'] # all record all cells
+cfg.cellsrec = 1
+if cfg.cellsrec == 0:  cfg.recordCells = ['all'] # all record all cells
 elif cfg.cellsrec == 1: cfg.recordCells = [(pop,0) for pop in allpops] # record one cell of each pop
 elif cfg.cellsrec == 2: cfg.recordCells = [('IT2',10), ('IT5A',10), ('PT5B',10), ('PV5B',10), ('SOM5B',10)] # record selected cells
 elif cfg.cellsrec == 3: cfg.recordCells = [(pop,50) for pop in ['IT5A', 'PT5B']]+[('PT5B',x) for x in [393,579,19,104]] #,214,1138,799]] # record selected cells # record selected cells
