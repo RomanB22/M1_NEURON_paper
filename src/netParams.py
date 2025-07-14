@@ -11,14 +11,10 @@ from netpyne import specs
 import pickle, json
 from pathlib import Path
 cwd = str(Path.cwd())
+from cfg import cfg
 
+cfg.update()
 netParams = specs.NetParams()   # object of class NetParams to store the network parameters
-
-try:
-    from __main__ import cfg  # import SimConfig object with params from parent module
-except:
-    from cfg import cfg
-
 netParams.version = cfg.version
 
 #------------------------------------------------------------------------------
@@ -55,8 +51,9 @@ cellModels = ['HH_reduced', 'HH_full']
 excTypes = ['IT', 'CT', 'PT']
 inhTypes = ['PV', 'SOM', 'VIP', 'NGF']
 
-layer = {'1':[0.0, 0.1], '2': [0.1,0.29], '4': [0.29,0.37], '5A': [0.37,0.47], '24':[0.1,0.37], '5B': [0.47,0.8], '6': [0.8,1.0], 
-'longTPO': [2.0,2.1], 'longTVL': [2.1,2.2], 'longS1': [2.2,2.3], 'longS2': [2.3,2.4], 'longcM1': [2.4,2.5], 'longM2': [2.5,2.6], 'longOC': [2.6,2.7]}  # normalized layer boundaries
+layer = cfg.normLayers
+layer.update({'longTPO': [2.0,2.1], 'longTVL': [2.1,2.2], 'longS1': [2.2,2.3], 'longS2': [2.3,2.4], 
+              'longcM1': [2.4,2.5], 'longM2': [2.5,2.6], 'longOC': [2.6,2.7]})  # normalized layer boundaries
 
 netParams.correctBorder = {'threshold': [cfg.correctBorderThreshold, cfg.correctBorderThreshold, cfg.correctBorderThreshold], 
                         'yborders': [layer['2'][0], layer['5A'][0], layer['6'][0], layer['6'][1]]}  # correct conn border effect
@@ -548,7 +545,7 @@ if cfg.addSubConn:
     # L2/3,TVL,S2,cM1,M2 -> PT (Suter, 2015)
     lenY = 30 
     spacing = 50
-    gridY = range(0, -spacing*lenY, -spacing)
+    gridY = list(range(0, -spacing*lenY, -spacing))
     synDens, _, fixedSomaY = connDendPTData['synDens'], connDendPTData['gridY'], connDendPTData['fixedSomaY']
     for k in synDens.keys():
         prePop,postType = k.split('_')  # eg. split 'M2_PT'
@@ -565,7 +562,7 @@ if cfg.addSubConn:
     # TPO, TVL, M2, OC  -> E (L2/3, L5A, L5B, L6) (Hooks 2013)
     lenY = 26
     spacing = 50
-    gridY = range(0, -spacing*lenY, -spacing)
+    gridY = list(range(0, -spacing*lenY, -spacing))
     synDens, _, fixedSomaY = connDendITData['synDens'], connDendITData['gridY'], connDendITData['fixedSomaY']
     for k in synDens.keys():
         prePop,post = k.split('_')  # eg. split 'M2_L2'

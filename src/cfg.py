@@ -8,6 +8,8 @@ Contributors: salvadordura@gmail.com
 
 from netpyne import specs
 import pickle
+import pandas as pd
+import numpy as np
 from pathlib import Path
 cwd = str(Path.cwd())
 
@@ -24,7 +26,10 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 1e3 # (ms)
+cfg.transient = 500
+cfg.preTone = 500
+cfg.postTone = 500 # Movement part
+cfg.duration = cfg.transient + cfg.preTone + cfg.postTone
 cfg.dt = 0.025
 cfg.seeds = {'conn': 4321, 'stim': 1234, 'loc': 4321} 
 cfg.hParams = {'celsius': 34, 'v_init': -80}  
@@ -160,6 +165,11 @@ cfg.axonRa = 0.005
 
 cfg.gpas = 0.5  # multiplicative factor for pas g in PT cells
 cfg.epas = 0.9  # multiplicative factor for pas e in PT cells
+cfg.KgbarFactor = 1.0 # multiplicative factor for K channels gbar in all E cells
+cfg.makeKgbarFactorEqualToNewFactor = False
+
+cfg.modifyMechs = {'startTime': cfg.transient+cfg.preTone, 'endTime': cfg.transient+cfg.preTone+cfg.postTone, 
+                   'cellType':'PT', 'mech': 'hd', 'property': 'gbar', 'newFactor': 1.00, 'origFactor': 0.75}
 
 #------------------------------------------------------------------------------
 # Synapses
@@ -191,6 +201,7 @@ cfg.sizeX = 300.0
 cfg.sizeZ = 300.0
 cfg.scaleDensity = 1.0
 cfg.correctBorderThreshold = 150.0
+cfg.normLayers = {'1': [0.0, 0.1], '2': [0.1,0.29], '4': [0.29,0.37], '5A': [0.37,0.47], '5B': [0.47,0.8], '6': [0.8, 1.0]}
 
 cfg.L5BrecurrentFactor = 1.0
 cfg.ITinterFactor = 1.0
@@ -275,3 +286,76 @@ cfg.addNetStim = False
 # 				'start': 500, 'interval': 50.0, 'noise': 0.2, 'number': 1000.0/50.0, 'weight': 10.0, 'delay': 1}
 cfg.NetStim1 = {'pop': 'IT2', 'ynorm':[0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0],
 				'start': 500, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 'weight': 30.0, 'delay': 0}
+
+cfg.numSampledCellsPerLayer = [1]
+"""
+#------------------------------------------------------------------------------
+# In Vivo m1 sampled neurons & spikes
+#------------------------------------------------------------------------------
+cfg.addInVivoThalamus = False
+def load_epoched_spikes(path, region):
+	import json
+	spikes = pd.read_csv(path / f'{region}_epoched_spikes.csv')
+	with open(path / f'{region}_epoched_spikes_attrs.json', 'r') as jsonfile:
+		attrs = json.load(jsonfile)
+
+	# Convert lists back to numpy arrays only if they are lists
+	for key, value in attrs.items():
+		if isinstance(value, list):
+			spikes.attrs[key] = np.array(value)
+		else:
+			spikes.attrs[key] = value
+
+	return spikes
+
+
+m1_spikes = load_epoched_spikes(Path(cwd+'/data/spikingData'), 'm1')
+norm_sampled_depths = m1_spikes.attrs['cell_depths']/cfg.sizeY
+norm_sampled_depths[norm_sampled_depths>=1] = 0.99
+
+cfg.numSampledCellsPerLayer = [len(norm_sampled_depths[(norm_sampled_depths>=cfg.normLayers[i][0])
+													   & (norm_sampled_depths<cfg.normLayers[i][1])]) for i in cfg.normLayers.keys()]
+
+#------------------------------------------------------------------------------
+# In Vivo thalamic inputs
+#------------------------------------------------------------------------------
+
+if cfg.addInVivoThalamus:
+	thalamus_spikes = load_epoched_spikes(Path(cfg.workingDir+'/data/spikingData'), 'th')
+	cfg.Trial = int( max(np.unique(thalamus_spikes['trial']))/2. ) # Pick the half trial as inputs
+
+	preToneTime = abs(thalamus_spikes.attrs['trial_window'][0])*1000
+	postToneTime = abs(thalamus_spikes.attrs['trial_window'][1])*1000
+
+	# cfg.transient = thalamus_spikes.attrs['margin']*1000
+	# cfg.preTone = abs(thalamus_spikes.attrs['trial_window'][0])*1000-cfg.transient
+	# cfg.postTone = thalamus_spikes.attrs['trial_window'][1]*1000-cfg.transient
+	# cfg.duration = 2*cfg.transient + cfg.preTone + cfg.postTone
+
+	cells = np.unique(thalamus_spikes['cell_id'])
+	maskTrial = np.array(thalamus_spikes['trial'])==cfg.Trial
+	maskBeforeUnlock = np.array(thalamus_spikes['stage'])==0
+	maskUnlock = np.array(thalamus_spikes['stage'])==1
+	maskToneOn = np.array(thalamus_spikes['stage'])==2
+	maskToneOff = np.array(thalamus_spikes['stage'])==3
+
+	thalamus_spikesBeforeUnlock = thalamus_spikes[maskTrial*maskBeforeUnlock]
+	thalamus_spikesmaskUnlock = thalamus_spikes[maskTrial*maskUnlock]
+	thalamus_spikesmaskToneOn = thalamus_spikes[maskTrial*maskToneOn]
+	thalamus_spikesmaskToneOff = thalamus_spikes[maskTrial*maskToneOff]
+
+	MarginTime = thalamus_spikesBeforeUnlock.iloc[0]['spike_time']
+	UnlockTime = thalamus_spikesmaskUnlock.iloc[0]['spike_time']
+	ToneOnTime = thalamus_spikesmaskToneOn.iloc[0]['spike_time']
+	ToneOffTime = thalamus_spikesmaskToneOff.iloc[0]['spike_time']
+
+	cfg.spikeTimesInVivo = [thalamus_spikes[maskTrial * (np.array(thalamus_spikes['cell_id'])==i)]['spike_time'].values.tolist()-UnlockTime for i in cells]
+
+	# cfg.preTone, cfg.postTone
+
+	for idx in range(len(cfg.spikeTimesInVivo)):
+		spikes = cfg.spikeTimesInVivo[idx]*1000.
+		cfg.spikeTimesInVivo[idx] = list(spikes[(spikes>=-cfg.preTone)*(spikes<=cfg.postTone)]+cfg.preTone)
+
+	cfg.weightThalamicSpikes = 1
+"""
