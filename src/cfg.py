@@ -9,7 +9,7 @@ Contributors: salvadordura@gmail.com
 from netpyne import specs
 import pickle
 from pathlib import Path
-cwd = Path.cwd()
+cwd = str(Path.cwd())
 
 
 cfg = specs.SimConfig()  
@@ -84,8 +84,9 @@ cfg.recordStep = 0.1
 #------------------------------------------------------------------------------
 # Saving
 #------------------------------------------------------------------------------
-cfg.simLabel = 'v103_tune3'
-cfg.saveFolder = '../data/v103_manualTune'
+cfg.version = 104 # version number for the simulation
+cfg.simLabel = 'v%s_tune3' % str(cfg.version)  # label for the simulation
+cfg.saveFolder = cwd+'/batchData/v%s_manualTune' % str(cfg.version)
 cfg.savePickle = False
 cfg.saveJson = True
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams']#, 'net']
@@ -101,7 +102,7 @@ cfg.compactConnFormat = 0
 with open(cwd + '/cells/popColors.pkl', 'rb') as fileObj: popColors = pickle.load(fileObj)['popColors']
 
 cfg.analysis['plotRaster'] = {'include': allpops, 'orderBy': ['pop', 'y'], 'timeRange': [0,cfg.duration],
-                             'saveFig': True, 'showFig': False, 'labels': 'overlay', 'popRates': True, 
+                             'saveFig': True, 'showFig': False, 'popRates': True, 
                              'orderInverse': True, 'popColors': popColors, 'figSize': (12,18), 'lw': 0.3,
                              'markerSize':3, 'marker': '.', 'dpi': 300} 
 
