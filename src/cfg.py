@@ -8,6 +8,9 @@ Contributors: salvadordura@gmail.com
 
 from netpyne import specs
 import pickle
+from pathlib import Path
+cwd = Path.cwd()
+
 
 cfg = specs.SimConfig()  
 
@@ -36,6 +39,7 @@ cfg.printRunTime = 0.1
 cfg.printSynsAfterRule = False
 cfg.pt3dRelativeToCellLocation = True
 cfg.oneSynPerNetcon = True  # only affects conns not in subconnParams; produces identical results
+cfg.validateNetParams = True
 
 cfg.includeParamsLabel = False
 cfg.printPopAvgRates = [0, cfg.duration]
@@ -46,6 +50,7 @@ cfg.checkErrorsVerbose = False
 cfg.rand123GlobalIndex = None
 cfg.coreneuron = True
 cfg.random123 = True
+cfg.gpu = False
 #------------------------------------------------------------------------------
 # Recording 
 #------------------------------------------------------------------------------
@@ -75,7 +80,6 @@ cfg.recordStim = False
 cfg.recordTime = False  
 cfg.recordStep = 0.1
 
-
 #------------------------------------------------------------------------------
 # Saving
 #------------------------------------------------------------------------------
@@ -93,25 +97,35 @@ cfg.compactConnFormat = 0
 #------------------------------------------------------------------------------
 # Analysis and plotting 
 #------------------------------------------------------------------------------
-with open('../cells/popColors.pkl', 'rb') as fileObj: popColors = pickle.load(fileObj)['popColors']
-cfg.analysis['plotRaster'] = {'include': allpops, 'orderBy': ['pop', 'y'], 'timeRange': [0,cfg.duration], 'saveFig': True, 'showFig': False, 'labels': 'overlay', 'popRates': True, 'orderInverse': True, 'popColors': popColors, 'figSize': (12,10), 'lw': 0.3, 'markerSize':3, 'marker': '.', 'dpi': 300} 
+with open(cwd + '/cells/popColors.pkl', 'rb') as fileObj: popColors = pickle.load(fileObj)['popColors']
 
+cfg.analysis['plotRaster'] = {'include': allpops, 'orderBy': ['pop', 'y'], 'timeRange': [0,cfg.duration],
+                             'saveFig': True, 'showFig': False, 'labels': 'overlay', 'popRates': True, 
+                             'orderInverse': True, 'popColors': popColors, 'figSize': (12,18), 'lw': 0.3,
+                             'markerSize':3, 'marker': '.', 'dpi': 300} 
 
-# cfg.analysis['plotSpikeHist'] = {'include': ['IT2','IT4','IT5A','IT5B','PT5B','IT6','CT6'], 'timeRange': [1000,6000], 'yaxis':'rate', 'binSize':5, 'graphType':'bar',
-#  								'saveFig': True, 'showFig': False, 'popColors': popColors, 'figSize': (10,4), 'dpi': 300} 
+cfg.analysis['plotTraces'] = {'include': cfg.recordCells, 'timeRange': [0,cfg.duration], 
+                              'overlay': True, 'oneFigPer': 'trace', 'figSize': (10,4), 
+                              'saveFig': True, 'showFig': False} 
 
-# cfg.analysis['plotLFP'] = {'plots': ['spectrogram'], 'figSize': (6,10), 'timeRange': [1000,6000], 'NFFT': 256*20, 'noverlap': 128*20, 'nperseg': 132*20, 
-# 							'saveFig': True, 'showFig':False} 
+# cfg.analysis['plotSpikeHist'] = {'include': ['IT2','IT4','IT5A','IT5B','PT5B','IT6','CT6'], 
+#                                 'timeRange': [1000,6000], 'yaxis':'rate', 'binSize':5, 'graphType':'bar',
+#  								'saveFig': True, 'showFig': False, 'popColors': popColors, 'figSize': (10,4),
+# 								'dpi': 300} 
 
+# cfg.analysis['plotLFP'] = {'plots': ['spectrogram'], 'figSize': (6,10), 'timeRange': [1000,6000], 
+#                           'NFFT': 256*20, 'noverlap': 128*20, 'nperseg': 132*20, 'saveFig': True, 
+#                           'showFig':False} 
 
-cfg.analysis['plotTraces'] = {'include': cfg.recordCells, 'timeRange': [0,cfg.duration], 'overlay': True, 'oneFigPer': 'trace', 'figSize': (10,4), 'saveFig': True, 'showFig': False} 
+# cfg.analysis['plotShape'] = {'includePre': ['all'], 'includePost': [('PT5B',100)], 'cvar':'numSyns',
+#                             'saveFig': True, 'showFig': False, 'includeAxon': False}
 
-#cfg.analysis['plotShape'] = {'includePre': ['all'], 'includePost': [('PT5B',100)], 'cvar':'numSyns','saveFig': True, 'showFig': False, 'includeAxon': False}
-#cfg.analysis['plotConn'] = {'include': ['allCells']}
+# cfg.analysis['plotConn'] = {'include': ['allCells']}
 # cfg.analysis['calculateDisynaptic'] = True
 
-# cfg.analysis['plotConn'] = {'includePre': allpops, 'includePost': allpops, 'feature': 'strength', 'figSize': (10,10), 'groupBy': 'pop', \
-#  						'graphType': 'bar', 'synOrConn': 'conn', 'synMech': None, 'saveData': None, 'saveFig': 1, 'showFig': 0}
+# cfg.analysis['plotConn'] = {'includePre': allpops, 'includePost': allpops, 'feature': 'strength', 
+#                             'figSize': (10,10), 'groupBy': 'pop', 'graphType': 'bar', 'synOrConn': 'conn', 
+#                             'synMech': None, 'saveData': None, 'saveFig': 1, 'showFig': False}
 
 #------------------------------------------------------------------------------
 # Cells
@@ -124,8 +138,10 @@ cfg.cellmod =  {'IT2': 'HH_reduced',
 				'IT6': 'HH_reduced',
 				'CT6': 'HH_reduced'}
 
+ihQuiet = 1.0
+ihMovement = 0.25
 cfg.ihModel = 'migliore'  # ih model
-cfg.ihGbar = 0.75  # multiplicative factor for ih gbar in PT cells
+cfg.ihGbar = ihQuiet  # multiplicative factor for ih gbar in PT cells
 cfg.ihGbarZD = None # multiplicative factor for ih gbar in PT cells
 cfg.ihGbarBasal = 1.0 # 0.1 # multiplicative factor for ih gbar in PT cells
 cfg.ihlkc = 0.2 # ih leak param (used in Migliore)
@@ -160,11 +176,11 @@ cfg.distributeSynsUniformly = True
 #------------------------------------------------------------------------------
 # Network 
 #------------------------------------------------------------------------------
-cfg.singleCellPops = 0  # Create pops with 1 single cell (to debug)
-cfg.weightNorm = 1  # use weight normalization
+cfg.singleCellPops = False  # Create pops with 1 single cell (to debug)
+cfg.weightNorm = True  # use weight normalization
 cfg.weightNormThreshold = 4.0  # weight normalization factor threshold
 
-cfg.addConn = 1
+cfg.addConn = True
 cfg.allowConnsWithWeight0 = True
 cfg.allowSelfConns = False
 cfg.scale = 1.0
@@ -178,13 +194,13 @@ cfg.L5BrecurrentFactor = 1.0
 cfg.ITinterFactor = 1.0
 cfg.strengthFactor = 1.0
 
-cfg.EEGain = 0.530860873959182
+cfg.EEGain = 1.0
 cfg.EIGain = 1.0
 cfg.IEGain = 1.0
 cfg.IIGain = 1.0
 
 ## E->I by target cell type
-cfg.EICellTypeGain= {'PV': 2.588295268601415, 'SOM': 0.6568380849927258, 'VIP': 1.4582025338644486, 'NGF': 3.355557614291127}
+cfg.EICellTypeGain= {'PV': 1.0, 'SOM': 1.0, 'VIP': 1.0, 'NGF': 1.0}
 
 cfg.IEdisynapticBias = None  # increase prob of I->Ey conns if Ex->I and Ex->Ey exist 
 
@@ -207,8 +223,8 @@ cfg.SOMSOMGain = None #0.75
 
 #------------------------------------------------------------------------------
 ## I->E/I layer weights (L2/3+4, L5, L6)
-cfg.IEweights = [0.5175411466399648, 0.7434834613857577, 1.0101817500320014]
-cfg.IIweights = [1.449601171855032, 0.7831317900654744, 1.141724408254077]
+cfg.IEweights = [1.0, 1.0, 1.0]
+cfg.IIweights = [1.0, 1.0, 1.0]
 
 cfg.IPTGain = 1.0
 cfg.IFullGain = 1.0  # deprecated
@@ -216,23 +232,25 @@ cfg.IFullGain = 1.0  # deprecated
 #------------------------------------------------------------------------------
 # Subcellular distribution
 #------------------------------------------------------------------------------
-cfg.addSubConn = 1
+cfg.addSubConn = True
 
 #------------------------------------------------------------------------------
 # Long range inputs
 #------------------------------------------------------------------------------
-cfg.addLongConn = 1
+cfg.addLongConn = True
 cfg.numCellsLong = int(1000 * cfg.scaleDensity) # num of cells per population
 cfg.noiseLong = 1.0  # firing rate random noise
 cfg.delayLong = 5.0  # (ms)
 factor = 1
 cfg.weightLong = {'TPO': 0.5*factor, 'TVL': 0.5*factor, 'S1': 0.5*factor, 'S2': 0.5*factor, 'cM1': 0.5*factor, 'M2': 0.5*factor, 'OC': 0.5*factor}  # corresponds to unitary connection somatic EPSP (mV)
 cfg.startLong = 0  # start at 0 ms
-cfg.ratesLong = {'TPO': [0,5], 'TVL': [0,5], 'S1': [0,5], 'S2': [0,5], 'cM1': [0,5], 'M2': [0,5], 'OC': [0,5]}
+TVLquiet = [0, 2.5] 
+TVLmovement = [0, 10]  # TVL firing rate (Hz)
+cfg.ratesLong = {'TPO': [0,5], 'TVL': TVLquiet, 'S1': [0,5], 'S2': [0,5], 'cM1': [0,5], 'M2': [0,5], 'OC': [0,5]}
 
 
 ## input pulses
-cfg.addPulses = 1
+cfg.addPulses = False
 cfg.pulse = {'pop': 'None', 'start': 1000, 'end': 1100, 'rate': 20, 'noise': 0.8}
 cfg.pulse2 = {'pop': 'None', 'start': 1000, 'end': 1200, 'rate': 20, 'noise': 0.5, 'duration': None}
 
@@ -240,7 +258,7 @@ cfg.pulse2 = {'pop': 'None', 'start': 1000, 'end': 1200, 'rate': 20, 'noise': 0.
 #------------------------------------------------------------------------------
 # Current inputs 
 #------------------------------------------------------------------------------
-cfg.addIClamp = 0
+cfg.addIClamp = False
 
 cfg.IClamp1 = {'pop': 'IT5B', 'sec': 'soma', 'loc': 0.5, 'start': 0, 'dur': 1000, 'amp': 0.50}
 
@@ -248,7 +266,7 @@ cfg.IClamp1 = {'pop': 'IT5B', 'sec': 'soma', 'loc': 0.5, 'start': 0, 'dur': 1000
 #------------------------------------------------------------------------------
 # NetStim inputs 
 #------------------------------------------------------------------------------
-cfg.addNetStim = 0
+cfg.addNetStim = False
 
  			   ## pop, sec, loc, synMech, start, interval, noise, number, weight, delay 
 # cfg.NetStim1 = {'pop': 'IT2', 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA','NMDA'], 'synMechWeightFactor': cfg.synWeightFractionEE,
