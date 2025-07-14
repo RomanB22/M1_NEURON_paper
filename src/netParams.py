@@ -60,11 +60,9 @@ netParams.correctBorder = {'threshold': [cfg.correctBorderThreshold, cfg.correct
 
 #------------------------------------------------------------------------------
 ## Load cell rules previously saved using netpyne format
-cellParamLabels = [] #['IT2_reduced', 'IT4_reduced', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 
-                   #'CT6_reduced', 'SOM_reduced', 'IT5A_full',  'PV_reduced', 'VIP_reduced', 'NGF_reduced', 
-                   #'PT5B_full'] #  # list of cell rules to load from file
+cellParamLabels = cfg.cellParamLabels
 loadCellParams = cellParamLabels
-saveCellParams = True
+saveCellParams = False
 
 for ruleLabel in loadCellParams:
     netParams.loadCellParamsRule(label=ruleLabel, fileName = cwd+'/cells/' + ruleLabel + '_cellParams.pkl')
@@ -283,23 +281,34 @@ if cfg.singleCellPops:
 ## Long-range input populations (VecStims)
 if cfg.addLongConn:
     ## load experimentally based parameters for long range inputs
-    with open(cwd+'/conn/conn_long.pkl', 'rb') as fileObj: connLongData = pickle.load(fileObj)
-    #ratesLong = connLongData['rates']
+    with open(cwd + '/conn/conn_long.pkl', 'rb') as fileObj:
+        connLongData = pickle.load(fileObj)
+    # ratesLong = connLongData['rates']
 
     numCells = cfg.numCellsLong
     noise = cfg.noiseLong
     start = cfg.startLong
 
-    longPops = ['TPO', 'TVL', 'S1', 'S2', 'cM1', 'M2', 'OC']
-    ## create populations with fixed 
+    if cfg.addInVivoThalamus: 
+        longPops = ['TPO', 'S1', 'S2', 'cM1', 'M2', 'OC']
+    else:
+        longPops = ['TPO', 'TVL', 'S1', 'S2', 'cM1', 'M2', 'OC']
+    ## create populations with fixed
     for longPop in longPops:
-        netParams.popParams[longPop] = {'cellModel': 'VecStim', 'numCells': numCells, 'rate': cfg.ratesLong[longPop], 
-                                        'noise': noise, 'start': start, 'pulses': [], 'ynormRange': layer['long'+longPop]}
-        if isinstance(cfg.ratesLong[longPop], str): # filename to load spikes from
+        netParams.popParams[longPop] = {'cellModel': 'VecStim', 'numCells': numCells, 'rate': cfg.ratesLong[longPop],
+                                        'noise': noise, 'start': start, 'pulses': [],
+                                        'ynormRange': layer['long' + longPop]}
+        if isinstance(cfg.ratesLong[longPop], str):  # filename to load spikes from
             spikesFile = cfg.ratesLong[longPop]
             with open(spikesFile, 'r') as f: spks = json.load(f)
             netParams.popParams[longPop].pop('rate')
             netParams.popParams[longPop]['spkTimes'] = spks
+
+    if cfg.addInVivoThalamus:
+        netParams.popParams['TVL'] = {'cellModel': 'VecStim',
+                                                 'numCells': len(cfg.spikeTimesInVivo),
+                                                 'spkTimes': cfg.spikeTimesInVivo,
+                                                 'ynormRange': layer['long' + 'TVL']}
 
 
 #------------------------------------------------------------------------------

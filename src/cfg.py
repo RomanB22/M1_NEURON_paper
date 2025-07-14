@@ -85,6 +85,9 @@ cfg.recordTraces = {'V_soma': {'sec':'soma', 'loc':0.5, 'var':'v'}}#,
 cfg.recordStim = False
 cfg.recordTime = False  
 cfg.recordStep = 0.1
+cfg.cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 
+                      'CT6_reduced', 'SOM_reduced', 'IT5A_full',  'PV_reduced', 'VIP_reduced', 'NGF_reduced', 
+                      'PT5B_full'] #  # list of cell rules to load from file
 
 #------------------------------------------------------------------------------
 # Saving
@@ -188,7 +191,7 @@ cfg.distributeSynsUniformly = True
 #------------------------------------------------------------------------------
 # Network 
 #------------------------------------------------------------------------------
-cfg.singleCellPops = False  # Create pops with 1 single cell (to debug)
+cfg.singleCellPops = True  # Create pops with 1 single cell (to debug)
 cfg.weightNorm = True  # use weight normalization
 cfg.weightNormThreshold = 4.0  # weight normalization factor threshold
 
@@ -287,12 +290,11 @@ cfg.addNetStim = False
 cfg.NetStim1 = {'pop': 'IT2', 'ynorm':[0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0],
 				'start': 500, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 'weight': 30.0, 'delay': 0}
 
-cfg.numSampledCellsPerLayer = [1]
-"""
 #------------------------------------------------------------------------------
 # In Vivo m1 sampled neurons & spikes
 #------------------------------------------------------------------------------
-cfg.addInVivoThalamus = False
+cfg.addInVivoThalamus = True
+
 def load_epoched_spikes(path, region):
 	import json
 	spikes = pd.read_csv(path / f'{region}_epoched_spikes.csv')
@@ -321,7 +323,7 @@ cfg.numSampledCellsPerLayer = [len(norm_sampled_depths[(norm_sampled_depths>=cfg
 #------------------------------------------------------------------------------
 
 if cfg.addInVivoThalamus:
-	thalamus_spikes = load_epoched_spikes(Path(cfg.workingDir+'/data/spikingData'), 'th')
+	thalamus_spikes = load_epoched_spikes(Path(cwd+'/data/spikingData'), 'th')
 	cfg.Trial = int( max(np.unique(thalamus_spikes['trial']))/2. ) # Pick the half trial as inputs
 
 	preToneTime = abs(thalamus_spikes.attrs['trial_window'][0])*1000
@@ -358,4 +360,3 @@ if cfg.addInVivoThalamus:
 		cfg.spikeTimesInVivo[idx] = list(spikes[(spikes>=-cfg.preTone)*(spikes<=cfg.postTone)]+cfg.preTone)
 
 	cfg.weightThalamicSpikes = 1
-"""
