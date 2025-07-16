@@ -107,14 +107,15 @@ cfg.drugEffect = 0.5 # Multiplicative factor
 # Variants and specifics of Tim's PT5B model
 #------------------------------------------------------------------------------
 
-cfg.dendNa = 0.1
+cfg.dendNa = 1.0
 cfg.loadmutantParams = False
 cfg.variant = 'WT' # L1666F, E1211K, D195G, R853Q, K1422E, M1879T, WT
+cfg.heterozygous = False
 
 #------------------------------------------------------------------------------
 # Saving
 #------------------------------------------------------------------------------
-cfg.simLabel = 'v103_tune_%s_treatment_%s' % (cfg.variant, str(cfg.treatment)) if cfg.loadmutantParams else 'v103_tune_WT_treatment%s' % str(cfg.treatment)
+cfg.simLabel = 'v103_tune_%s_treatment_%s_het_%s' % (cfg.variant, str(cfg.treatment), str(cfg.heterozygous)) if cfg.loadmutantParams else 'v103_tune_WT_treatment%s_het_%s' % (str(cfg.treatment),  str(cfg.heterozygous))
 cfg.saveFolder = '../data/v103_manualTune'
 cfg.savePickle = False
 cfg.saveJson = True
@@ -195,7 +196,7 @@ cfg.distributeSynsUniformly = True
 # Network 
 #------------------------------------------------------------------------------
 cfg.singleCellPops = False  # Create pops with 1 single cell (to debug)
-cfg.weightNorm = 1  # use weight normalization
+cfg.weightNorm = True  # use weight normalization
 cfg.weightNormThreshold = 4.0  # weight normalization factor threshold
 
 cfg.addConn = 1

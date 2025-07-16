@@ -9,6 +9,7 @@ Contributors: salvadordura@gmail.com
 
 from netpyne import specs
 import pickle, json, csv
+import numpy as np
 
 netParams = specs.NetParams()   # object of class NetParams to store the network parameters
 
@@ -63,7 +64,7 @@ netParams.correctBorder = {'threshold': [cfg.correctBorderThreshold, cfg.correct
 ## Load cell rules previously saved using netpyne format
 cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 
                    'IT6_reduced', 'CT6_reduced', 'SOM_reduced', 'IT5A_full',  'PV_reduced', 
-                   'VIP_reduced', 'NGF_reduced', 'PT5B_full']   # list of cell rules to load from file. 
+                   'VIP_reduced', 'NGF_reduced']   # list of cell rules to load from file. 
                                                                 # All but 'PT5B_full'. If putting more than PT5B, be aware of BUG
 loadCellParams = cellParamLabels
 saveCellParams = False
@@ -193,6 +194,14 @@ if 'PT5B_full' not in loadCellParams:
     # # cellRule has to be used as a pointer for any operation, if not will throw an error
     # del cellRule['secs']['soma']['pointps']
     # del cellRule['secs']['dend_0']['pointps']
+
+    if cfg.heterozygous:
+        for secName in cellRule['secs']:
+            for mechName,mech in cellRule['secs'][secName]['mechs'].items():
+                if mechName in ['na12mut']: 
+                    mech['gbar'] = [g*0. for g in mech['gbar']] if isinstance(mech['gbar'],list) else mech['gbar']*0.
+
+
 
     # Adapt ih params based on cfg param
     for secName in cellRule['secs']:

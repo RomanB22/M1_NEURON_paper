@@ -669,6 +669,90 @@ def custom():
     return b
 
 # ----------------------------------------------------------------------------------------------
+# Custom
+# ----------------------------------------------------------------------------------------------
+def simsTim2025(loadmutantParams = False, variant = 'WT', heterozygous = False):
+    # L1666F, E1211K, D195G, R853Q, K1422E, M1879T, WT
+    params = specs.ODict()
+
+    # long-range inputs
+    params[('weightLong', 'TPO')] = [0.36413449176562400, 0.3063808192016440, 0.4240719259553920] 
+    params[('weightLong', 'TVL')] = [0.7401510020260390, 0.7274024173525900, 0.2025915934240240] 
+    params[('weightLong', 'S1')] =  [0.2541439351062100, 0.3459663438425080, 0.5748488440742660] 
+    params[('weightLong', 'S2')] =  [0.7195235836024700, 0.3634746938070880, 0.29174281758222300] 
+    params[('weightLong', 'cM1')] = [0.6186759835193960, 0.6230076920885720, 0.5605278885531990] 
+    params[('weightLong', 'M2')] =  [0.2705385128468150, 0.5548220253161980, 0.4704826136474020] 
+    params[('weightLong', 'OC')] =  [0.43698626369427500, 0.4313743781837130, 0.5563998577764100]	
+
+    params[('EICellTypeGain', 'NGF')] =  [1., 1., 1.2485313205235000] 
+    params[('EICellTypeGain', 'PV')] = [1., 1., 1.6681926192759200] 
+    params[('EICellTypeGain', 'SOM')] =  [1., 1., 1.7524115899720600] 
+    params[('EICellTypeGain', 'VIP')] =  [1., 1., 3.33530829854624]
+    # EEgain
+    params['EEGain'] = [1.317362156974150, 1.3215766044956300, 0.6778276252972780] 
+    # EEgain
+    params['dendNa'] = [0.5376196583853010, 0.29984346957945700, 0.038361817962891200]
+
+    # IEgain
+    ## L2/3+4
+    params[('IEweights',0)] =  [0.6420744954735150, 0.6656845404424300, 1.4305558417774100]
+    ## L5
+    params[('IEweights',1)] = [0.9238685575153140, 1.023634486779100, 1.01785336454795] 
+    ## L6
+    params[('IEweights',2)] =  [1.0265257700567000, 1.1457093749079400, 0.6790034644417310] 
+
+    # IIGain
+    ## L2/3+4
+    params[('IIweights',0)] =  [1.2539903827407800, 1.4651419102413900, 1.238825125074220]						
+    ## L5
+    params[('IIweights',1)] = [0.6441327168694440, 0.7103330969952170, 0.6998691993724570]
+    ## L6
+    params[('IIweights',2)] =  [0.5213230676619150, 0.538611743790487, 0.9728543513804210] 
+
+
+    groupedParams = [('weightLong', 'TPO'), 
+                    ('weightLong', 'TVL'), 
+                    ('weightLong', 'S1'), 
+                    ('weightLong', 'S2'), 
+                    ('weightLong', 'cM1'), 
+                    ('weightLong', 'M2'), 
+                    ('weightLong', 'OC'),
+                    ('IIweights',0),
+                    ('IIweights',1),
+                    ('IIweights',2),
+                    ('IEweights',0),
+                    ('IEweights',1),
+                    ('IEweights',2),
+                    ('EICellTypeGain','NGF'),
+                    ('EICellTypeGain','PV'),
+                    ('EICellTypeGain','SOM'),
+                    ('EICellTypeGain','VIP'),
+                    'EEGain',
+                    'dendNa']
+    
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg['duration'] = 3000
+    initCfg['printPopAvgRates'] = [1000, 3000] 
+    initCfg['dt'] = 0.025
+    initCfg['singleCellPops'] = False
+    initCfg['loadmutantParams'] = loadmutantParams
+    initCfg['variant'] = variant
+    initCfg['heterozygous'] = heterozygous
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [1000,3000]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1000,3000]
+
+    initCfg['scaleDensity'] = 1.0
+    
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+
+# ----------------------------------------------------------------------------------------------
 # Evol
 # ----------------------------------------------------------------------------------------------
 def evolRates(popSize=30, maxGen=200, scaleDensity=1.0):
@@ -825,7 +909,7 @@ def evolRates(popSize=30, maxGen=200, scaleDensity=1.0):
 # ----------------------------------------------------------------------------------------------
 # Adaptive Stochastic Descent (ASD)
 # ----------------------------------------------------------------------------------------------
-def optunaRatesTotal(scaleDensity=1.0):
+def optunaRatesTotal(scaleDensity=1.0, maxGen=300):
 
     # --------------------------------------------------------
     # parameters
@@ -975,7 +1059,7 @@ def optunaRatesTotal(scaleDensity=1.0):
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
         'fitnessFuncArgs': fitnessFuncArgs,
         'maxFitness': fitnessFuncArgs['maxFitness'],
-        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxiters':     maxGen,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
         'maxtime':      None,    #    Maximum time allowed, in seconds
         'time_sleep': 10*60, # 5min wait this time before checking again if sim is completed (for each generation)
         'maxiter_wait': 10*24, # (5h20) max number of times to check if sim is completed (for each generation)
@@ -987,7 +1071,7 @@ def optunaRatesTotal(scaleDensity=1.0):
 # ----------------------------------------------------------------------------------------------
 # Adaptive Stochastic Descent (ASD)
 # ----------------------------------------------------------------------------------------------
-def optunaRates(scaleDensity=1.0):
+def optunaRates(scaleDensity=1.0, maxGen=300):
 
     # --------------------------------------------------------
     # parameters
@@ -1132,7 +1216,7 @@ def optunaRates(scaleDensity=1.0):
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
         'fitnessFuncArgs': fitnessFuncArgs,
         'maxFitness': fitnessFuncArgs['maxFitness'],
-        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxiters':     maxGen, #1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
         'maxtime':      None,    #    Maximum time allowed, in seconds
         'time_sleep': 5*60, # 5min wait this time before checking again if sim is completed (for each generation)
         'maxiter_wait': 10*24, # (5h20) max number of times to check if sim is completed (for each generation)
@@ -1376,7 +1460,7 @@ def setRunCfg(b, type='mpi_bulletin'):
                     'jobName': 'M1_CR',
                     'cores': 40,
                     'log': os.getcwd() + '/' + b.saveFolder +'/' + b.method,
-                    'vmem': '100G',
+                    'vmem': '200G',
                     'walltime': "10:00:00",
                     'mpiCommand': commandCPU,
                     # 'nrnCommand': './x86_64/special',
@@ -1386,7 +1470,7 @@ def setRunCfg(b, type='mpi_bulletin'):
     elif type=='hpc_sge_gpu':
         b.runCfg = {'type': 'hpc_sge_gpu',
                     'jobName': 'M1_GPU',
-                    'cores': 5,
+                    'cores': 10,
                     'log': os.getcwd() + '/' + b.saveFolder +'/' + b.method,
                     'vmem': '100G',
                     'walltime': "4:00:00",
@@ -1410,10 +1494,21 @@ if __name__ == '__main__':
     # b.saveFolder = '../batchData/'+b.batchLabel
     # RunCfg = 'hpc_slurm_Expanse'
 
-    b = optunaRates(scaleDensity=1.0)
-    b.batchLabel = 'optunaRatesCPU'  
-    b.saveFolder = '../batchData/'+b.batchLabel
-    RunCfg = 'hpc_sge_cpu'
+    # b = optunaRatesTotal(scaleDensity=1.0, maxGen=300)
+    # b.batchLabel = 'optunaRatesGPU_Total'  
+    # b.saveFolder = '../batchData/'+b.batchLabel
+    # RunCfg = 'hpc_sge_gpu'
 
-    setRunCfg(b, RunCfg)
-    b.run() # run batch
+    configList = [(False, 'WT', False),
+                  (False, 'WT', True),
+                  (True, 'M1879T', False),
+                  (True, 'R937C', False),
+                  (True, 'R1882Q', False),
+                  (True, 'R853Q', False)]
+    for config in configList:
+        b = simsTim2025(loadmutantParams = config[0], variant = config[1], heterozygous = config[2])
+        b.batchLabel = 'grid_Mut%s_%s_Het%s' % (config[0], config[1], config[2])  
+        b.saveFolder = '../batchData/'+b.batchLabel
+        RunCfg = 'hpc_sge_cpu'    
+        setRunCfg(b, RunCfg)
+        b.run() # run batch
