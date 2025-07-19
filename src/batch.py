@@ -1414,6 +1414,15 @@ def setRunCfg(b, type='mpi_bulletin'):
     commandCPU = ('conda activate M1  \n'
               'export LD_LIBRARY_PATH="/ddn/rbarav/miniconda3/envs/M1_dev/lib/python3.10/site-packages/mpi4py_mpich.libs" \n'    
               'mpiexec')
+    
+    # Expanse config
+    commandExpanse = ('source ~/default.sh  \n'
+                      'conda activate NetPyNE  \n'
+                      'export LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/" \n'
+                      'MINWAIT=10 \n' 
+                      'MAXWAIT=30 \n' 
+                      'sleep $((MINWAIT+RANDOM % (MAXWAIT-MINWAIT))) \n'
+                      'mpiexec')
 
     if type=='mpi_bulletin' or type=='mpi':
         b.runCfg = {'type': 'mpi_bulletin', 
@@ -1430,14 +1439,14 @@ def setRunCfg(b, type='mpi_bulletin'):
     elif type == 'hpc_slurm_Expanse':
         b.runCfg = {'type': 'hpc_slurm',
                     'allocation': 'TG-MED240058',
-                    'partition': 'compute', #'large-shared',
+                    'partition': 'compute', #'large-shared', compute
                     'walltime': '10:30:00',
                     'nodes': 1,
                     'coresPerNode': 96,
                     'email': 'romanbaravalle@gmail.com',
                     'folder': '/home/rbaravalle/ChannelopathiesLastNoPrint/src',
                     'script': 'init.py',
-                    'mpiCommand': '\nsource ~/default.sh\nconda activate NetPyNE\nexport LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/"\nmpiexec',
+                    'mpiCommand': commandExpanse,
                     'custom': '#SBATCH --mem=128G\n#SBATCH --export=ALL\n#SBATCH --partition=compute',
                     'skip': True}
         
