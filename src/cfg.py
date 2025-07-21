@@ -33,9 +33,9 @@ cfg.duration = cfg.transient + cfg.preTone + cfg.postTone
 cfg.dt = 0.025
 cfg.seeds = {'conn': 4321, 'stim': 1234, 'loc': 4321} 
 cfg.hParams = {'celsius': 34, 'v_init': -80}  
-cfg.verbose = True
-cfg.createNEURONObj = 1
-cfg.createPyStruct = 1
+cfg.verbose = False
+cfg.createNEURONObj = True
+cfg.createPyStruct = True
 cfg.connRandomSecFromList = False  # set to false for reproducibility 
 cfg.cvode_active = False
 cfg.cvode_atol = 1e-6
@@ -48,7 +48,7 @@ cfg.validateNetParams = True
 cfg.progressBar = 0
 
 cfg.includeParamsLabel = False
-cfg.printPopAvgRates = [0, cfg.duration]
+cfg.printPopAvgRates = False #[0, cfg.duration]
 
 cfg.checkErrors = False
 cfg.checkErrorsVerbose = False
@@ -84,16 +84,16 @@ cfg.recordTraces = {'V_soma': {'sec':'soma', 'loc':0.5, 'var':'v'}}#,
 
 cfg.recordStim = False
 cfg.recordTime = False  
-cfg.recordStep = 0.1
-cfg.cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 
-                      'CT6_reduced', 'SOM_reduced', 'IT5A_full',  'PV_reduced', 'VIP_reduced', 'NGF_reduced', 
-                      'PT5B_full'] #  # list of cell rules to load from file
+cfg.recordStep = cfg.dt
+cfg.cellParamLabels = []#['IT2_reduced', 'IT4_reduced', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 
+                      #'CT6_reduced', 'SOM_reduced', 'IT5A_full',  'PV_reduced', 'VIP_reduced', 'NGF_reduced', 
+                      #'PT5B_full'] #  # list of cell rules to load from file
 
 #------------------------------------------------------------------------------
 # Saving
 #------------------------------------------------------------------------------
 cfg.version = 104 # version number for the simulation
-cfg.simLabel = 'v%s_tune3' % str(cfg.version)  # label for the simulation
+cfg.simLabel = 'v%s_tune1' % str(cfg.version)  # label for the simulation
 cfg.saveFolder = cwd+'/batchData/v%s_manualTune' % str(cfg.version)
 cfg.savePickle = False
 cfg.saveJson = True

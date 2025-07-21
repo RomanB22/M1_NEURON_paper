@@ -75,5 +75,5 @@ results = search(job_type = 'sh', # or 'sh'
     #    remote_dir='/home/rbaravalle/M1_CEBRA_BatchTools/src',
     #    host='expanse0',
     #    key='###',
-       num_samples=1,
+       num_samples=2,
        )
