@@ -20,13 +20,13 @@ params = {'weightLong.TPO': [0.25, 0.75],
 nameCluster = 'ssh_sge_gpu'
 
 config = {
-    'ssh_sge_gpu': { 'job_type': 'ssh_sge',
+    'ssh_sge_gpu': {'job_type': 'ssh_sge',
                     'comm_type': 'sftp',
                     'host': 'grid0',
-                    'remote_dir': '/home/rbaravalle/M1_Manifolds',
+                    'remote_dir': '/ddn/rbarav/M1_Manifolds',
                     'key': '###',  # replace with your SSH key
-                    'output_path':'/ddn/rbarav/M1_Manifolds/batchData/optuna_batch',
-                    'checkpoint_path': cwd+'/batchData/ray',
+                    'output_path':'./batchData/optuna_batch',
+                    'checkpoint_path': './batchData/ray',
                     'run_config':  {'queue': 'gpu.q',
                                     'cores': 10,
                                     'vmem': '90G',
@@ -35,20 +35,28 @@ config = {
                                                 'export PATH=$HOME/neuronGPU/bin:$PATH \n' 
                                                 'export PYTHONPATH=$HOME/neuronGPU/lib/python:$PYTHONPATH \n'
                                                 'export LD_LIBRARY_PATH="/usr/lib64/openmpi/lib/":"/opt/nvidia/hpc_sdk/Linux_x86_64/23.9/compilers/lib" \n'  
-                                                'mpiexec -n $NSLOTS -hosts $(hostname) ./x86_64/special -python -mpi src/init.py')}
+                                                'export PYTHONPATH=$PYTHONPATH:$PWD \n' # do it in \src and in parent folder
+                                                'cd src \n'
+                                                'export PYTHONPATH=$PYTHONPATH:$PWD \n' # do it in \src and in parent folder
+                                                'cd .. \n'                                               
+                                                'mpiexec -n $NSLOTS ./x86_64/special -python -mpi src/init.py')}
     },
     'ssh_sge_cpu': { 'job_type': 'ssh_sge',
                     'comm_type': 'sftp',
                     'host': 'grid0',
                     'remote_dir': '/ddn/rbarav/M1_Manifolds',
                     'key': '###',  # replace with your SSH key
-                    'output_path': '/ddn/rbarav/M1_Manifolds/batchData/optuna_batch',
-                    'checkpoint_path': cwd+'/batchData/ray',
+                    'output_path':'./batchData/optuna_batch',
+                    'checkpoint_path': './batchData/ray',
                     'run_config':  {'queue': 'cpu.q',
                                     'cores': 50,
                                     'vmem': '90G',
                                     'realtime': '15:00:00',
                                     'command': ('conda activate M1  \n'
+                                                'export PYTHONPATH=$PYTHONPATH:$PWD \n' # do it in \src and in parent folder
+                                                'cd src \n'
+                                                'export PYTHONPATH=$PYTHONPATH:$PWD \n' # do it in \src and in parent folder
+                                                'cd .. \n'
                                                 'export LD_LIBRARY_PATH="/ddn/rbarav/miniconda3/envs/M1_dev/lib/python3.10/site-packages/mpi4py_mpich.libs" \n'    
                                                 'mpiexec -n $NSLOTS -hosts $(hostname) nrniv -python -mpi src/init.py')}
     },
@@ -69,6 +77,10 @@ config = {
                                     'custom': ('source ~/.bashrc \n'
                                                 'source ~/default.sh\n'
                                                 'conda activate M1_batchTools\n'
+                                                'export PYTHONPATH=$PYTHONPATH:$PWD \n' # do it in \src and in parent folder
+                                                'cd src \n'
+                                                'export PYTHONPATH=$PYTHONPATH:$PWD \n' # do it in \src and in parent folder
+                                                'cd .. \n'
                                                 'export LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/" \n'),
                                     'command': 'time mpirun -n 96 nrniv -python -mpi src/init.py'}
     }
@@ -89,7 +101,7 @@ config = {
 # 'sh'        , None        -> job run directly on local shell, no communication (only grid or random searches)
 
 results = search(job_type = config[nameCluster]['job_type'], # job_type defines how the job is submitted to the cluster, e.g. 'ssh_sge', 'ssh_slurm', 'sge', 'sh'
-       comm_type = config[nameCluster]['job_type'], # if a metric and mode is specified, some method of communicating with the host needs to be defined
+       comm_type = config[nameCluster]['comm_type'], # if a metric and mode is specified, some method of communicating with the host needs to be defined
        label = 'optuna',
        params = params,
        output_path = config[nameCluster]['output_path'],
