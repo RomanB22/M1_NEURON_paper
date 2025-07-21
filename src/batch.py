@@ -17,34 +17,61 @@ params = {'weightLong.TPO': [0.25, 0.75],
           'IIweights.2': [0.5, 1.5],
           }
 
-# SGE GPU CONFIG
-sge_config = {
-    'queue': 'gpu.q',
-    'cores': 19,
-    'vmem': '90G', #90G
-    'realtime': '15:00:00',
-    'command': 'mpiexec -n $NSLOTS -hosts $(hostname) ./x86_64/special -python -mpi init.py'}
+nameCluster = 'ssh_sge_gpu'
 
-# use batch_shell_config if running directly on the machine
-shell_config = {'command': 'nrniv -python src/init.py'}
-
-# EXPANSE CONFIG
-setup = """
-source ~/.bashrc
-source ~/default.sh
-conda activate M1_batchTools
-export LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/"
-"""
-slurm_config = {
-    'allocation': 'TG-MED240058',
-    'realtime': '10:30:00',
-    'nodes': 1,
-    'coresPerNode': 96,
-    'mem': '128G',
-    'partition': 'compute',
-    'email': 'romanbaravalle@gmail.com',
-    'custom': setup,
-    'command':'time mpirun -n 96 nrniv -python -mpi init.py'
+config = {
+    'ssh_sge_gpu': { 'job_type': 'ssh_sge',
+                    'comm_type': 'sftp',
+                    'host': 'grid0',
+                    'remote_dir': '/home/rbaravalle/M1_Manifolds',
+                    'key': '###',  # replace with your SSH key
+                    'output_path':'/ddn/rbarav/M1_Manifolds/batchData/optuna_batch',
+                    'checkpoint_path': cwd+'/batchData/ray',
+                    'run_config':  {'queue': 'gpu.q',
+                                    'cores': 10,
+                                    'vmem': '90G',
+                                    'realtime': '15:00:00',
+                                    'command': ('conda activate GPU  \n'
+                                                'export PATH=$HOME/neuronGPU/bin:$PATH \n' 
+                                                'export PYTHONPATH=$HOME/neuronGPU/lib/python:$PYTHONPATH \n'
+                                                'export LD_LIBRARY_PATH="/usr/lib64/openmpi/lib/":"/opt/nvidia/hpc_sdk/Linux_x86_64/23.9/compilers/lib" \n'  
+                                                'mpiexec -n $NSLOTS -hosts $(hostname) ./x86_64/special -python -mpi src/init.py')}
+    },
+    'ssh_sge_cpu': { 'job_type': 'ssh_sge',
+                    'comm_type': 'sftp',
+                    'host': 'grid0',
+                    'remote_dir': '/ddn/rbarav/M1_Manifolds',
+                    'key': '###',  # replace with your SSH key
+                    'output_path': '/ddn/rbarav/M1_Manifolds/batchData/optuna_batch',
+                    'checkpoint_path': cwd+'/batchData/ray',
+                    'run_config':  {'queue': 'cpu.q',
+                                    'cores': 50,
+                                    'vmem': '90G',
+                                    'realtime': '15:00:00',
+                                    'command': ('conda activate M1  \n'
+                                                'export LD_LIBRARY_PATH="/ddn/rbarav/miniconda3/envs/M1_dev/lib/python3.10/site-packages/mpi4py_mpich.libs" \n'    
+                                                'mpiexec -n $NSLOTS -hosts $(hostname) nrniv -python -mpi src/init.py')}
+    },
+    'ssh_expanse_cpu': { 'job_type': 'ssh_slurm',
+                    'comm_type': 'sftp',
+                    'host': 'expanse0',
+                    'remote_dir': '/home/rbaravalle/M1_Manifolds',
+                    'key': '###',  # replace with your SSH key
+                    'output_path': '/home/rbaravalle/M1_Manifolds/batchData/optuna_batch',
+                    'checkpoint_path': cwd+'/batchData/ray',
+                    'run_config':  {'allocation': 'TG-MED240058',
+                                    'realtime': '10:30:00',
+                                    'nodes': 1,
+                                    'coresPerNode': 96,
+                                    'mem': '128G',
+                                    'partition': 'compute',
+                                    'email': 'romanbaravalle@gmail.com',
+                                    'custom': ('source ~/.bashrc \n'
+                                                'source ~/default.sh\n'
+                                                'conda activate M1_batchTools\n'
+                                                'export LD_LIBRARY_PATH="/home/rbaravalle/.conda/envs/NetPyNE/lib/python3.10/site-packages/mpi4py_mpich.libs/" \n'),
+                                    'command': 'time mpirun -n 96 nrniv -python -mpi src/init.py'}
+    }
 }
 
 # =======================
@@ -61,19 +88,19 @@ slurm_config = {
 # 'sh'        , 'sfs'       -> job run directly on local shell, communication via shared file system
 # 'sh'        , None        -> job run directly on local shell, no communication (only grid or random searches)
 
-results = search(job_type = 'sh', # or 'sh'
-       comm_type = 'socket', # if a metric and mode is specified, some method of communicating with the host needs to be defined
+results = search(job_type = config[nameCluster]['job_type'], # job_type defines how the job is submitted to the cluster, e.g. 'ssh_sge', 'ssh_slurm', 'sge', 'sh'
+       comm_type = config[nameCluster]['job_type'], # if a metric and mode is specified, some method of communicating with the host needs to be defined
        label = 'optuna',
        params = params,
-       output_path = cwd+'/batchData/optuna_batch',
-       checkpoint_path = cwd+'/batchData/ray',
-       run_config = shell_config,
+       output_path = config[nameCluster]['output_path'],
+       checkpoint_path = config[nameCluster]['checkpoint_path'],
+       run_config = config[nameCluster]['run_config'],
        metric = 'loss', # if a metric and mode is specified, the search will collect metric data and report on the optimal configuration
        mode = 'min',
        algorithm = "optuna",
        max_concurrent = 1,
-    #    remote_dir='/home/rbaravalle/M1_CEBRA_BatchTools/src',
-    #    host='expanse0',
-    #    key='###',
+       remote_dir=config[nameCluster]['remote_dir'],
+       host=config[nameCluster]['host'],
+       key=config[nameCluster]['key'],
        num_samples=2,
        )
