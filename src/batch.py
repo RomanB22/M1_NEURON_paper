@@ -86,20 +86,6 @@ config = {
     }
 }
 
-# =======================
-# job_type    , comm_type
-# =======================
-# 'sge'       , 'socket'    -> job submission through Sun Grid Engine, INET socket based communication
-# 'sge'       , 'sfs'       -> job submission through Sun Grid Engine, communication via shared file system
-# 'sge'       , None        -> job submission through Sun Grid Engine, no communication (only grid or random searches)
-# 'ssh_sge'   , 'sftp'      -> remote SSH onto a gateway, job submission through Sun Grid Engine, communication via Secure FTP
-# 'ssh_slurm' , 'sftp'      -> remote SSH onto a gateway, job submission through Slurm, communication via Secure FTP
-# 'ssh_sge'   , None        -> remote SSH onto a gateway, job submission through Sun Grid Engine, no communication (only grid or random searches)
-# 'ssh_slurm' , None        -> remote SSH onto a gateway, job submission through Slurm, no communication (only grid or random searches)
-# 'sh'        , 'socket'    -> job run directly on local shell, INET socket based communication
-# 'sh'        , 'sfs'       -> job run directly on local shell, communication via shared file system
-# 'sh'        , None        -> job run directly on local shell, no communication (only grid or random searches)
-
 results = search(job_type = config[nameCluster]['job_type'], # job_type defines how the job is submitted to the cluster, e.g. 'ssh_sge', 'ssh_slurm', 'sge', 'sh'
        comm_type = config[nameCluster]['comm_type'], # if a metric and mode is specified, some method of communicating with the host needs to be defined
        label = 'optuna',
@@ -116,3 +102,17 @@ results = search(job_type = config[nameCluster]['job_type'], # job_type defines 
        key=config[nameCluster]['key'],
        num_samples=2,
        )
+
+# =======================
+# job_type    , comm_type
+# =======================
+# 'sge'       , 'socket'    -> job submission through Sun Grid Engine, INET socket based communication
+# 'sge'       , 'sfs'       -> job submission through Sun Grid Engine, communication via shared file system
+# 'sge'       , None        -> job submission through Sun Grid Engine, no communication (only grid or random searches)
+# 'ssh_sge'   , 'sftp'      -> remote SSH onto a gateway, job submission through Sun Grid Engine, communication via Secure FTP
+# 'ssh_slurm' , 'sftp'      -> remote SSH onto a gateway, job submission through Slurm, communication via Secure FTP
+# 'ssh_sge'   , None        -> remote SSH onto a gateway, job submission through Sun Grid Engine, no communication (only grid or random searches)
+# 'ssh_slurm' , None        -> remote SSH onto a gateway, job submission through Slurm, no communication (only grid or random searches)
+# 'sh'        , 'socket'    -> job run directly on local shell, INET socket based communication
+# 'sh'        , 'sfs'       -> job run directly on local shell, communication via shared file system
+# 'sh'        , None        -> job run directly on local shell, no communication (only grid or random searches)
