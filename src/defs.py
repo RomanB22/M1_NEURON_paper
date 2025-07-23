@@ -599,3 +599,12 @@ def defineSubcellularConnectivity(cwd, netParams, layer, ESynMech, SOMESynMech, 
         'density': 'uniform'} 
 
     return None
+
+def loadInVivoSpikes():
+    
+    return None 
+
+
+
+
+

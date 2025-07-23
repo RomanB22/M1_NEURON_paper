@@ -17,9 +17,24 @@ params = {'weightLong.TPO': [0.25, 0.75],
           'IIweights.2': [0.5, 1.5],
           }
 
-nameCluster = 'ssh_sge_gpu'
+nameCluster = 'sh_local'
 
 config = {
+    'sh_local': {'job_type': 'sh',
+                 'comm_type': 'socket',
+                 'output_path': cwd+'/batchData/optuna_batch',
+                 'checkpoint_path': cwd+'/batchData/ray',
+                 'host': '###',
+                 'remote_dir': cwd,
+                 'key': '###',  # replace with your SSH key                
+                 'run_config': {'command': ('unset DISPLAY \n'
+                                            'conda activate M1_CEBRA \n'                     
+                                            'export PYTHONPATH=$PYTHONPATH:$PWD \n' # do it in \src and in parent folder
+                                            'cd src \n'
+                                            'export PYTHONPATH=$PYTHONPATH:$PWD \n' # do it in \src and in parent folder
+                                            'cd .. \n'
+                                            'nrniv -python src/init.py')}
+                 },
     'ssh_sge_gpu': {'job_type': 'ssh_sge',
                     'comm_type': 'sftp',
                     'host': 'grid0',

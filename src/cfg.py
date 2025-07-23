@@ -148,7 +148,7 @@ cfg.cellmod =  {'IT2': 'HH_reduced',
 				'IT6': 'HH_reduced',
 				'CT6': 'HH_reduced'}
 
-ihQuiet = 1.0
+ihQuiet = 1.0 # Factor for ih gbar in PT cells at quiet state
 ihMovement = 0.25
 cfg.ihModel = 'migliore'  # ih model
 cfg.ihGbar = ihQuiet  # multiplicative factor for ih gbar in PT cells
@@ -262,7 +262,7 @@ cfg.weightLong = {'TPO': 0.5*factor, 'TVL': 0.5*factor, 'S1': 0.5*factor, 'S2': 
 cfg.startLong = 0  # start at 0 ms
 TVLquiet = [0, 2.5] 
 TVLmovement = [0, 10]  # TVL firing rate (Hz)
-cfg.ratesLong = {'TPO': [0,5], 'TVL': TVLquiet, 'S1': [0,5], 'S2': [0,5], 'cM1': [0,5], 'M2': [0,5], 'OC': [0,5]}
+cfg.ratesLong = {'TPO': [0, 2.5], 'TVL': TVLquiet, 'S1': [0, 2.5], 'S2': [0, 2.5], 'cM1': [0,5], 'M2': [0,5], 'OC': [0,5]}
 
 
 ## input pulses
