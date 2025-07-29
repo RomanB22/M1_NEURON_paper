@@ -1,6 +1,0 @@
-.vscode/*
-env/*
-*.pyc
-
-data/*
-!data/README.md

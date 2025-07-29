@@ -7,6 +7,13 @@ Contributors: romanbaravalle@gmail.com
 """
 from netpyne import specs
 import gc
+import random
+import pandas as pd
+import numpy as np
+from pathlib import Path
+from collections import defaultdict
+from typing import List, Dict, Union
+import math
 
 #------------------------------------------------------------------------------
 ## Function to calculate the fitness according to required rate
@@ -293,7 +300,7 @@ def addLongConnections(cwd, netParams, cfg, layer):
             netParams.popParams[longPop].pop('rate')
             netParams.popParams[longPop]['spkTimes'] = spks
 
-    if cfg.addInVivoThalamus:
+    if cfg.addInVivoThalamus:   
         netParams.popParams['TVL'] = {'cellModel': 'VecStim',
                                                  'numCells': len(cfg.spikeTimesInVivo),
                                                  'spkTimes': cfg.spikeTimesInVivo,
@@ -600,11 +607,95 @@ def defineSubcellularConnectivity(cwd, netParams, layer, ESynMech, SOMESynMech, 
 
     return None
 
-def loadInVivoSpikes():
+def SampleSpikes(spikeTimesList, cfg, preTone=-2., postTone=2, baselineEnd=-0.5):
+    # Make spktimes positives!! Separate in baseline (1 sec before tone) and movementAndPost (after tone onset)
+    # TODO: UNIFY THE SPIKE TIMES, SO WE HAVE ALL CELLS FIRING IN SIMILAR FREQUENCY. WE WILL NEED TO SAMPLE THE SPIKES TWO OR THREE TIMES 
+    # IF WE WANT MORE
+    # We need to align things in simulation in two ways:
+    # 1) For the movement trials, we need to take a window around 0 in the recordings (-cfg.preMovement, cfg.postTone). For the spikes postTone,
+    #  we add baseline spikes after the 2 sec
+    # 2) For the baseline spikes we can use the time between -2 and -0.5 secs as a baseline, and sample several times until reach the desired length
     
-    return None 
+    
+    # Check that the spiking input is enough to run the simulation
+    if (cfg.SimulateBaseline==False and cfg.preTone>2000.):
+        raise ValueError("cfg.preTone cannot be larger than 2000 ms") # TODO: Add extension for preTone: we could add more baseline to the left actually
+    if (cfg.SimulateBaseline==False and cfg.postTone>2000.):
+        raise ValueError("cfg.preTone cannot be larger than 2000 ms") # TODO: Add extension for postTone: could it be baseline again?
 
 
+    MovementTrials = []
+    BaselineTrials = []
+    for spkList in spikeTimesList:
+        MovementTrialsAux = []
+        BaselineTrialsAux = []
+        for spkTimes in spkList:
+            if (preTone <= spkTimes <= baselineEnd): BaselineTrialsAux.append(1000*(spkTimes+abs(preTone)))
+            if (preTone <= spkTimes <= postTone): MovementTrialsAux.append(1000*(spkTimes+abs(preTone))-cfg.preTone)
+        if len(MovementTrialsAux): MovementTrials.append(MovementTrialsAux)
+        if len(BaselineTrialsAux): BaselineTrials.append(BaselineTrialsAux)
 
+    # Sample spikes
+    baselineSpks = random.choices(BaselineTrials, k=cfg.numCellsLong)
+    baselineSpks = [list(i) for i in baselineSpks]
 
+    movementAndPostSpks = random.choices(MovementTrials, k=cfg.numCellsLong)
+    movementAndPostSpks = [list(i) for i in movementAndPostSpks]
 
+    if cfg.SimulateBaseline==True:
+        sampledSpikesSpan = 1000*(baselineEnd-preTone)
+        numSpans = math.ceil(cfg.duration / sampledSpikesSpan)
+        for num in range(numSpans):
+            # Add a new sampling
+            baselineSpksAux = random.choices(BaselineTrials, k=cfg.numCellsLong)
+            baselineSpksAux = [[elem + (num+1)*sampledSpikesSpan for elem in sublist] for sublist in baselineSpksAux]
+            baselineSpks = [a + b for a, b in zip(baselineSpks, baselineSpksAux)]
+
+    return baselineSpks, movementAndPostSpks
+
+def cellPerlayer(numbers):
+    Layers = {'1': [0.0, 0.1*1350], '2': [0.1*1350,0.29*1350], '4': [0.29*1350,0.37*1350], '5A': [0.3*1350,0.47*1350], '5B': [0.47*1350,0.8*1350], '6': [0.8*1350, 1.0*1350]}
+
+    from collections import defaultdict
+
+    counts = defaultdict(int)
+
+    for num in numbers:
+        for layer, (low, high) in Layers.items():
+            if low <= num < high:
+                counts[layer] += 1
+                break  # Assumes one number belongs to only one layer
+
+    return counts
+
+def loadThalSpikes(cwd, cfg):
+    import pickle as pkl
+    with open(cwd+"/data/spikingData/ThRates.pkl", "rb") as f:
+        data = pkl.load(f)
+    spikeTimesList = []
+    M1sampledCells = []
+    foldersName = []
+
+    for folder in data.keys():
+        for i in range(len(data[folder].keys())-3):
+            spikeTimesList[len(spikeTimesList):] = list(data[folder]['trial_%d' % i]['spkt'])
+        cellDepths = data[folder]['cell_depths']
+        counts = cellPerlayer(cellDepths)
+        M1sampledCells.append(counts)
+        foldersName.append(folder)
+
+    baselineSpks, movementAndPostSpks = SampleSpikes(spikeTimesList, cfg)
+
+    return baselineSpks, movementAndPostSpks, M1sampledCells, foldersName
+
+def average_dict_entries(dicts: List[Union[dict, defaultdict]]) -> Dict[str, float]:
+    totals = defaultdict(int)
+    counts = defaultdict(int)
+
+    for entry in dicts:
+        for key, value in entry.items():
+            totals[key] += value
+            counts[key] += 1
+
+    averages = {key: int(totals[key] / counts[key]) for key in totals}
+    return averages
