@@ -16,13 +16,23 @@ Previous versions of the model were described in the following papers:
 
 This specific version of the model was extended to include two new types of interneurons -- NGF and VIP -- and has not been previously published.
 
+## Download the Repository
+
+To clone the dev branch of the repository, open a terminal in the directory where you'd like to store the project and run:
+
+```bash
+git clone --branch Manifolds --single-branch https://github.com/RomanB22/M1_NEURON_paper.git M1_Manifolds
+````
+
+After that, make sure to move to the repo folder using `cd M1_Manifolds`.
 
 ## Setup and execution
 
 Requires NEURON with Python and MPI support. 
 
-1. From /sim run `nrnivmodl ../mod`. This should create a directory called x86_64. 
-2. To run type: `./runsim [num_proc]' or the equivalent `mpiexec -np [num_proc] nrniv -python -mpi init.py`
+1. From parent folder run `nrnivmodl mod`. This should create a directory called x86_64.
+2. Add project root directory to PYTHONPATH: `export PYTHONPATH=PYTHONPATH:$PWD`
+3. To run type: `mpiexec -np [num_proc] nrniv -python -mpi src/init.py`
 
 ## Overview of file structure:
 
@@ -41,6 +51,8 @@ Requires NEURON with Python and MPI support.
 * /mod: NMODL files containing the ionic channel and synaptic mechanisms used in the model 
 
 * /data: where the model data is stored 
+
+* /manifolds: where the data related to manifolds is stored 
 
 * /batchData: where the simulation data is stored 
 
