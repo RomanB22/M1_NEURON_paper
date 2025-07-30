@@ -89,9 +89,9 @@ cfg.recordTraces = {'V_soma': {'sec':'soma', 'loc':0.5, 'var':'v'}}#,
 cfg.recordStim = False
 cfg.recordTime = False  
 cfg.recordStep = cfg.dt
-cfg.cellParamLabels = []#['IT2_reduced', 'IT4_reduced', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 
-                      #'CT6_reduced', 'SOM_reduced', 'IT5A_full',  'PV_reduced', 'VIP_reduced', 'NGF_reduced', 
-                      #'PT5B_full'] #  # list of cell rules to load from file
+cfg.cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 
+                      'CT6_reduced', 'SOM_reduced', 'IT5A_full',  'PV_reduced', 'VIP_reduced', 'NGF_reduced', 
+                      'PT5B_full'] #  # list of cell rules to load from file
 
 #------------------------------------------------------------------------------
 # Saving
