@@ -30,7 +30,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 cfg.preTone = 1000
 cfg.postTone = 1000 # Movement part
-cfg.SimulateBaseline = False
+cfg.SimulateBaseline = True
 cfg.addInVivoThalamus = True # To add the sampled spike times from in-vivo recordings on TVL
 cfg.duration = cfg.preTone + cfg.postTone
 cfg.dt = 0.025
@@ -59,7 +59,7 @@ cfg.checkErrorsVerbose = False
 cfg.rand123GlobalIndex = None
 cfg.coreneuron = True
 cfg.random123 = True
-cfg.gpu = False
+cfg.gpu = True
 #------------------------------------------------------------------------------
 # Recording 
 #------------------------------------------------------------------------------
@@ -96,15 +96,15 @@ cfg.cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_reduced', 'IT5B_reduc
 # Saving
 #------------------------------------------------------------------------------
 cfg.version = 104 # version number for the simulation
-cfg.simLabel = 'v%s_tune3' % str(cfg.version)  # label for the simulation
+cfg.simLabel = 'v%s_tune0' % str(cfg.version)  # label for the simulation
 cfg.saveFolder = cwd+'/batchData/v%s_manualTune' % str(cfg.version)
-cfg.savePickle = False
-cfg.saveJson = True
-cfg.saveDataInclude = ['simData', 'simConfig', 'netParams']#, 'net']
+cfg.savePickle = True
+cfg.saveJson = False
+cfg.saveDataInclude = ['simData', 'simConfig'] #, 'netParams', 'net']
 cfg.backupCfgFile = None #['cfg.py', 'backupcfg/'] 
 cfg.gatherOnlySimData = False
 cfg.saveCellSecs = False
-cfg.saveCellConns = 0
+cfg.saveCellConns = False
 cfg.compactConnFormat = 0
 
 #------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ cfg.compactConnFormat = 0
 #------------------------------------------------------------------------------
 with open(cwd + '/cells/popColors.pkl', 'rb') as fileObj: popColors = pickle.load(fileObj)['popColors']
 
-allpops = ['TVL']
+# allpops = ['TVL']
 
 cfg.analysis['plotRaster'] = {'include': allpops, 'orderBy': ['pop', 'y'], 'timeRange': [0,cfg.duration],
                              'saveFig': True, 'showFig': False, 'popRates': True, 
@@ -156,7 +156,7 @@ cfg.cellmod =  {'IT2': 'HH_reduced',
 ihQuiet = 1.0 # Factor for ih gbar in PT cells at quiet state
 ihMovement = 0.25
 cfg.ihModel = 'migliore'  # ih model
-cfg.ihGbar = ihQuiet  # multiplicative factor for ih gbar in PT cells
+cfg.ihGbar = ihQuiet if cfg.SimulateBaseline else ihMovement # multiplicative factor for ih gbar in PT cells
 cfg.ihGbarZD = None # multiplicative factor for ih gbar in PT cells
 cfg.ihGbarBasal = 1.0 # 0.1 # multiplicative factor for ih gbar in PT cells
 cfg.ihlkc = 0.2 # ih leak param (used in Migliore)
@@ -196,7 +196,7 @@ cfg.distributeSynsUniformly = True
 #------------------------------------------------------------------------------
 # Network 
 #------------------------------------------------------------------------------
-cfg.singleCellPops = True  # Create pops with 1 single cell (to debug)
+cfg.singleCellPops = False  # Create pops with 1 single cell (to debug)
 cfg.weightNorm = True  # use weight normalization
 cfg.weightNormThreshold = 4.0  # weight normalization factor threshold
 

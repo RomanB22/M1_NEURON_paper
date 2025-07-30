@@ -17,7 +17,7 @@ params = {'weightLong.TPO': [0.25, 0.75],
           'IIweights.2': [0.5, 1.5],
           }
 
-nameCluster = 'sh_local'
+nameCluster = 'ssh_sge_gpu'
 
 config = {
     'sh_local': {'job_type': 'sh',
@@ -115,7 +115,7 @@ results = search(job_type = config[nameCluster]['job_type'], # job_type defines 
        remote_dir=config[nameCluster]['remote_dir'],
        host=config[nameCluster]['host'],
        key=config[nameCluster]['key'],
-       num_samples=2,
+       num_samples=150,
        )
 
 # =======================

@@ -608,21 +608,11 @@ def defineSubcellularConnectivity(cwd, netParams, layer, ESynMech, SOMESynMech, 
     return None
 
 def SampleSpikes(spikeTimesList, cfg, preTone=-2., postTone=2, baselineEnd=-0.5, skipEmpty=False):
-    # Make spktimes positives!! Separate in baseline (1 sec before tone) and movementAndPost (after tone onset)
-    # TODO: UNIFY THE SPIKE TIMES, SO WE HAVE ALL CELLS FIRING IN SIMILAR FREQUENCY. WE WILL NEED TO SAMPLE THE SPIKES TWO OR THREE TIMES 
-    # IF WE WANT MORE
-    # We need to align things in simulation in two ways:
-    # 1) For the movement trials, we need to take a window around 0 in the recordings (-cfg.preMovement, cfg.postTone). For the spikes postTone,
-    #  we add baseline spikes after the 2 sec
-    # 2) For the baseline spikes we can use the time between -2 and -0.5 secs as a baseline, and sample several times until reach the desired length
-    
-    
     # Check that the spiking input is enough to run the simulation
     if (cfg.SimulateBaseline==False and cfg.preTone>2000.):
         raise ValueError("cfg.preTone cannot be larger than 2000 ms") # TODO: Add extension for preTone: we could add more baseline to the left actually
     if (cfg.SimulateBaseline==False and cfg.postTone>2000.):
         raise ValueError("cfg.preTone cannot be larger than 2000 ms") # TODO: Add extension for postTone: could it be baseline again?
-
 
     MovementTrials = []
     BaselineTrials = []
@@ -640,8 +630,6 @@ def SampleSpikes(spikeTimesList, cfg, preTone=-2., postTone=2, baselineEnd=-0.5,
         else:
             MovementTrials.append(MovementTrialsAux)
             BaselineTrials.append(BaselineTrialsAux)
-        # print(MovementTrialsAux)
-        # quit()
     # Sample spikes
     baselineSpks = random.choices(BaselineTrials, k=cfg.numCellsLong)
     baselineSpks = [list(i) for i in baselineSpks]
