@@ -12,6 +12,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 import defs
+import gc
 
 cwd = str(Path.cwd())
 
@@ -309,3 +310,5 @@ if cfg.addInVivoThalamus:
 
 	cfg.numSampledCellsPerLayer = defs.average_dict_entries(M1sampledCells)
 	cfg.spikeTimesInVivo = np.array(baselineSpks, dtype=object) if cfg.SimulateBaseline else np.array(movementAndPostSpks, dtype=object)
+	del baselineSpks, movementAndPostSpks, M1sampledCells, foldersName
+	gc.collect()
