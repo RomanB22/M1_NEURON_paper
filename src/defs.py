@@ -607,7 +607,7 @@ def defineSubcellularConnectivity(cwd, netParams, layer, ESynMech, SOMESynMech, 
 
     return None
 
-def SampleSpikes(spikeTimesList, cfg, preTone=-2., postTone=2, baselineEnd=-0.5):
+def SampleSpikes(spikeTimesList, cfg, preTone=-2., postTone=2, baselineEnd=-0.5, skipEmpty=False):
     # Make spktimes positives!! Separate in baseline (1 sec before tone) and movementAndPost (after tone onset)
     # TODO: UNIFY THE SPIKE TIMES, SO WE HAVE ALL CELLS FIRING IN SIMILAR FREQUENCY. WE WILL NEED TO SAMPLE THE SPIKES TWO OR THREE TIMES 
     # IF WE WANT MORE
@@ -631,10 +631,17 @@ def SampleSpikes(spikeTimesList, cfg, preTone=-2., postTone=2, baselineEnd=-0.5)
         BaselineTrialsAux = []
         for spkTimes in spkList:
             if (preTone <= spkTimes <= baselineEnd): BaselineTrialsAux.append(1000*(spkTimes+abs(preTone)))
-            if (preTone <= spkTimes <= postTone): MovementTrialsAux.append(1000*(spkTimes+abs(preTone))-cfg.preTone)
-        if len(MovementTrialsAux): MovementTrials.append(MovementTrialsAux)
-        if len(BaselineTrialsAux): BaselineTrials.append(BaselineTrialsAux)
-
+            if (preTone+cfg.preTone/1000. <= spkTimes <= postTone-cfg.postTone/1000.): 
+                PositiveTimes = 1000*(spkTimes+abs(preTone))-cfg.preTone
+                MovementTrialsAux.append(PositiveTimes)
+        if skipEmpty:
+            if len(MovementTrialsAux)>0: MovementTrials.append(MovementTrialsAux)
+            if len(BaselineTrialsAux)>0: BaselineTrials.append(BaselineTrialsAux)
+        else:
+            MovementTrials.append(MovementTrialsAux)
+            BaselineTrials.append(BaselineTrialsAux)
+        # print(MovementTrialsAux)
+        # quit()
     # Sample spikes
     baselineSpks = random.choices(BaselineTrials, k=cfg.numCellsLong)
     baselineSpks = [list(i) for i in baselineSpks]
@@ -668,7 +675,7 @@ def cellPerlayer(numbers):
 
     return counts
 
-def loadThalSpikes(cwd, cfg):
+def loadThalSpikes(cwd, cfg, skipEmpty=False):
     import pickle as pkl
     with open(cwd+"/data/spikingData/ThRates.pkl", "rb") as f:
         data = pkl.load(f)
@@ -684,7 +691,7 @@ def loadThalSpikes(cwd, cfg):
         M1sampledCells.append(counts)
         foldersName.append(folder)
 
-    baselineSpks, movementAndPostSpks = SampleSpikes(spikeTimesList, cfg)
+    baselineSpks, movementAndPostSpks = SampleSpikes(spikeTimesList, cfg, skipEmpty=skipEmpty)
 
     return baselineSpks, movementAndPostSpks, M1sampledCells, foldersName
 

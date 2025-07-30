@@ -30,7 +30,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 cfg.preTone = 1000
 cfg.postTone = 1000 # Movement part
-cfg.SimulateBaseline = True
+cfg.SimulateBaseline = False
 cfg.addInVivoThalamus = True # To add the sampled spike times from in-vivo recordings on TVL
 cfg.duration = cfg.preTone + cfg.postTone
 cfg.dt = 0.025
@@ -96,7 +96,7 @@ cfg.cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_reduced', 'IT5B_reduc
 # Saving
 #------------------------------------------------------------------------------
 cfg.version = 104 # version number for the simulation
-cfg.simLabel = 'v%s_tune0' % str(cfg.version)  # label for the simulation
+cfg.simLabel = 'v%s_tune3' % str(cfg.version)  # label for the simulation
 cfg.saveFolder = cwd+'/batchData/v%s_manualTune' % str(cfg.version)
 cfg.savePickle = False
 cfg.saveJson = True
@@ -112,7 +112,7 @@ cfg.compactConnFormat = 0
 #------------------------------------------------------------------------------
 with open(cwd + '/cells/popColors.pkl', 'rb') as fileObj: popColors = pickle.load(fileObj)['popColors']
 
-# allpops = ['TVL']
+allpops = ['TVL']
 
 cfg.analysis['plotRaster'] = {'include': allpops, 'orderBy': ['pop', 'y'], 'timeRange': [0,cfg.duration],
                              'saveFig': True, 'showFig': False, 'popRates': True, 
@@ -305,7 +305,7 @@ cfg.NetStim1 = {'pop': 'IT2', 'ynorm':[0,1], 'sec': 'soma', 'loc': 0.5, 'synMech
 #------------------------------------------------------------------------------
 
 if cfg.addInVivoThalamus:
-	baselineSpks, movementAndPostSpks, M1sampledCells, foldersName = defs.loadThalSpikes(cwd, cfg)
+	baselineSpks, movementAndPostSpks, M1sampledCells, foldersName = defs.loadThalSpikes(cwd, cfg, skipEmpty=False)
 
 	cfg.numSampledCellsPerLayer = defs.average_dict_entries(M1sampledCells)
 	cfg.spikeTimesInVivo = np.array(baselineSpks, dtype=object) if cfg.SimulateBaseline else np.array(movementAndPostSpks, dtype=object)
