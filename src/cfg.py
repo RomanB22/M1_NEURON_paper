@@ -309,6 +309,6 @@ if cfg.addInVivoThalamus:
 	baselineSpks, movementAndPostSpks, M1sampledCells, foldersName = defs.loadThalSpikes(cwd, cfg, skipEmpty=False)
 
 	cfg.numSampledCellsPerLayer = defs.average_dict_entries(M1sampledCells)
-	cfg.spikeTimesInVivo = np.array(baselineSpks, dtype=object) if cfg.SimulateBaseline else np.array(movementAndPostSpks, dtype=object)
+	cfg.spikeTimesInVivo = np.array(baselineSpks, dtype=object).tolist() if cfg.SimulateBaseline else np.array(movementAndPostSpks, dtype=object).tolist()
 	del baselineSpks, movementAndPostSpks, M1sampledCells, foldersName
 	gc.collect()
