@@ -138,6 +138,12 @@ def PT5BFullModel(cfg, cwd, saveCellParams):
     netParamsAux.addCellParamsWeightNorm('PT5B_full', cwd+'/conn/PT5B_full_weightNorm.pkl', threshold=cfg.weightNormThreshold)  # load weight norm
     if saveCellParams: netParamsAux.saveCellParamsRule(label='PT5B_full', fileName=cwd+'/cells/PT5B_full_cellParams.pkl')
 
+    # for secName in cellRule['secs']:
+    #     print(secName, np.mean(cellRule['secs'][secName]['mechs']['hd']['gbar']))
+    #     # print(cellRule['secs'][secName]['mechs']['na12'])
+    #     # print(cellRule['secs'][secName]['mechs']['na12mut'])
+    # quit()
+
     del netParamsAux
     gc.collect()  # collect garbage to free memory
     # return the cell rule
