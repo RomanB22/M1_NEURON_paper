@@ -4,7 +4,7 @@ Multiscale model of mouse primary motor cortex (M1) developed using NetPyNE (www
 
 The model was used to benchmark CoreNEURON in the following paper:
 
-- Awile O, Kumbhar P, Cornu N, Dura-Bernal S, Gonzalo JK, Lupton O, Magkanaris I, McDougal R, Newton AJH, Pereira A, Savulescu A, Carnevale NT, Hines M, Lytton WW, Schurmann F. **Modernizing the NEURON Simulator for Sustainability, Portability, and Performance**. Frontiers in Neuroinformatics (Under Revision). Research Topic: "Neuroscience, Computing, Performance, and Benchmarks: Why It Matters to Neuroscience How Fast We Can Compute." 
+- Awile O, Kumbhar P, Cornu N, Dura-Bernal S, Gonzalo JK, Lupton O, Magkanaris I, McDougal R, Newton AJH, Pereira A, Savulescu A, Carnevale NT, Hines M, Lytton WW, Schurmann F. **Modernizing the NEURON Simulator for Sustainability, Portability, and Performance**. Frontiers in Neuroinformatics (Under Revision). Research Topic: "Neuroscience, Computing, Performance, and Benchmarks: Why It Matters to Neuroscience How Fast We Can Compute."
 
 
 Previous versions of the model were described in the following papers:
@@ -26,11 +26,13 @@ Requires NEURON with Python and MPI support.
 
 ## Overview of file structure:
 
-* /sim/init.py: Main executable; calls functions from other modules. Sets what parameter file to use.
+* /src/init.py: Main executable; calls functions from other modules. Sets what parameter file to use.
 
-* /sim/netParams.py: Network parameters
+* /src/netParams.py: Network parameters
 
-* /sim/cfg.py: Simulation configuration
+* /src/cfg.py: Simulation configuration
+
+* /src/defs.py: Functions to define cell types, connections and auxiliar functions to setup the in-vivo spikes for the model. 
 
 * /cells: source .py, .hoc, .json or .pkl files for the different cell types used in the model; these will be imported into netpyne
 
@@ -38,7 +40,9 @@ Requires NEURON with Python and MPI support.
 
 * /mod: NMODL files containing the ionic channel and synaptic mechanisms used in the model 
 
-* /data: where the model and simulation data is stored 
+* /data: where the model data is stored 
+
+* /batchData: where the simulation data is stored 
 
 
 For further information please contact: salvadordura@gmail.com 
