@@ -3,6 +3,7 @@ from pathlib import Path
 cwd = str(Path.cwd())
 
 params = {'weightLong.TPO': [0.25, 0.75],
+          'weightLong.TVL': [0.25, 0.75],
           'weightLong.S1': [0.25, 0.75],
           'weightLong.S2': [0.25, 0.75],
           'weightLong.cM1': [0.25, 0.75],
