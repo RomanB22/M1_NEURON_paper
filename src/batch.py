@@ -40,6 +40,7 @@ config = {
                     'comm_type': 'socket',
                     'host': 'grid0',
                     'remote_dir': '/ddn/rbarav/M1_Manifolds',
+                    'key': '###',  # replace with your SSH key
                     'output_path':'./batchData/optuna_batch',
                     'checkpoint_path': './batchData/ray',
                     'run_config':  {'queue': 'gpu.q',
