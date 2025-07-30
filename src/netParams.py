@@ -222,10 +222,11 @@ if 'PT5B_full' not in loadCellParams:
                                      threshold=cfg.weightNormThreshold)
     
     # Test that mutant is being loaded!
-    # for secName in cellRule['secs']:
-    #     print(cellRule['secs'][secName]['mechs']['na12'])
-    #     print(cellRule['secs'][secName]['mechs']['na12mut'])
-    # quit()
+    for secName in cellRule['secs']:
+        print(secName, cellRule['secs'][secName]['mechs']['Ih']['gIhbar'])
+        # print(cellRule['secs'][secName]['mechs']['na12'])
+        # print(cellRule['secs'][secName]['mechs']['na12mut'])
+    quit()
 
     # save to json with all the above modifications so easier/faster to load
     if saveCellParams: netParams.saveCellParamsRule(label='PT5B_full', fileName='../cells/Na12HH16HH_TF.json')
