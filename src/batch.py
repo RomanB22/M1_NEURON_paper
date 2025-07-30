@@ -38,7 +38,7 @@ config = {
                  },
     'sge_gpu': {'job_type': 'sge',
                     'comm_type': 'socket',
-                    'host': 'grid0',
+                    'host': '###',
                     'remote_dir': '/ddn/rbarav/M1_Manifolds',
                     'key': '###',  # replace with your SSH key
                     'output_path':'./batchData/optuna_batch',
