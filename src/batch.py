@@ -57,6 +57,25 @@ config = {
                                                 'cd .. \n'                                               
                                                 'mpiexec -n $NSLOTS ./x86_64/special -python -mpi src/init.py')}
     },
+    'sge_cpu': { 'job_type': 'sge',
+                    'comm_type': 'socket',
+                    'host': '###',
+                    'remote_dir': '/ddn/rbarav/M1_Manifolds',
+                    'key': '###',  # replace with your SSH key
+                    'output_path':'./batchData/optuna_batch',
+                    'checkpoint_path': './batchData/ray',
+                    'run_config':  {'queue': 'cpu.q',
+                                    'cores': 50,
+                                    'vmem': '90G',
+                                    'realtime': '15:00:00',
+                                    'command': ('conda activate M1_dev  \n'
+                                                'export PYTHONPATH=$PYTHONPATH:$PWD \n' # do it in \src and in parent folder
+                                                'cd src \n'
+                                                'export PYTHONPATH=$PYTHONPATH:$PWD \n' # do it in \src and in parent folder
+                                                'cd .. \n'
+                                                'export LD_LIBRARY_PATH="/ddn/rbarav/miniconda3/envs/M1_dev/lib/python3.10/site-packages/mpi4py_mpich.libs" \n'    
+                                                'mpiexec -n $NSLOTS -hosts $(hostname) nrniv -python -mpi src/init.py')}
+    },
     'ssh_sge_gpu': {'job_type': 'ssh_sge',
                     'comm_type': 'sftp',
                     'host': 'grid0',
