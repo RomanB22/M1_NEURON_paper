@@ -18,7 +18,7 @@ params = {'weightLong.TPO': [0.25, 0.75],
           'IIweights.2': [0.5, 1.5],
           }
 
-nameCluster = 'ssh_sge_gpu'
+nameCluster = 'sge_gpu'
 
 config = {
     'sh_local': {'job_type': 'sh',
@@ -36,6 +36,26 @@ config = {
                                             'cd .. \n'
                                             'nrniv -python src/init.py')}
                  },
+    'sge_gpu': {'job_type': 'sge',
+                    'comm_type': 'socket',
+                    'host': 'grid0',
+                    'remote_dir': '/ddn/rbarav/M1_Manifolds',
+                    'output_path':'./batchData/optuna_batch',
+                    'checkpoint_path': './batchData/ray',
+                    'run_config':  {'queue': 'gpu.q',
+                                    'cores': 10,
+                                    'vmem': '90G',
+                                    'realtime': '15:00:00',
+                                    'command': ('conda activate GPU  \n'
+                                                'export PATH=$HOME/neuronGPU/bin:$PATH \n' 
+                                                'export PYTHONPATH=$HOME/neuronGPU/lib/python:$PYTHONPATH \n'
+                                                'export LD_LIBRARY_PATH="/usr/lib64/openmpi/lib/":"/opt/nvidia/hpc_sdk/Linux_x86_64/23.9/compilers/lib" \n'  
+                                                'export PYTHONPATH=$PYTHONPATH:$PWD \n' # do it in \src and in parent folder
+                                                'cd src \n'
+                                                'export PYTHONPATH=$PYTHONPATH:$PWD \n' # do it in \src and in parent folder
+                                                'cd .. \n'                                               
+                                                'mpiexec -n $NSLOTS ./x86_64/special -python -mpi src/init.py')}
+    },
     'ssh_sge_gpu': {'job_type': 'ssh_sge',
                     'comm_type': 'sftp',
                     'host': 'grid0',
