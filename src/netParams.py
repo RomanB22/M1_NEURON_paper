@@ -221,7 +221,7 @@ if 'PT5B_full' not in loadCellParams:
     netParams.addCellParamsWeightNorm('PT5B_full', '../conn/PT5B_full_weightNorm.pkl',
                                      threshold=cfg.weightNormThreshold)
     
-    # Test that mutant is being loaded!
+    # Test that mutant is being loaded! and test Ih
     # for secName in cellRule['secs']:
     #     print(secName, cellRule['secs'][secName]['mechs']['Ih']['gIhbar'])
     #     # print(cellRule['secs'][secName]['mechs']['na12'])
