@@ -17,21 +17,18 @@ import math
 
 #------------------------------------------------------------------------------
 ## Function to calculate the fitness according to required rate
-def rateFitnessFunc(simData, print=False, **kwargs):
+def rateFitnessFunc(simData, **kwargs):
     import numpy as np
     pops = kwargs['pops']
     maxFitness = kwargs['maxFitness']
 
-    popFitness = [min(np.exp(abs(v['target'] - simData['popRates'][k]) / v['width']), maxFitness)
-                  if simData['popRates'][k] > v['min'] else maxFitness for k, v in pops.items()]
+    popFitness = [min(np.exp(abs(v['target'] - simData['popRates'][k])/v['width']), maxFitness) 
+                if simData['popRates'][k] > v['min'] else maxFitness for k,v in pops.items()]
     fitness = np.mean(popFitness)
 
-    if print:
-        popInfo = '; '.join(
-            ['%s rate=%.1f fit=%1.f' % (p, simData['popRates'][p], popFitness[i]) for i, p in enumerate(pops)])
-        print('  ' + popInfo)
+    popInfo = '; '.join(['%s rate=%.1f fit=%1.f'%(p, simData['popRates'][p], popFitness[i]) for i,p in enumerate(pops)])
+    print('  '+popInfo)
     return fitness
-
 #------------------------------------------------------------------------------
 ## Function to modify cell params during sim (e.g. modify PT ih)
 def modifyMechsFunc(simTime, cfg):

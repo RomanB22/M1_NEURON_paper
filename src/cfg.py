@@ -60,7 +60,7 @@ cfg.checkErrorsVerbose = False
 cfg.rand123GlobalIndex = None
 cfg.coreneuron = True
 cfg.random123 = True
-cfg.gpu = True
+cfg.gpu = False
 #------------------------------------------------------------------------------
 # Recording 
 #------------------------------------------------------------------------------
@@ -208,7 +208,7 @@ cfg.scale = 1.0
 cfg.sizeY = 1350.0
 cfg.sizeX = 300.0
 cfg.sizeZ = 300.0
-cfg.scaleDensity = 1.0
+cfg.scaleDensity = 0.15
 cfg.correctBorderThreshold = 150.0
 cfg.normLayers = {'1': [0.0, 0.1], '2': [0.1,0.29], '4': [0.29,0.37], '5A': [0.37,0.47], '5B': [0.47,0.8], '6': [0.8, 1.0]}
 
@@ -309,6 +309,4 @@ if cfg.addInVivoThalamus:
 	baselineSpks, movementAndPostSpks, M1sampledCells, foldersName = defs.loadThalSpikes(cwd, cfg, skipEmpty=False)
 
 	cfg.numSampledCellsPerLayer = defs.average_dict_entries(M1sampledCells)
-	cfg.spikeTimesInVivo = np.array(baselineSpks, dtype=object).tolist() if cfg.SimulateBaseline else np.array(movementAndPostSpks, dtype=object).tolist()
-	del baselineSpks, movementAndPostSpks, M1sampledCells, foldersName
-	gc.collect()
+	cfg.spikeTimesInVivo = baselineSpks if cfg.SimulateBaseline else movementAndPostSpks

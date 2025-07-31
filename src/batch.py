@@ -37,7 +37,7 @@ config = {
                                             'nrniv -python src/init.py')}
                  },
     'sge_gpu': {'job_type': 'sge',
-                    'comm_type': 'socket',
+                    'comm_type': 'sfs',
                     'host': '###',
                     'remote_dir': '/ddn/rbarav/M1_Manifolds',
                     'key': '###',  # replace with your SSH key
@@ -58,7 +58,7 @@ config = {
                                                 'mpiexec -n $NSLOTS ./x86_64/special -python -mpi src/init.py')}
     },
     'sge_cpu': { 'job_type': 'sge',
-                    'comm_type': 'socket',
+                    'comm_type': 'sfs',
                     'host': '###',
                     'remote_dir': '/ddn/rbarav/M1_Manifolds',
                     'key': '###',  # replace with your SSH key
