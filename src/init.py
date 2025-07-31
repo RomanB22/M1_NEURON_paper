@@ -46,8 +46,8 @@ sim.gatherData()                  			# gather spiking data and cell info from ea
 # sim.saveDataInNodes()
 # sim.gatherDataFromFiles()
 
-sim.allSimData.numSampledCellsPerLayer = cfg.numSampledCellsPerLayer
-sim.allSimData.norm_layers = cfg.normLayers
+sim.simData.numSampledCellsPerLayer = cfg.numSampledCellsPerLayer
+sim.simData.norm_layers = cfg.normLayers
 
 sim.saveData()                    			# save params, cell info and sim output to file (pickle,mat,txt,etc)#
 sim.analysis.plotData()         			# plot spike raster etc

@@ -18,7 +18,7 @@ params = {'weightLong.TPO': [0.25, 0.75],
           'IIweights.2': [0.5, 1.5],
           }
 
-nameCluster = 'ssh_sge_cpu'
+nameCluster = 'ssh_sge_gpu'
 
 config = {
     'sh_local': {'job_type': 'sh',
@@ -106,9 +106,9 @@ config = {
                     'checkpoint_path': './batchData/ray',
                     'run_config':  {'queue': 'cpu.q',
                                     'cores': 50,
-                                    'vmem': '90G',
+                                    'vmem': '150G',
                                     'realtime': '15:00:00',
-                                    'command': ('conda activate M1  \n'
+                                    'command': ('conda activate M1_dev \n'
                                                 'export PYTHONPATH=$PYTHONPATH:$PWD \n' # do it in \src and in parent folder
                                                 'cd src \n'
                                                 'export PYTHONPATH=$PYTHONPATH:$PWD \n' # do it in \src and in parent folder
@@ -144,7 +144,7 @@ config = {
 
 results = search(job_type = config[nameCluster]['job_type'], # job_type defines how the job is submitted to the cluster, e.g. 'ssh_sge', 'ssh_slurm', 'sge', 'sh'
        comm_type = config[nameCluster]['comm_type'], # if a metric and mode is specified, some method of communicating with the host needs to be defined
-       label = 'optuna2',
+       label = 'optuna',
        params = params,
        output_path = config[nameCluster]['output_path'],
        checkpoint_path = config[nameCluster]['checkpoint_path'],
