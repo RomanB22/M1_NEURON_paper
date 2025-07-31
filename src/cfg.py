@@ -29,8 +29,8 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.preTone = 500
-cfg.postTone = 500 # Movement part
+cfg.preTone = 1000
+cfg.postTone = 1000 # Movement part
 cfg.SimulateBaseline = True
 cfg.addInVivoThalamus = True # To add the sampled spike times from in-vivo recordings on TVL
 cfg.duration = cfg.preTone + cfg.postTone
@@ -52,7 +52,7 @@ cfg.validateNetParams = True
 cfg.progressBar = 0
 
 cfg.includeParamsLabel = False
-cfg.printPopAvgRates = [0, cfg.duration]
+cfg.printPopAvgRates = [1000, cfg.duration]
 
 cfg.checkErrors = False
 cfg.checkErrorsVerbose = False
