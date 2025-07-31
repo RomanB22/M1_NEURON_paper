@@ -135,12 +135,6 @@ def PT5BFullModel(cfg, cwd, saveCellParams):
     netParamsAux.addCellParamsWeightNorm('PT5B_full', cwd+'/conn/PT5B_full_weightNorm.pkl', threshold=cfg.weightNormThreshold)  # load weight norm
     if saveCellParams: netParamsAux.saveCellParamsRule(label='PT5B_full', fileName=cwd+'/cells/PT5B_full_cellParams.pkl')
 
-    # for secName in cellRule['secs']:
-    #     print(secName, np.mean(cellRule['secs'][secName]['mechs']['hd']['gbar']))
-    #     # print(cellRule['secs'][secName]['mechs']['na12'])
-    #     # print(cellRule['secs'][secName]['mechs']['na12mut'])
-    # quit()
-
     del netParamsAux
     gc.collect()  # collect garbage to free memory
     # return the cell rule
@@ -624,8 +618,8 @@ def SampleSpikes(spikeTimesList, cfg, preTone=-2., postTone=2, baselineEnd=-0.5,
         BaselineTrialsAux = []
         for spkTimes in spkList:
             if (preTone <= spkTimes <= baselineEnd): BaselineTrialsAux.append(1000*(spkTimes+abs(preTone)))
-            if (preTone+cfg.preTone/1000. <= spkTimes <= postTone-cfg.postTone/1000.): 
-                PositiveTimes = 1000*(spkTimes+abs(preTone))-cfg.preTone
+            if (-cfg.preTone/1000. <= spkTimes <= cfg.postTone/1000.): 
+                PositiveTimes = 1000*spkTimes+cfg.preTone
                 MovementTrialsAux.append(PositiveTimes)
         if skipEmpty:
             if len(MovementTrialsAux)>0: MovementTrials.append(MovementTrialsAux)
@@ -697,3 +691,10 @@ def average_dict_entries(dicts: List[Union[dict, defaultdict]]) -> Dict[str, flo
 
     averages = {key: int(totals[key] / counts[key]) for key in totals}
     return averages
+
+def trimTVLSpikes(spikeList, cfg):
+    trimmedList = []
+    for i in spikeList:
+        trimmedList.append([j for j in i if (0<=j<=cfg.duration)])
+    
+    return trimmedList

@@ -29,8 +29,8 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.preTone = 1000
-cfg.postTone = 1000 # Movement part
+cfg.preTone = 500
+cfg.postTone = 500 # Movement part
 cfg.SimulateBaseline = True
 cfg.addInVivoThalamus = True # To add the sampled spike times from in-vivo recordings on TVL
 cfg.duration = cfg.preTone + cfg.postTone
@@ -49,10 +49,10 @@ cfg.printSynsAfterRule = False
 cfg.pt3dRelativeToCellLocation = True
 cfg.oneSynPerNetcon = True  # only affects conns not in subconnParams; produces identical results
 cfg.validateNetParams = True
-cfg.progressBar = 0
+# cfg.progressBar = 0
 
 cfg.includeParamsLabel = False
-cfg.printPopAvgRates = False #[0, cfg.duration]
+cfg.printPopAvgRates = [0, cfg.duration]
 
 cfg.checkErrors = False
 cfg.checkErrorsVerbose = False
@@ -60,7 +60,7 @@ cfg.checkErrorsVerbose = False
 cfg.rand123GlobalIndex = None
 cfg.coreneuron = True
 cfg.random123 = True
-cfg.gpu = False
+cfg.gpu = True
 #------------------------------------------------------------------------------
 # Recording 
 #------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ cfg.compactConnFormat = 0
 #------------------------------------------------------------------------------
 with open(cwd + '/cells/popColors.pkl', 'rb') as fileObj: popColors = pickle.load(fileObj)['popColors']
 
-# allpops = ['TVL']
+allpops = ['TVL']
 
 cfg.analysis['plotRaster'] = {'include': allpops, 'orderBy': ['pop', 'y'], 'timeRange': [0,cfg.duration],
                              'saveFig': True, 'showFig': False, 'popRates': True, 
@@ -124,10 +124,9 @@ cfg.analysis['plotTraces'] = {'include': cfg.recordCells, 'timeRange': [0,cfg.du
                               'overlay': True, 'oneFigPer': 'trace', 'figSize': (10,4), 
                               'saveFig': True, 'showFig': False} 
 
-# cfg.analysis['plotSpikeHist'] = {'include': ['IT2','IT4','IT5A','IT5B','PT5B','IT6','CT6'], 
-#                                 'timeRange': [1000,6000], 'yaxis':'rate', 'binSize':5, 'graphType':'bar',
-#  								'saveFig': True, 'showFig': False, 'popColors': popColors, 'figSize': (10,4),
-# 								'dpi': 300} 
+cfg.analysis['plotSpikeHist'] = {'include': ['TVL'], 
+                                'timeRange': [0,cfg.duration], 'yaxis':'rate', 'binSize':5, 'graphType':'bar',
+ 								'saveFig': True} 
 
 # cfg.analysis['plotLFP'] = {'plots': ['spectrogram'], 'figSize': (6,10), 'timeRange': [1000,6000], 
 #                           'NFFT': 256*20, 'noverlap': 128*20, 'nperseg': 132*20, 'saveFig': True, 
@@ -208,7 +207,7 @@ cfg.scale = 1.0
 cfg.sizeY = 1350.0
 cfg.sizeX = 300.0
 cfg.sizeZ = 300.0
-cfg.scaleDensity = 0.15
+cfg.scaleDensity = 1.0
 cfg.correctBorderThreshold = 150.0
 cfg.normLayers = {'1': [0.0, 0.1], '2': [0.1,0.29], '4': [0.29,0.37], '5A': [0.37,0.47], '5B': [0.47,0.8], '6': [0.8, 1.0]}
 
@@ -308,5 +307,10 @@ cfg.NetStim1 = {'pop': 'IT2', 'ynorm':[0,1], 'sec': 'soma', 'loc': 0.5, 'synMech
 if cfg.addInVivoThalamus:
 	baselineSpks, movementAndPostSpks, M1sampledCells, foldersName = defs.loadThalSpikes(cwd, cfg, skipEmpty=False)
 
+	trimmedBaseline = defs.trimTVLSpikes(baselineSpks, cfg)
+	trimmedMovement = defs.trimTVLSpikes(movementAndPostSpks, cfg)
+
 	cfg.numSampledCellsPerLayer = defs.average_dict_entries(M1sampledCells)
-	cfg.spikeTimesInVivo = baselineSpks if cfg.SimulateBaseline else movementAndPostSpks
+	cfg.spikeTimesInVivo = trimmedBaseline if cfg.SimulateBaseline else trimmedMovement
+	del baselineSpks, movementAndPostSpks, trimmedBaseline, trimmedMovement
+	gc.collect()
