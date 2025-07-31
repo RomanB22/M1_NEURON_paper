@@ -18,7 +18,7 @@ params = {'weightLong.TPO': [0.25, 0.75],
           'IIweights.2': [0.5, 1.5],
           }
 
-nameCluster = 'ssh_sge_gpu'
+nameCluster = 'ssh_sge_cpu'
 
 config = {
     'sh_local': {'job_type': 'sh',

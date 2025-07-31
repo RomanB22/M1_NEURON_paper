@@ -49,7 +49,7 @@ cfg.printSynsAfterRule = False
 cfg.pt3dRelativeToCellLocation = True
 cfg.oneSynPerNetcon = True  # only affects conns not in subconnParams; produces identical results
 cfg.validateNetParams = True
-# cfg.progressBar = 0
+cfg.progressBar = 0
 
 cfg.includeParamsLabel = False
 cfg.printPopAvgRates = [0, cfg.duration]
@@ -60,7 +60,7 @@ cfg.checkErrorsVerbose = False
 cfg.rand123GlobalIndex = None
 cfg.coreneuron = True
 cfg.random123 = True
-cfg.gpu = True
+cfg.gpu = False
 #------------------------------------------------------------------------------
 # Recording 
 #------------------------------------------------------------------------------
