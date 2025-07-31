@@ -695,6 +695,7 @@ def average_dict_entries(dicts: List[Union[dict, defaultdict]]) -> Dict[str, flo
 def trimTVLSpikes(spikeList, cfg):
     trimmedList = []
     for i in spikeList:
-        trimmedList.append([j for j in i if (0<=j<=cfg.duration)])
+        border = 2*cfg.dt # To avoid error of having a spike after the last integration step
+        trimmedList.append([j for j in i if (0<=j<=cfg.duration-border)])
     
     return trimmedList
