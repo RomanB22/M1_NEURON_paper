@@ -52,7 +52,8 @@ cfg.validateNetParams = True
 cfg.progressBar = 0
 
 cfg.includeParamsLabel = False
-cfg.printPopAvgRates = [1000, cfg.duration]
+cfg.timeRanges = [1000., cfg.duration]
+cfg.printPopAvgRates = cfg.timeRanges
 
 cfg.checkErrors = False
 cfg.checkErrorsVerbose = False
@@ -60,7 +61,7 @@ cfg.checkErrorsVerbose = False
 cfg.rand123GlobalIndex = None
 cfg.coreneuron = True
 cfg.random123 = True
-cfg.gpu = False
+cfg.gpu = True
 #------------------------------------------------------------------------------
 # Recording 
 #------------------------------------------------------------------------------
@@ -113,20 +114,20 @@ cfg.compactConnFormat = 0
 #------------------------------------------------------------------------------
 with open(cwd + '/cells/popColors.pkl', 'rb') as fileObj: popColors = pickle.load(fileObj)['popColors']
 
-allpops = ['TVL']
+# allpops = ['TVL']
 
-cfg.analysis['plotRaster'] = {'include': allpops, 'orderBy': ['pop', 'y'], 'timeRange': [0,cfg.duration],
+cfg.analysis['plotRaster'] = {'include': allpops, 'orderBy': ['pop', 'y'], 'timeRange': cfg.timeRanges,
                              'saveFig': True, 'showFig': False, 'popRates': True, 
                              'orderInverse': True, 'popColors': popColors, 'figSize': (12,18), 'lw': 0.3,
                              'markerSize':3, 'marker': '.', 'dpi': 300} 
 
-cfg.analysis['plotTraces'] = {'include': cfg.recordCells, 'timeRange': [0,cfg.duration], 
-                              'overlay': True, 'oneFigPer': 'trace', 'figSize': (10,4), 
-                              'saveFig': True, 'showFig': False} 
+# cfg.analysis['plotTraces'] = {'include': cfg.recordCells, 'timeRange': [0,cfg.duration], 
+#                               'overlay': True, 'oneFigPer': 'trace', 'figSize': (10,4), 
+#                               'saveFig': True, 'showFig': False} 
 
-cfg.analysis['plotSpikeHist'] = {'include': ['TVL'], 
-                                'timeRange': [0,cfg.duration], 'yaxis':'rate', 'binSize':5, 'graphType':'bar',
- 								'saveFig': True} 
+# cfg.analysis['plotSpikeHist'] = {'include': ['TVL'], 
+#                                 'timeRange': [0,cfg.duration], 'yaxis':'rate', 'binSize':5, 'graphType':'bar',
+#  								'saveFig': True} 
 
 # cfg.analysis['plotLFP'] = {'plots': ['spectrogram'], 'figSize': (6,10), 'timeRange': [1000,6000], 
 #                           'NFFT': 256*20, 'noverlap': 128*20, 'nperseg': 132*20, 'saveFig': True, 

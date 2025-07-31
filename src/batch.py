@@ -2,23 +2,23 @@ from netpyne.batchtools.search import search
 from pathlib import Path
 cwd = str(Path.cwd())
 
-params = {'weightLong.TPO': [0.25, 0.75],
-          'weightLong.TVL': [0.25, 0.75],
-          'weightLong.S1': [0.25, 0.75],
-          'weightLong.S2': [0.25, 0.75],
-          'weightLong.cM1': [0.25, 0.75],
-          'weightLong.M2': [0.25, 0.75],
-          'weightLong.OC': [0.25, 0.75],
-          'EEGain': [0.5, 1.5],
-          'IEweights.0': [0.5, 1.5],
-          'IEweights.1': [0.5, 1.5],
-          'IEweights.2': [0.5, 1.5],
-          'IIweights.0': [0.5, 1.5],
-          'IIweights.1': [0.5, 1.5],
-          'IIweights.2': [0.5, 1.5],
+params = {'weightLong.TPO': [0.1, 0.9],
+          'weightLong.TVL': [0.1, 0.9],
+          'weightLong.S1': [0.1, 0.9],
+          'weightLong.S2': [0.1, 0.9],
+          'weightLong.cM1': [0.1, 0.9],
+          'weightLong.M2': [0.1, 0.9],
+          'weightLong.OC': [0.1, 0.9],
+          'EEGain': [0.75, 1.25],
+          'IEweights.0': [0.75, 1.25],
+          'IEweights.1': [0.75, 1.25],
+          'IEweights.2': [0.75, 1.25],
+          'IIweights.0': [0.75, 1.25],
+          'IIweights.1': [0.75, 1.25],
+          'IIweights.2': [0.75, 1.25],
           }
 
-nameCluster = 'ssh_sge_cpu'
+nameCluster = 'ssh_sge_gpu'
 
 config = {
     'sh_local': {'job_type': 'sh',
@@ -85,7 +85,7 @@ config = {
                     'checkpoint_path': './batchData/ray',
                     'run_config':  {'queue': 'gpu.q',
                                     'cores': 10,
-                                    'vmem': '90G',
+                                    'vmem': '200G',
                                     'realtime': '15:00:00',
                                     'command': ('conda activate GPU  \n'
                                                 'export PATH=$HOME/neuronGPU/bin:$PATH \n' 
@@ -156,7 +156,7 @@ results = search(job_type = config[nameCluster]['job_type'], # job_type defines 
        remote_dir=config[nameCluster]['remote_dir'],
        host=config[nameCluster]['host'],
        key=config[nameCluster]['key'],
-       num_samples=1,
+       num_samples=200,
        )
 
 # =======================

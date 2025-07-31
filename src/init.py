@@ -58,7 +58,7 @@ if sim.rank == 0:
     print('transmitting data...')
     inputs = cfg.get_mappings()
     # print(json.dumps({**inputs}))
-    results = sim.analysis.popAvgRates(tranges=None, show=False) #TODO: Avoid printing firing rates
+    results = sim.analysis.popAvgRates(tranges=cfg.timeRanges, show=False) #TODO: Avoid printing firing rates
 
     sim.simData['popRates'] = results
 
