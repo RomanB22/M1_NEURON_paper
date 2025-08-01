@@ -88,8 +88,8 @@ config = {
                     'output_path':'./batchData/optuna_batch',
                     'checkpoint_path': './batchData/ray',
                     'run_config':  {'queue': 'gpu.q',
-                                    'cores': 10,
-                                    'vmem': '200G',
+                                    'cores': 10, 
+                                    'vmem': '100G',
                                     'realtime': '15:00:00',
                                     'command': ('conda activate GPU  \n'
                                                 'export PATH=$HOME/neuronGPU/bin:$PATH \n' 
@@ -99,7 +99,10 @@ config = {
                                                 'cd src \n'
                                                 'export PYTHONPATH=$PYTHONPATH:$PWD \n' # do it in \src and in parent folder
                                                 'cd .. \n'                                               
-                                                'mpiexec -n $NSLOTS ./x86_64/special -python -mpi src/init.py')}
+                                                'mpiexec -n $NSLOTS ./x86_64/special -python -mpi src/init.py')
+                                                # Put half of the cores you want to use
+                                                # 'mpiexec -n 10 -x CUDA_VISIBLE_DEVICES=0 ./x86_64/special -python -mpi src/init.py : -n 10 -x CUDA_VISIBLE_DEVICES=1 ./x86_64/special -python -mpi src/init.py')
+                                                }
     },
     'ssh_sge_cpu': { 'job_type': 'ssh_sge',
                     'comm_type': 'sftp',
