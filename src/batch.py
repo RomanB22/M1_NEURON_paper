@@ -9,13 +9,17 @@ params = {'weightLong.TPO': [0.1, 0.9],
           'weightLong.cM1': [0.1, 0.9],
           'weightLong.M2': [0.1, 0.9],
           'weightLong.OC': [0.1, 0.9],
-          'EEGain': [0.75, 1.25],
-          'IEweights.0': [0.75, 1.25],
-          'IEweights.1': [0.75, 1.25],
-          'IEweights.2': [0.75, 1.25],
-          'IIweights.0': [0.75, 1.25],
-          'IIweights.1': [0.75, 1.25],
-          'IIweights.2': [0.75, 1.25],
+          'EEGain': [0.3, 1.7],
+          'IEweights.0': [0.75, 1.25],    ## L2/3+4
+          'IEweights.1': [0.75, 1.25],    ## L5
+          'IEweights.2': [0.75, 1.25],    ## L6
+          'IIweights.0': [0.75, 1.25],    ## L2/3+4
+          'IIweights.1': [0.75, 1.25],    ## L5
+          'IIweights.2': [0.75, 1.25],    ## L6
+          'EICellTypeGain.PV': [0.1, 4.0],    
+          'EICellTypeGain.SOM': [0.1, 4.0],    
+          'EICellTypeGain.VIP': [0.1, 4.0],    
+          'EICellTypeGain.NGF': [0.1, 4.0],   
           }
 
 nameCluster = 'ssh_sge_gpu'
@@ -157,6 +161,7 @@ results = search(job_type = config[nameCluster]['job_type'], # job_type defines 
        host=config[nameCluster]['host'],
        key=config[nameCluster]['key'],
        num_samples=200,
+       sample_interval=5
        )
 
 # =======================
