@@ -695,7 +695,7 @@ def average_dict_entries(dicts: List[Union[dict, defaultdict]]) -> Dict[str, flo
 def trimTVLSpikes(spikeList, cfg):
     trimmedList = []
     for i in spikeList:
-        # We need to round the spike time to avoid numerical errors in the delivery of the vecStim (due torounding errors it could happen that the simulator find a negative delivery time, which stops the simulation)
-        trimmedList.append([round(j, 4) for j in i if (0<=j<=(cfg.duration))])
-    
+        # We need to align the spike time to avoid numerical errors in the delivery of the vecStim (due torounding errors it could happen that the simulator find a negative delivery time, which stops the simulation)
+        trimmedList.append(np.unique([round(np.round(j / cfg.dt) * cfg.dt, 2) for j in i if (0<j<cfg.duration)]).tolist())
+        
     return trimmedList
