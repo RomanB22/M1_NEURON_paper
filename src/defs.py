@@ -637,7 +637,8 @@ def SampleSpikes(spikeTimesList, cfg, preTone=-2., postTone=2, baselineEnd=-0.5,
     if cfg.SimulateBaseline==True:
         sampledSpikesSpan = 1000*(baselineEnd-preTone)
         numSpans = math.ceil(cfg.duration / sampledSpikesSpan)
-        for num in range(numSpans):
+        # TODO: Check the spike times extension (times should be unique and ordered)
+        for num in range(numSpans-1):
             # Add a new sampling
             baselineSpksAux = random.choices(BaselineTrials, k=cfg.numCellsLong)
             baselineSpksAux = [[elem + (num+1)*sampledSpikesSpan for elem in sublist] for sublist in baselineSpksAux]
@@ -697,5 +698,5 @@ def trimTVLSpikes(spikeList, cfg):
     for i in spikeList:
         # We need to align the spike time to avoid numerical errors in the delivery of the vecStim (due torounding errors it could happen that the simulator find a negative delivery time, which stops the simulation)
         trimmedList.append(np.unique([round(np.round(j / cfg.dt) * cfg.dt, 2) for j in i if (0<j<cfg.duration)]).tolist())
-        
+
     return trimmedList
