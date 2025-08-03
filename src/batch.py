@@ -2,24 +2,24 @@ from netpyne.batchtools.search import search
 from pathlib import Path
 cwd = str(Path.cwd())
 
-params = {'weightLong.TPO': [0.1, 0.9],
-          'weightLong.TVL': [0.1, 0.9],
-          'weightLong.S1': [0.1, 0.9],
-          'weightLong.S2': [0.1, 0.9],
-          'weightLong.cM1': [0.1, 0.9],
-          'weightLong.M2': [0.1, 0.9],
-          'weightLong.OC': [0.1, 0.9],
-          'EEGain': [0.3, 1.7],
-          'IEweights.0': [0.5, 1.5],    ## L2/3+4
-          'IEweights.1': [0.5, 1.5],    ## L5
-          'IEweights.2': [0.5, 1.5],    ## L6
-          'IIweights.0': [0.5, 1.5],    ## L2/3+4
-          'IIweights.1': [0.5, 1.5],    ## L5
-          'IIweights.2': [0.5, 1.5],    ## L6
-          'EICellTypeGain.PV': [0.1, 4.0],    
-          'EICellTypeGain.SOM': [0.1, 4.0],    
-          'EICellTypeGain.VIP': [0.1, 4.0],    
-          'EICellTypeGain.NGF': [0.1, 4.0],   
+params = {'weightLong.TPO': [0.25, 0.75],
+          'weightLong.TVL': [0, 0.5],
+          'weightLong.S1': [0.25, 0.75],
+          'weightLong.S2': [0.25, 0.75],
+          'weightLong.cM1': [0.25, 0.75],
+          'weightLong.M2': [0.25, 0.75],
+          'weightLong.OC': [0.25, 0.75],
+          'EEGain': [0.75, 1.25],
+          'IEweights.0': [0.75, 1.25],    ## L2/3+4
+          'IEweights.1': [0.75, 1.25],    ## L5
+          'IEweights.2': [0.75, 1.25],    ## L6
+          'IIweights.0': [0.75, 1.25],    ## L2/3+4
+          'IIweights.1': [0.75, 1.25],    ## L5
+          'IIweights.2': [0.75, 1.25],    ## L6
+        #   'EICellTypeGain.PV': [0.1, 4.0],    
+        #   'EICellTypeGain.SOM': [0.1, 4.0],    
+        #   'EICellTypeGain.VIP': [0.1, 4.0],    
+        #   'EICellTypeGain.NGF': [0.1, 4.0],   
           }
 
 nameCluster = 'ssh_sge_gpu'
