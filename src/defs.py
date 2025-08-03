@@ -26,6 +26,27 @@ def rateFitnessFunc(simData, **kwargs):
                 if simData['popRates'][k] > v['min'] else maxFitness for k,v in pops.items()]
     fitness = np.mean(popFitness)
 
+    # Add extra conditions to the fitness
+    # check I > E in each layer
+    condsIE_L23 = (simData['popRates']['PV2'] > simData['popRates']['IT2']) and (simData['popRates']['SOM2'] > simData['popRates']['IT2'])
+    condsIE_L5A = (simData['popRates']['PV5A'] > simData['popRates']['IT5A']) and (simData['popRates']['SOM5A'] > simData['popRates']['IT5A'])
+    condsIE_L5B = (simData['popRates']['PV5B'] > simData['popRates']['IT5B']) and (simData['popRates']['SOM5B'] > simData['popRates']['IT5B'])
+    condsIE_L6 = (simData['popRates']['PV6'] > simData['popRates']['IT6']) and (simData['popRates']['SOM6'] > simData['popRates']['IT6'])
+    # check E L5 > L6 > L2
+    condEE562_0 = (simData['popRates']['IT5A']+simData['popRates']['IT5B']+simData['popRates']['PT5B'])/3 > (simData['popRates']['IT6']+simData['popRates']['CT6'])/2
+    condEE562_1 = (simData['popRates']['IT6']+simData['popRates']['CT6'])/2 > simData['popRates']['IT2']
+    # check PV > SOM in each layer
+    condsPVSOM_L23 = (simData['popRates']['PV2'] > simData['popRates']['SOM2'])
+    condsPVSOM_L5A = (simData['popRates']['PV5A'] > simData['popRates']['SOM5A'])
+    condsPVSOM_L5B = (simData['popRates']['PV5B'] > simData['popRates']['SOM5B'])
+    condsPVSOM_L6 = (simData['popRates']['PV6'] > simData['popRates']['SOM6'])
+
+    conds = [condsIE_L23, condsIE_L5A, condsIE_L5B, condsIE_L6, condEE562_0, condEE562_1, condsPVSOM_L23, condsPVSOM_L5A, condsPVSOM_L5B, condsPVSOM_L6]
+
+    if not all(conds): fitness *= 1.5
+    
+    fitness = min(maxFitness, fitness)
+
     popInfo = '; '.join(['%s rate=%.1f fit=%1.f'%(p, simData['popRates'][p], popFitness[i]) for i,p in enumerate(pops)])
     print('  '+popInfo)
     return fitness
