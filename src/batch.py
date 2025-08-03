@@ -164,7 +164,7 @@ results = search(job_type = config[nameCluster]['job_type'], # job_type defines 
        host=config[nameCluster]['host'],
        key=config[nameCluster]['key'],
        num_samples=200,
-       sample_interval=5
+       sample_interval=15
        )
 
 # =======================
