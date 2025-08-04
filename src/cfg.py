@@ -34,7 +34,7 @@ cfg.postTone = 1000 # Movement part
 cfg.SimulateBaseline = True
 cfg.addInVivoThalamus = True # To add the sampled spike times from in-vivo recordings on TVL
 cfg.duration = cfg.preTone + cfg.postTone
-cfg.dt = 0.025 # For GPU increase the dt to not get precision errors
+cfg.dt = 0.025*2 # For GPU increase the dt to not get precision errors
 cfg.seeds = {'conn': 4321, 'stim': 1234, 'loc': 4321} 
 cfg.hParams = {'celsius': 34, 'v_init': -80}  
 cfg.verbose = False
@@ -100,7 +100,7 @@ cfg.cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_reduced', 'IT5B_reduc
 cfg.version = 104 # version number for the simulation
 cfg.simLabel = 'v%s_tune0' % str(cfg.version)  # label for the simulation
 cfg.saveFolder = cwd+'/batchData/v%s_manualTune' % str(cfg.version)
-cfg.savePickle = True
+cfg.savePickle = False
 cfg.saveJson = False
 cfg.saveDataInclude = ['simData', 'simConfig'] #, 'netParams', 'net']
 cfg.backupCfgFile = None #['cfg.py', 'backupcfg/'] 
@@ -274,13 +274,12 @@ cfg.numSampledCellsPerLayer = None
 
 TVLRates = TVLquiet if cfg.SimulateBaseline else TVLmovement
 
-cfg.ratesLong = {'TPO': [0, 2.5], 'TVL': TVLRates, 'S1': [0, 2.5], 'S2': [0, 2.5], 'cM1': [0,5], 'M2': [0,5], 'OC': [0,5]}
+cfg.ratesLong = {'TPO': [0, 5], 'TVL': TVLRates, 'S1': [0, 5], 'S2': [0, 5], 'cM1': [0, 2.5], 'M2': [0, 2.5], 'OC': [0,5]}
 
 ## input pulses
 cfg.addPulses = False
 cfg.pulse = {'pop': 'None', 'start': 1000, 'end': 1100, 'rate': 20, 'noise': 0.8}
 cfg.pulse2 = {'pop': 'None', 'start': 1000, 'end': 1200, 'rate': 20, 'noise': 0.5, 'duration': None}
-
 
 #------------------------------------------------------------------------------
 # Current inputs 
