@@ -44,7 +44,7 @@ def rateFitnessFunc(simData, extraConds=True, **kwargs):
 
         conds = [condsIE_L23, condsIE_L5A, condsIE_L5B, condsIE_L6, condEE562_0, condEE562_1, condsPVSOM_L23, condsPVSOM_L5A, condsPVSOM_L5B, condsPVSOM_L6]
 
-        if not all(conds): fitness *= 1.5
+        if not all(conds): fitness *= 1.2
         
         fitness = min(maxFitness, fitness)
 
