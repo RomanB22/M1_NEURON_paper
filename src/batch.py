@@ -24,7 +24,7 @@ params = {'weightLong.TPO': [0.5*minChg, 0.5*maxChg],
           'EICellTypeGain.SOM': [1.*minChg, 4.*maxChg],    
           'EICellTypeGain.VIP': [1.*minChg, 4.*maxChg],    
           'EICellTypeGain.NGF': [1.*minChg, 4.*maxChg],
-          'scaleDensity': [0.15]   
+        #   'scaleDensity': [0.15]   
           }
 
 nameCluster = 'ssh_sge_gpu'
@@ -53,7 +53,7 @@ config = {
                     'output_path':'./batchData/optuna_batch',
                     'checkpoint_path': './batchData/ray',
                     'run_config':  {'queue': 'gpu.q',
-                                    'cores': 10,
+                                    'cores': 11,
                                     'vmem': '150G',
                                     'realtime': '15:00:00',
                                     'command': ('conda activate GPU  \n'
@@ -88,12 +88,12 @@ config = {
     'ssh_sge_gpu': {'job_type': 'ssh_sge',
                     'comm_type': 'sftp',
                     'host': 'grid0',
-                    'remote_dir': '/ddn/rbarav/M1_Manifolds',
+                    'remote_dir': '/ddn/rbarav/M1_Manifolds_Scaled',
                     'key': '###',  # replace with your SSH key
                     'output_path':'./batchData/optuna_batch',
                     'checkpoint_path': './batchData/ray',
                     'run_config':  {'queue': 'gpu.q',
-                                    'cores': 10, 
+                                    'cores': 11, 
                                     'vmem': '100G',
                                     'realtime': '15:00:00',
                                     'command': ('conda activate GPU  \n'
@@ -132,10 +132,10 @@ config = {
                     'comm_type': 'sftp',
                     'host': 'expanse0',
                     'remote_dir': '/home/rbaravalle/M1_Manifolds',
-                    'key': '###',  # replace with your SSH key
+                    'key': 'J4PXKKROVTM3R4ELLVAQ3CJCL6OUP2WN',  # replace with your SSH key
                     'output_path': '/home/rbaravalle/M1_Manifolds/batchData/optuna_batch',
                     'checkpoint_path': cwd+'/batchData/ray',
-                    'run_config':  {'allocation': 'TG-MED240058',
+                    'run_config':  {'allocation': 'TG-IBN140002',#'TG-MED240058',
                                     'realtime': '10:30:00',
                                     'nodes': 1,
                                     'coresPerNode': 96,

@@ -17,13 +17,13 @@ import math
 
 #------------------------------------------------------------------------------
 ## Function to calculate the fitness according to required rate
-def rateFitnessFunc(simData, extraConds=True, **kwargs):
+def rateFitnessFunc(simData, extraConds=False, **kwargs):
     import numpy as np
     pops = kwargs['pops']
     maxFitness = kwargs['maxFitness']
 
     factor=1
-    # Add extra conditions to the fitness
+    # Add extra conditions to the fitness. It 'breaks' the fitness function
     if extraConds:
         # check I > E in each layer
         condsIE_L23 = (simData['popRates']['PV2'] > simData['popRates']['IT2']) and (simData['popRates']['SOM2'] > simData['popRates']['IT2'])
