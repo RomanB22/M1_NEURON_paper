@@ -20,10 +20,11 @@ params = {'weightLong.TPO': [0.5*minChg, 0.5*maxChg],
           'IIweights.0': [1.*minChg, 1.*maxChg],    ## L2/3+4
           'IIweights.1': [1.*minChg, 1.*maxChg],    ## L5
           'IIweights.2': [1.*minChg, 1.*maxChg],    ## L6
-        #   'EICellTypeGain.PV': [1.*minChg, 1.*maxChg],    
-        #   'EICellTypeGain.SOM': [1.*minChg, 1.*maxChg],    
-        #   'EICellTypeGain.VIP': [1.*minChg, 1.*maxChg],    
-        #   'EICellTypeGain.NGF': [1.*minChg, 1.*maxChg],   
+          'EICellTypeGain.PV': [1.*minChg, 4.*maxChg],    
+          'EICellTypeGain.SOM': [1.*minChg, 4.*maxChg],    
+          'EICellTypeGain.VIP': [1.*minChg, 4.*maxChg],    
+          'EICellTypeGain.NGF': [1.*minChg, 4.*maxChg],
+          'scaleDensity': [0.15]   
           }
 
 nameCluster = 'ssh_sge_gpu'
