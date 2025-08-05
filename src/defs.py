@@ -22,10 +22,7 @@ def rateFitnessFunc(simData, extraConds=True, **kwargs):
     pops = kwargs['pops']
     maxFitness = kwargs['maxFitness']
 
-    popFitness = [min(np.exp(abs(v['target'] - simData['popRates'][k])/v['width']), maxFitness) 
-                if simData['popRates'][k] > v['min'] else maxFitness for k,v in pops.items()]
-    fitness = np.mean(popFitness)
-
+    factor=1
     # Add extra conditions to the fitness
     if extraConds:
         # check I > E in each layer
@@ -44,9 +41,11 @@ def rateFitnessFunc(simData, extraConds=True, **kwargs):
 
         conds = [condsIE_L23, condsIE_L5A, condsIE_L5B, condsIE_L6, condEE562_0, condEE562_1, condsPVSOM_L23, condsPVSOM_L5A, condsPVSOM_L5B, condsPVSOM_L6]
 
-        if not all(conds): fitness *= 1.2
+        if not all(conds): factor = 1.5
         
-        fitness = min(maxFitness, fitness)
+    popFitness = [min(np.exp(factor*abs(v['target'] - simData['popRates'][k])/v['width']), maxFitness) 
+                if simData['popRates'][k] > v['min'] else maxFitness for k,v in pops.items()]
+    fitness = np.mean(popFitness)
 
     popInfo = '; '.join(['%s rate=%.1f fit=%1.f'%(p, simData['popRates'][p], popFitness[i]) for i,p in enumerate(pops)])
     print('  '+popInfo)

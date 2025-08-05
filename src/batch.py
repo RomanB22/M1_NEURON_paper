@@ -2,24 +2,28 @@ from netpyne.batchtools.search import search
 from pathlib import Path
 cwd = str(Path.cwd())
 
-params = {'weightLong.TPO': [0.25, 0.75],
-          'weightLong.TVL': [0.25, 0.75],
-          'weightLong.S1': [0.25, 0.75],
-          'weightLong.S2': [0.25, 0.75],
-          'weightLong.cM1': [0.25, 0.75],
-          'weightLong.M2': [0.25, 0.75],
-          'weightLong.OC': [0.25, 0.75],
-          'EEGain': [0.5, 1.5],
-          'IEweights.0': [0.5, 1.5],    ## L2/3+4
-          'IEweights.1': [0.5, 1.5],    ## L5
-          'IEweights.2': [0.5, 1.5],    ## L6
-          'IIweights.0': [0.5, 1.5],    ## L2/3+4
-          'IIweights.1': [0.5, 1.5],    ## L5
-          'IIweights.2': [0.5, 1.5],    ## L6
-        #   'EICellTypeGain.PV': [0.1, 4.0],    
-        #   'EICellTypeGain.SOM': [0.1, 4.0],    
-        #   'EICellTypeGain.VIP': [0.1, 4.0],    
-        #   'EICellTypeGain.NGF': [0.1, 4.0],   
+PercentageChange = 0.3
+minChg = (1-PercentageChange)
+maxChg = (1+PercentageChange)
+
+params = {'weightLong.TPO': [0.5*minChg, 0.5*maxChg],
+          'weightLong.TVL': [0.5*minChg, 0.5*maxChg],
+          'weightLong.S1': [0.5*minChg, 0.5*maxChg],
+          'weightLong.S2': [0.5*minChg, 0.5*maxChg],
+          'weightLong.cM1': [0.5*minChg, 0.5*maxChg],
+          'weightLong.M2': [0.5*minChg, 0.5*maxChg],
+          'weightLong.OC': [0.5*minChg, 0.5*maxChg],
+          'EEGain': [1.*minChg, 1.*maxChg],
+          'IEweights.0': [1.*minChg, 1.*maxChg],    ## L2/3+4
+          'IEweights.1': [1.*minChg, 1.*maxChg],    ## L5
+          'IEweights.2': [1.*minChg, 1.*maxChg],    ## L6
+          'IIweights.0': [1.*minChg, 1.*maxChg],    ## L2/3+4
+          'IIweights.1': [1.*minChg, 1.*maxChg],    ## L5
+          'IIweights.2': [1.*minChg, 1.*maxChg],    ## L6
+        #   'EICellTypeGain.PV': [1.*minChg, 1.*maxChg],    
+        #   'EICellTypeGain.SOM': [1.*minChg, 1.*maxChg],    
+        #   'EICellTypeGain.VIP': [1.*minChg, 1.*maxChg],    
+        #   'EICellTypeGain.NGF': [1.*minChg, 1.*maxChg],   
           }
 
 nameCluster = 'ssh_sge_gpu'
