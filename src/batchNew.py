@@ -33,7 +33,7 @@ params = {'weightLong.TPO': [0.1*minChg, 0.5*maxChg],
 
 # --- Define Constants and Common Settings ---
 
-SSH_KEY_PATH = 'J4PXKKROVTM3R4ELLVAQ3CJCL6OUP2WN'  # Central place to define your SSH key path
+SSH_KEY_PATH = ''  # Central place to define your SSH key path
 
 # Common shell commands for setting up the Python environment
 PYTHON_SETUP_CMDS = """
