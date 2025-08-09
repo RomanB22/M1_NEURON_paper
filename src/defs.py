@@ -649,6 +649,7 @@ def SampleSpikes(spikeTimesList, cfg, preTone=-2., postTone=2, baselineEnd=-0.5,
             MovementTrials.append(MovementTrialsAux)
             BaselineTrials.append(BaselineTrialsAux)
     # Sample spikes
+    random.seed(cfg.seeds['tvl_sampling'])
     baselineSpks = random.choices(BaselineTrials, k=cfg.numCellsLong)
     baselineSpks = [list(i) for i in baselineSpks]
 
@@ -683,9 +684,14 @@ def cellPerlayer(numbers):
     return counts
 
 def loadThalSpikes(cwd, cfg, skipEmpty=False):
-    import pickle as pkl
-    with open(cwd+"/data/spikingData/ThRates.pkl", "rb") as f:
-        data = pkl.load(f)
+    # import pickle as pkl
+    # with open(cwd+"/data/spikingData/ThRates.pkl", "rb") as f:
+    #     data = pkl.load(f)
+    # import joblib
+    # joblib.dump(data, cwd+"/data/spikingData/ThRates.joblib")
+    import joblib
+    data = joblib.load(cwd+"/data/spikingData/ThRatesNew.joblib")
+
     spikeTimesList = []
     M1sampledCells = []
     foldersName = []

@@ -2,17 +2,17 @@ from netpyne.batchtools.search import search
 from pathlib import Path
 cwd = str(Path.cwd())
 
-PercentageChange = 0.3
+PercentageChange = 0.5
 minChg = (1-PercentageChange)
 maxChg = (1+PercentageChange)
 
-params = {'weightLong.TPO': [0.5*minChg, 0.5*maxChg],
-          'weightLong.TVL': [0.5*minChg, 0.5*maxChg],
-          'weightLong.S1': [0.5*minChg, 0.5*maxChg],
-          'weightLong.S2': [0.5*minChg, 0.5*maxChg],
-          'weightLong.cM1': [0.5*minChg, 0.5*maxChg],
-          'weightLong.M2': [0.5*minChg, 0.5*maxChg],
-          'weightLong.OC': [0.5*minChg, 0.5*maxChg],
+params = {'weightLong.TPO': [0.1*minChg, 0.5*maxChg],
+          'weightLong.TVL': [0.1*minChg, 0.5*maxChg],
+          'weightLong.S1': [0.1*minChg, 0.5*maxChg],
+          'weightLong.S2': [0.1*minChg, 0.5*maxChg],
+          'weightLong.cM1': [0.1*minChg, 0.5*maxChg],
+          'weightLong.M2': [0.1*minChg, 0.5*maxChg],
+          'weightLong.OC': [0.1*minChg, 0.5*maxChg],
           'EEGain': [1.*minChg, 1.*maxChg],
           'IEweights.0': [1.*minChg, 1.*maxChg],    ## L2/3+4
           'IEweights.1': [1.*minChg, 1.*maxChg],    ## L5
@@ -88,10 +88,10 @@ config = {
     'ssh_sge_gpu': {'job_type': 'ssh_sge',
                     'comm_type': 'sftp',
                     'host': 'grid0',
-                    'remote_dir': '/ddn/rbarav/M1_Manifolds_Scaled',
+                    'remote_dir': '/ddn/rbarav/M1_Manifolds',
                     'key': '###',  # replace with your SSH key
                     'output_path':'./batchData/optuna_batch',
-                    'checkpoint_path': './batchData/ray',
+                    'checkpoint_path': './batchData/ray_3',
                     'run_config':  {'queue': 'gpu.q',
                                     'cores': 11, 
                                     'vmem': '100G',
@@ -132,7 +132,7 @@ config = {
                     'comm_type': 'sftp',
                     'host': 'expanse0',
                     'remote_dir': '/home/rbaravalle/M1_Manifolds',
-                    'key': 'J4PXKKROVTM3R4ELLVAQ3CJCL6OUP2WN',  # replace with your SSH key
+                    'key': '',  # replace with your SSH key
                     'output_path': '/home/rbaravalle/M1_Manifolds/batchData/optuna_batch',
                     'checkpoint_path': cwd+'/batchData/ray',
                     'run_config':  {'allocation': 'TG-IBN140002',#'TG-MED240058',
