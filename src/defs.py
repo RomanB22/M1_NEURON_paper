@@ -684,22 +684,24 @@ def cellPerlayer(numbers):
     return counts
 
 def loadThalSpikes(cwd, cfg, skipEmpty=False):
-    # import pickle as pkl
-    # with open(cwd+"/data/spikingData/ThRates.pkl", "rb") as f:
-    #     data = pkl.load(f)
-    # import joblib
-    # joblib.dump(data, cwd+"/data/spikingData/ThRates.joblib")
-    import joblib
-    data = joblib.load(cwd+"/data/spikingData/ThRatesNew.joblib")
+    import json
+    with open(cwd+"/data/spikingData/ThRates.json", "r") as fileObj:
+        data = json.loads(fileObj.read())
 
     spikeTimesList = []
     M1sampledCells = []
     foldersName = []
 
     for folder in data.keys():
-        for i in range(len(data[folder].keys())-3):
-            spikeTimesList[len(spikeTimesList):] = list(data[folder]['trial_%d' % i]['spkt'])
-        cellDepths = data[folder]['cell_depths']
+        for i in range(len(data[folder].keys())-4): # exclude M1_cell_depths, Th_cell_depths, meanRate, stdRate
+            spkid =  data[folder]['trial_%d' % i]['spkid']
+            spkt = data[folder]['trial_%d' % i]['spkt']
+            npre = int(np.max(spkid)) + 1
+            spkTimes_by_cell = [[] for _ in range(npre)]
+            for t, i in zip(spkt, spkid):
+                spkTimes_by_cell[int(i)].append(float(t))
+            spikeTimesList[len(spikeTimesList):] += spkTimes_by_cell
+        cellDepths = data[folder]['M1_cell_depths']
         counts = cellPerlayer(cellDepths)
         M1sampledCells.append(counts)
         foldersName.append(folder)
@@ -727,3 +729,4 @@ def trimTVLSpikes(spikeList, cfg):
         trimmedList.append(np.unique([round(np.round(j / cfg.dt) * cfg.dt, 2) for j in i if (0<j<cfg.duration)]).tolist())
 
     return trimmedList
+

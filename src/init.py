@@ -32,7 +32,8 @@ sim.net.createPops()               			# instantiate network populations
 sim.net.createCells()              			# instantiate network cells based on defined populations
 sim.net.connectCells()            			# create connections between cells based on params
 sim.net.addStims() 							# add network stimulation
-sim.setupRecording()              			# setup variables to record for each cell (spikes, V traces, etc)
+sim.setupRecording()
+
 #------------------------------------------------------------------------------
 # Simulation option 1: standard
 sim.runSim()                              # run parallel Neuron simulation (calling func to modify mechs)
@@ -51,10 +52,11 @@ sim.simData.norm_layers = cfg.normLayers
 
 sim.saveData()                    			# save params, cell info and sim output to file (pickle,mat,txt,etc)#
 sim.analysis.plotData()         			# plot spike raster etc
+
 print('completed simulation...')
 
 if sim.rank == 0:
-    netParams.save("{}/{}_params.json".format(cfg.saveFolder, cfg.simLabel))
+    # netParams.save("{}/{}_params.json".format(cfg.saveFolder, cfg.simLabel))
     print('transmitting data...')
     inputs = cfg.get_mappings()
     # print(json.dumps({**inputs}))
