@@ -29,12 +29,12 @@ node_modules/
 creds.js
  
 # Private Files
-*.json
-*.csv
-*.csv.gz
-*.tsv
-*.tsv.gz
-*.xlsx
+# *.json
+# *.csv
+# *.csv.gz
+# *.tsv
+# *.tsv.gz
+# *.xlsx
  
  
 # Mac/OSX
