@@ -35,7 +35,6 @@ params = {'weightLong.TPO': [0.1*minChg, 0.5*maxChg],
 
 with open('ExpanseKey.txt') as f:
     SSH_KEY_PATH = f.readlines()[0]
-print(SSH_KEY_PATH)
 
 # Common shell commands for setting up the Python environment
 PYTHON_SETUP_CMDS = """
@@ -210,7 +209,7 @@ mpiexec -n $NSLOTS -hosts $(hostname) nrniv -python -mpi src/init.py
             'command': f"""
                 {CONFIG_EXPANSE_CPU}
                 {PYTHON_SETUP_CMDS}
-time mpiexec -n $((SLURM_NTASKS-1)) python -u src/init.py
+time mpirun --bind-to none -n $SLURM_NTASKS ./x86_64/special -mpi -python src/init.py
             """
         }
     },
@@ -235,11 +234,10 @@ time mpiexec -n $((SLURM_NTASKS-1)) python -u src/init.py
                 {CONFIG_EXPANSE_GPU}
                 {IMPORTNEURONGPU}
                 {PYTHON_SETUP_CMDS}
-time mpirun -n $((SLURM_NTASKS-1)) ./x86_64/special -mpi -python src/init.py
+time mpirun --bind-to none -n $SLURM_NTASKS ./x86_64/special -mpi -python src/init.py
             """
         }
     }
-
 }
 
 # --- Simplified Function Call ---
