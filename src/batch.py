@@ -5,7 +5,7 @@ import os
 CWD = os.getcwd()
 
 nameCluster = 'ssh_expanse_gpu' 
-numSamples = 1
+numSamples = 3000
 PercentageChange = 0.5
 minChg = (1-PercentageChange)
 maxChg = (1+PercentageChange)
@@ -221,7 +221,7 @@ time mpiexec -n $((SLURM_NTASKS-1)) python -u src/init.py
         'key': SSH_KEY_PATH,  # No key needed for this host
         'remote_dir': '/home/rbaravalle/M1_Manifolds',
         'output_path': './batchData/optuna_batch',
-        'checkpoint_path': "./batchData/ray_expanseGPU_2",
+        'checkpoint_path': "./batchData/ray_expanseGPU",
         'run_config': {
             'allocation': 'TG-MED240058',
             'realtime': '10:30:00',
