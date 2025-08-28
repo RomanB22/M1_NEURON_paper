@@ -4,6 +4,8 @@ batchData/
 GPUConfig.sh
 GPUExpanseTest.sh
 setupLocal.sh
+optunaGPU_Expanse.txt
+optunaGPU_SGE.txt
 
 # VSCode
 .vscode/*
