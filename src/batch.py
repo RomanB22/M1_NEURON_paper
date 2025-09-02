@@ -4,7 +4,9 @@ import os
 
 CWD = os.getcwd()
 
-nameCluster = 'ssh_expanse_gpu' 
+nameCluster = 'ssh_sge_gpu'
+directorySGE = 'M1_Manifolds' #'ChannelopathiesGPU' 
+directoryExpanse = 'M1_Manifolds' #'ChannelopathiesGPU' 
 numSamples = 3000
 PercentageChange = 0.5
 minChg = (1-PercentageChange)
@@ -152,12 +154,12 @@ config = {
         'comm_type': 'sftp',
         'host': 'grid0',
         'key': '###',
-        'remote_dir': '/ddn/rbarav/M1_Manifolds',
+        'remote_dir': '/ddn/rbarav/%s' % directorySGE,
         'output_path': './batchData/optuna_batch',
-        'checkpoint_path': './batchData/ray_SGEGPU',
+        'checkpoint_path': './batchData/ray_SGEGPU_3',
         'run_config': {
             'queue': 'gpu.q',
-            'cores': 11,
+            'cores': 19,
             'vmem': '100G',
             'realtime': '15:00:00',
             'command': f"""
@@ -173,7 +175,7 @@ mpiexec -n $NSLOTS ./x86_64/special -python -mpi src/init.py
         'comm_type': 'sftp',
         'host': 'grid0',
         'key': '###',
-        'remote_dir': '/ddn/rbarav/M1_Manifolds',
+        'remote_dir': '/ddn/rbarav/%s' % directorySGE,
         'output_path': './batchData/optuna_batch',
         'checkpoint_path': './batchData/ray',
         'run_config': {
@@ -194,7 +196,7 @@ mpiexec -n $NSLOTS -hosts $(hostname) nrniv -python -mpi src/init.py
         'comm_type': 'sftp',
         'host': 'expanse0',
         'key': SSH_KEY_PATH,  # No key needed for this host
-        'remote_dir': '/home/rbaravalle/M1_notGPU',
+        'remote_dir': '/home/rbaravalle/%s' % directoryExpanse,
         'output_path': './batchData/optuna_batch',
         'checkpoint_path': "./batchData/ray_expanseCPU",
         'run_config': {
@@ -218,7 +220,7 @@ time mpirun --bind-to none -n $SLURM_NTASKS ./x86_64/special -mpi -python src/in
         'comm_type': 'sftp',
         'host': 'expanse0',
         'key': SSH_KEY_PATH,  # No key needed for this host
-        'remote_dir': '/home/rbaravalle/M1_Manifolds',
+        'remote_dir': '/home/rbaravalle/%s' % directoryExpanse,
         'output_path': './batchData/optuna_batch',
         'checkpoint_path': "./batchData/ray_expanseGPU",
         'run_config': {

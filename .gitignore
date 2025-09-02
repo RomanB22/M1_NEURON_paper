@@ -6,6 +6,8 @@ GPUExpanseTest.sh
 setupLocal.sh
 optunaGPU_Expanse.txt
 optunaGPU_SGE.txt
+optunaGPU_SGE_2.txt
+manifolds/
 
 # VSCode
 .vscode/*
