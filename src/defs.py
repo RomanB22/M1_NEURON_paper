@@ -397,11 +397,17 @@ def defineEEConnections(bins, cfg, netParams, cellModels, pmat, wmat):
     postTypes = ['IT', 'IT', 'PT', 'IT','CT']
     ESynMech = ['AMPA','NMDA']
 
+    # weight = []
+
     for i,(label, preBinLabel, postBinLabel) in enumerate(zip(labelsConns,labelPreBins, labelPostBins)):
         for ipre, preBin in enumerate(bins[preBinLabel]):
             for ipost, postBin in enumerate(bins[postBinLabel]):
                 for cellModel in cellModels:
                     ruleLabel = 'EE_'+cellModel+'_'+str(i)+'_'+str(ipre)+'_'+str(ipost)
+                    # if 'PT' in  postTypes[i] and list(postBin)[0]>=0.47 and list(postBin)[1]<=0.8:
+                    #     weight.append(wmat[label][ipost,ipre] * cfg.EEGain / cfg.synsperconn[cellModel])
+                    #     print(preTypes[i], postTypes[i], list(postBin), wmat[label][ipost,ipre] * cfg.EEGain / cfg.synsperconn[cellModel])
+                    #     print(min(weight), max(weight))
                     netParams.connParams[ruleLabel] = { 
                         'preConds': {'cellType': preTypes[i], 'ynorm': list(preBin)}, 
                         'postConds': {'cellModel': cellModel, 'cellType': postTypes[i], 'ynorm': list(postBin)},
@@ -412,7 +418,7 @@ def defineEEConnections(bins, cfg, netParams, cellModels, pmat, wmat):
                         'delay': 'defaultDelay+dist_3D/propVelocity',
                         'synsPerConn': cfg.synsperconn[cellModel],
                         'sec': 'spiny'}
-
+    # quit()
     return None
 
 def defineEIConnections(excTypes, inhTypes, bins, cfg, netParams, pmat, wmat):
