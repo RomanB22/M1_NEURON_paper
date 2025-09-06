@@ -222,7 +222,7 @@ time mpirun --bind-to none -n $SLURM_NTASKS ./x86_64/special -mpi -python src/in
         'key': SSH_KEY_PATH,  # No key needed for this host
         'remote_dir': '/home/rbaravalle/%s' % directoryExpanse,
         'output_path': './batchData/optuna_batch',
-        'checkpoint_path': "./batchData/ray_expanseGPU_channel",
+        'checkpoint_path': "./batchData/ray_expanseGPU_channel_2",
         'run_config': {
             'allocation': 'TG-MED240058',
             'realtime': '10:30:00',

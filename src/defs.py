@@ -405,8 +405,8 @@ def defineEEConnections(bins, cfg, netParams, cellModels, pmat, wmat):
                 for cellModel in cellModels:
                     ruleLabel = 'EE_'+cellModel+'_'+str(i)+'_'+str(ipre)+'_'+str(ipost)
                     # if 'PT' in  postTypes[i] and list(postBin)[0]>=0.47 and list(postBin)[1]<=0.8:
-                    #     weight.append(wmat[label][ipost,ipre] * cfg.EEGain / cfg.synsperconn[cellModel])
-                    #     print(preTypes[i], postTypes[i], list(postBin), wmat[label][ipost,ipre] * cfg.EEGain / cfg.synsperconn[cellModel])
+                    #     weight.append(wmat[label][ipost,ipre] * cfg.EEGain)
+                    #     print(preTypes[i], postTypes[i], list(postBin), wmat[label][ipost,ipre] * cfg.EEGain)
                     #     print(min(weight), max(weight))
                     netParams.connParams[ruleLabel] = { 
                         'preConds': {'cellType': preTypes[i], 'ynorm': list(preBin)}, 
