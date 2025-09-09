@@ -12,13 +12,13 @@ PercentageChange = 0.5
 minChg = (1-PercentageChange)
 maxChg = (1+PercentageChange)
 
-params = {'weightLong.TPO': [0.1*minChg, 0.75*maxChg],
-          'weightLong.TVL': [0.1*minChg, 0.75*maxChg],
-          'weightLong.S1': [0.1*minChg, 0.75*maxChg],
-          'weightLong.S2': [0.1*minChg, 0.75*maxChg],
-          'weightLong.cM1': [0.1*minChg, 0.75*maxChg],
-          'weightLong.M2': [0.1*minChg, 0.75*maxChg],
-          'weightLong.OC': [0.1*minChg, 0.75*maxChg],
+params = {'weightLong.TPO': [0.1*minChg, 0.5*maxChg],
+          'weightLong.TVL': [0.1*minChg, 0.5*maxChg],
+          'weightLong.S1': [0.1*minChg, 0.5*maxChg],
+          'weightLong.S2': [0.1*minChg, 0.5*maxChg],
+          'weightLong.cM1': [0.1*minChg, 0.5*maxChg],
+          'weightLong.M2': [0.1*minChg, 0.5*maxChg],
+          'weightLong.OC': [0.1*minChg, 0.5*maxChg],
           'EEGain': [1.*minChg, 1.*maxChg],
           'IEweights.0': [1.*minChg, 1.*maxChg],    ## L2/3+4
           'IEweights.1': [1.*minChg, 1.*maxChg],    ## L5
@@ -26,10 +26,10 @@ params = {'weightLong.TPO': [0.1*minChg, 0.75*maxChg],
           'IIweights.0': [1.*minChg, 1.*maxChg],    ## L2/3+4
           'IIweights.1': [1.*minChg, 1.*maxChg],    ## L5
           'IIweights.2': [1.*minChg, 1.*maxChg],    ## L6
-          'EICellTypeGain.PV': [1.*minChg, 4.*maxChg],    
-          'EICellTypeGain.SOM': [1.*minChg, 4.*maxChg],    
-          'EICellTypeGain.VIP': [1.*minChg, 4.*maxChg],    
-          'EICellTypeGain.NGF': [1.*minChg, 4.*maxChg],
+        #   'EICellTypeGain.PV': [1.*minChg, 4.*maxChg],    
+        #   'EICellTypeGain.SOM': [1.*minChg, 4.*maxChg],    
+        #   'EICellTypeGain.VIP': [1.*minChg, 4.*maxChg],    
+        #   'EICellTypeGain.NGF': [1.*minChg, 4.*maxChg],
         #   'scaleDensity': [0.15]   
           }
 
@@ -222,7 +222,7 @@ time mpirun --bind-to none -n $SLURM_NTASKS ./x86_64/special -mpi -python src/in
         'key': SSH_KEY_PATH,  # No key needed for this host
         'remote_dir': '/home/rbaravalle/%s' % directoryExpanse,
         'output_path': './batchData/optuna_batch',
-        'checkpoint_path': "./batchData/ray_expanseGPU_channel_2",
+        'checkpoint_path': "./batchData/ray_expanseGPU_channel_4",
         'run_config': {
             'allocation': 'TG-MED240058',
             'realtime': '10:30:00',

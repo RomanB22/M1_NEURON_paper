@@ -31,6 +31,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 cfg.preTone = 1000
 cfg.postTone = 1000 # Movement part
+cfg.transient = 1000
 cfg.SimulateBaseline = True
 cfg.addInVivoThalamus = True # To add the sampled spike times from in-vivo recordings on TVL
 cfg.duration = cfg.preTone + cfg.postTone
@@ -52,7 +53,7 @@ cfg.validateNetParams = True
 cfg.progressBar = 0
 
 cfg.includeParamsLabel = False
-cfg.timeRanges = [1000., cfg.duration]
+cfg.timeRanges = [cfg.transient, cfg.duration]
 cfg.printPopAvgRates = cfg.timeRanges
 
 cfg.checkErrors = False
@@ -115,7 +116,7 @@ cfg.compactConnFormat = 0
 #------------------------------------------------------------------------------
 with open(cwd + '/cells/popColors.pkl', 'rb') as fileObj: popColors = pickle.load(fileObj)['popColors']
 
-# allpops = ['TVL']
+allpops = ['TVL']
 
 cfg.analysis['plotRaster'] = {'include': allpops, 'orderBy': ['pop', 'y'], 'timeRange': cfg.timeRanges,
                              'saveFig': True, 'showFig': False, 'popRates': True, 

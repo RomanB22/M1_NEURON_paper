@@ -736,3 +736,4 @@ def trimTVLSpikes(spikeList, cfg):
 
     return trimmedList
 
+

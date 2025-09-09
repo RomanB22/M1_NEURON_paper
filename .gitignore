@@ -8,7 +8,9 @@ optunaGPU_Expanse.txt
 optunaGPU_SGE.txt
 optunaGPU_SGE_2.txt
 optunaGPU_Channelopathies*.txt
-manifolds/
+#manifolds/
+*.ai
+*.eps
 
 # VSCode
 .vscode/*
