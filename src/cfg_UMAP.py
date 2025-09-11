@@ -42,6 +42,10 @@ reprs, reds, names, task_progress, validCellsDepth, RawDataTone, params = defs.l
 cfg.selected_trial = 0
 cfg.UMAP_params = params
 
+ihQuiet = 1.0 # Factor for ih gbar in PT cells at quiet state
+ihMovement = 0.25
+cfg.ihGbar = ihQuiet # multiplicative factor for ih gbar in PT cells
+
 if cfg.period == 'scaled_prep':
 	cfg.RawData = RawDataPrep[cfg.selected_trial]
 	cfg.n_timesampled, _ = np.shape(cfg.RawData)
@@ -56,6 +60,7 @@ elif cfg.period == 'scaled_tone':
 	cfg.preTone = 0
 	cfg.postTone = duration
 	cfg.SimulateBaseline = False
+	cfg.ihGbar = ihMovement # multiplicative factor for ih gbar in PT cells
 elif cfg.period == 'full_trial':
 	# Raw Data is concatenation of both
 	durationPre = 1000.
@@ -192,10 +197,7 @@ cfg.cellmod =  {'IT2': 'HH_reduced',
 				'IT6': 'HH_reduced',
 				'CT6': 'HH_reduced'}
 
-ihQuiet = 1.0 # Factor for ih gbar in PT cells at quiet state
-ihMovement = 0.25
 cfg.ihModel = 'migliore'  # ih model
-cfg.ihGbar = ihQuiet if cfg.SimulateBaseline else ihMovement # multiplicative factor for ih gbar in PT cells
 cfg.ihGbarZD = None # multiplicative factor for ih gbar in PT cells
 cfg.ihGbarBasal = 1.0 # 0.1 # multiplicative factor for ih gbar in PT cells
 cfg.ihlkc = 0.2 # ih leak param (used in Migliore)
@@ -216,7 +218,7 @@ cfg.KgbarFactor = 1.0 # multiplicative factor for K channels gbar in all E cells
 cfg.makeKgbarFactorEqualToNewFactor = False
 
 cfg.modifyMechs = {'startTime': cfg.preTone, 'endTime': cfg.duration, 
-                   'cellType':'PT', 'mech': 'hd', 'property': 'gbar', 'newFactor': 1.00, 'origFactor': 0.75}
+                   'cellType':'PT', 'mech': 'hd', 'property': 'gbar', 'newFactor': ihMovement, 'origFactor': ihQuiet}
 
 #------------------------------------------------------------------------------
 # Synapses

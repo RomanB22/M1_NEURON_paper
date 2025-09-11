@@ -881,8 +881,16 @@ def binnedRaster(simData, cfg):
 def concatenateExpModelRate(ExpRaster, ModelRaster):
     # Concatenate the experimental and model rate data to calculate UMAP on the combined data
     import numpy as np
-    ExpRaster= np.transpose(ExpRaster)
-    ModelRaster= np.transpose(ModelRaster)
+
+    # transpose
+    ExpRaster = ExpRaster.T
+    ModelRaster = ModelRaster.T
+
+    # z-normalize row-wise
+    ExpRaster = (ExpRaster - ExpRaster.mean(axis=1, keepdims=True)) / ExpRaster.std(axis=1, keepdims=True)
+    ModelRaster = (ModelRaster - ModelRaster.mean(axis=1, keepdims=True)) / ModelRaster.std(axis=1, keepdims=True)
+
+    # concatenate
     Raster = np.hstack((ExpRaster, ModelRaster))
     ConcatenatedLabels = np.array([0]*np.shape(ExpRaster)[1] + [1]*np.shape(ModelRaster)[1])  # 0=ExpRaster, 1=ModelRaster
     # print(ConcatenatedLabels, np.shape(Raster))

@@ -180,7 +180,7 @@ cfg.KgbarFactor = 1.0 # multiplicative factor for K channels gbar in all E cells
 cfg.makeKgbarFactorEqualToNewFactor = False
 
 cfg.modifyMechs = {'startTime': cfg.preTone, 'endTime': cfg.duration, 
-                   'cellType':'PT', 'mech': 'hd', 'property': 'gbar', 'newFactor': 1.00, 'origFactor': 0.75}
+                   'cellType':'PT', 'mech': 'hd', 'property': 'gbar', 'newFactor': ihMovement, 'origFactor': ihQuiet}
 
 #------------------------------------------------------------------------------
 # Synapses

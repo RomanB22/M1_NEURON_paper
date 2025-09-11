@@ -38,11 +38,11 @@ sim.setupRecording()
 
 #------------------------------------------------------------------------------
 # Simulation option 1: standard
-sim.runSim()                              # run parallel Neuron simulation (calling func to modify mechs)
-# # Simulation option 2: interval function to modify mechanism params
-#TODO: Check that it works properly on CoreNEURON
-# print(cfg.modifyMechs)
-# sim.runSimWithIntervalFunc(cfg.transient+cfg.preTone, defs.modifyMechsFunc, funcArgs={'cfg': cfg})       # run parallel Neuron simulation (calling func to modify mechs)
+if cfg.period == 'full_trial':
+    print(cfg.modifyMechs)
+    sim.runSimWithIntervalFunc(cfg.preTone, defs.modifyMechsFunc, funcArgs={'cfg': cfg})       # run parallel Neuron simulation (calling func to modify mechs)
+else:
+    sim.runSim()                              # run parallel Neuron simulation (calling func to modify mechs)
 
 sim.gatherData()                  			# gather spiking data and cell info from each node
 # Gather/save data option 2: distributed saving across nodes

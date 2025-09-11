@@ -19,6 +19,7 @@ ExpRates.png
 ModelRates.png
 movement.png
 UMAP_embedding.png
+optuna*.csv
 
 # VSCode
 .vscode/*
