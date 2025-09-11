@@ -6,9 +6,9 @@ import pandas as pd
 CWD = os.getcwd()
 
 nameCluster = 'ssh_expanse_gpu'
-directorySGE = 'M1_Manifolds' #'ChannelopathiesGPU' M1_Manifolds
+directorySGE = 'M1_Manifolds_UMAP' #'ChannelopathiesGPU' M1_Manifolds M1_Manifolds_UMAP
 directoryExpanse = 'M1_Manifolds_UMAP' #'ChannelopathiesGPU_Last' M1_Manifolds M1_Manifolds_UMAP
-numSamples = 1
+numSamples = 3000
 PercentageChange = 0.5
 minChg = (1-PercentageChange)
 maxChg = (1+PercentageChange)
@@ -30,6 +30,7 @@ params = {
     col: [minChg * row[col], maxChg * row[col]]
     for col in include
 }
+params['period'] = 'full_trial' # 'scaled_tone', 'scaled_prep', 'full_unlock' full_trial
 
 # --- Define Constants and Common Settings ---
 
