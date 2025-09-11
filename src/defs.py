@@ -750,9 +750,10 @@ def load_umap_results(reg='m1', n_components=2, period='scaled_prep'):
     M1sampledCells = []
     RawData = []
     for i in range(len(loaded_names)):
-        counts = cellPerlayer(validCellsDepth[i])
+        idx = np.argsort(validCellsDepth[i])
+        counts = cellPerlayer(validCellsDepth[i][idx])
         M1sampledCells.append(counts)
-        RawData.append(loaded_reds[i]._raw_data)
+        RawData.append(loaded_reds[i]._raw_data[:,idx])
     import json
     params = json.load(open(f'./manifolds/UMAP_params.json', 'r'))
 
@@ -862,6 +863,8 @@ def binnedRaster(simData, cfg):
     spike_times = np.array(simData['spkt'].to_python())
     spike_ids = np.array(simData['spkid'].to_python())
     sampledCells = [j for i in cfg.sampled_cells.values() for j in i]
+    sampledCells.sort()
+    # print(sampledCells)
     spike_timesAux = []
     for i in sampledCells:
         spike_timesAux.append(spike_times[spike_ids == i]/1000.)
@@ -880,7 +883,7 @@ def concatenateExpModelRate(ExpRaster, ModelRaster):
     ModelRaster= np.transpose(ModelRaster)
     Raster = np.hstack((ExpRaster, ModelRaster))
     ConcatenatedLabels = np.array([0]*np.shape(ExpRaster)[1] + [1]*np.shape(ModelRaster)[1])  # 0=ExpRaster, 1=ModelRaster
-    print(ConcatenatedLabels, np.shape(Raster))
+    # print(ConcatenatedLabels, np.shape(Raster))
     return Raster, ConcatenatedLabels
 
 def UMAP(n_neighbors,min_dist,n_components,metric,randomNumber,Raster):
@@ -920,7 +923,7 @@ def umapFitnessFunc(umap_representation, ConcatenatedLabels):
 
     return wasserstein_dist, sw_dist
 
-def plot_embedding(embedding, labels, colors=("blue", "red"), alpha=0.7, size=50, title="Embedding"):
+def plot_embedding(embedding, labels, cfg, colors=("blue", "red"), alpha=0.7, size=50, title="Embedding"):
     """
     Plot 2D embedding with two subsets colored differently.
     
@@ -951,5 +954,6 @@ def plot_embedding(embedding, labels, colors=("blue", "red"), alpha=0.7, size=50
                 c=colors[1], alpha=alpha, s=size, label="Model")
     plt.title(title)
     plt.legend()
-    plt.savefig("UMAP_embedding.png")
+    filename = cfg.saveFolder + "/" + cfg.simLabel + "_umap.png"
+    plt.savefig(filename)
     plt.close()

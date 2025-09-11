@@ -34,7 +34,7 @@ sim.net.connectCells()            			# create connections between cells based on
 sim.net.addStims() 							# add network stimulation
 sim.setupRecording()
 
-sampled_cells = defs.sampleNeuronsFromModel(sim, cfg, plot=False)
+# print(cfg.saveFolder, cfg.simLabel)
 
 #------------------------------------------------------------------------------
 # Simulation option 1: standard
@@ -67,34 +67,24 @@ if sim.rank == 0:
     ConcatenatedRates, ConcatenatedLabels = defs.concatenateExpModelRate(cfg.RawData, ModelRates)
 
     import matplotlib.pyplot as plt
-    import numpy as np
-    plt.figure()
-    plt.imshow(np.transpose(ModelRates), aspect='auto')
-    plt.colorbar(label='Firing rate (Hz)')
-    plt.savefig('ModelRates.png')
-    plt.close()
-    plt.figure()
-    plt.imshow(np.transpose(cfg.RawData), aspect='auto')
-    plt.colorbar(label='Firing rate (Hz)')
-    plt.savefig('ExpRates.png')
-    plt.close()
     plt.figure()
     plt.imshow(ConcatenatedRates, aspect='auto')
     plt.colorbar(label='Firing rate (Hz)')
-    plt.savefig('Concatenated.png')
+    filename = cfg.saveFolder + "/" + cfg.simLabel + "_ratesConcat.png"
+    plt.savefig(filename)
     plt.close()
-    # quit()
 
     # TO DO: CALCULATE THE FITNESS FUNCTION WITH UMAP + LABELS
     umap_representation, umap_reduction, pearsonCorr, pvalue = defs.calculateUMAP(ConcatenatedRates, cfg)
-    print(np.shape(umap_representation), len(ConcatenatedLabels), pearsonCorr)
-    defs.plot_embedding(umap_representation, ConcatenatedLabels)
+    # print(np.shape(umap_representation), len(ConcatenatedLabels), pearsonCorr)
+    defs.plot_embedding(umap_representation, ConcatenatedLabels, cfg)
 
     wasserstein_dist, sw_dist = defs.umapFitnessFunc(umap_representation, ConcatenatedLabels)
     results = {}
-    results['loss_full'] = wasserstein_dist
-    results['loss_sliced'] = sw_dist
+    results['loss'] = wasserstein_dist # sw_dist
+    results['wasserstein_dist'] = wasserstein_dist # wasserstein_dist
+    results['sw_dist'] = sw_dist # sw_dist
     out_json = json.dumps({**inputs, **results})
 
-    print(out_json)
+    # print(out_json)
     sim.send(out_json)

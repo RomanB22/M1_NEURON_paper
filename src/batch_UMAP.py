@@ -1,37 +1,35 @@
 from netpyne.batchtools.search import search
 from pathlib import Path
 import os
+import pandas as pd
 
 CWD = os.getcwd()
 
 nameCluster = 'ssh_expanse_gpu'
 directorySGE = 'M1_Manifolds' #'ChannelopathiesGPU' M1_Manifolds
-directoryExpanse = 'ChannelopathiesGPU_Last' #'ChannelopathiesGPU' M1_Manifolds
-numSamples = 3000
+directoryExpanse = 'M1_Manifolds_UMAP' #'ChannelopathiesGPU_Last' M1_Manifolds M1_Manifolds_UMAP
+numSamples = 1
 PercentageChange = 0.5
 minChg = (1-PercentageChange)
 maxChg = (1+PercentageChange)
 
-params = {'weightLong.TPO': [0.1*minChg, 0.5*maxChg],
-          'weightLong.TVL': [0.1*minChg, 0.5*maxChg],
-          'weightLong.S1': [0.1*minChg, 0.5*maxChg],
-          'weightLong.S2': [0.1*minChg, 0.5*maxChg],
-          'weightLong.cM1': [0.1*minChg, 0.5*maxChg],
-          'weightLong.M2': [0.1*minChg, 0.5*maxChg],
-          'weightLong.OC': [0.1*minChg, 0.5*maxChg],
-          'EEGain': [1.*minChg, 1.*maxChg],
-          'IEweights.0': [1.*minChg, 1.*maxChg],    ## L2/3+4
-          'IEweights.1': [1.*minChg, 1.*maxChg],    ## L5
-          'IEweights.2': [1.*minChg, 1.*maxChg],    ## L6
-          'IIweights.0': [1.*minChg, 1.*maxChg],    ## L2/3+4
-          'IIweights.1': [1.*minChg, 1.*maxChg],    ## L5
-          'IIweights.2': [1.*minChg, 1.*maxChg],    ## L6
-        #   'EICellTypeGain.PV': [1.*minChg, 4.*maxChg],    
-        #   'EICellTypeGain.SOM': [1.*minChg, 4.*maxChg],    
-        #   'EICellTypeGain.VIP': [1.*minChg, 4.*maxChg],    
-        #   'EICellTypeGain.NGF': [1.*minChg, 4.*maxChg],
-        #   'scaleDensity': [0.15]   
-          }
+dataFrame = pd.read_csv('./manifolds/BaselineModels.csv') 
+include = ['IIweights.0', 'IEweights.2', 'IIweights.2',
+       'IIweights.1', 'EICellTypeGain.SOM', 'EICellTypeGain.PV',
+       'EICellTypeGain.NGF', 'EICellTypeGain.VIP', 'weightLong.S1',
+       'weightLong.S2', 'weightLong.TPO', 'weightLong.TVL', 'weightLong.OC',
+       'EEGain', 'weightLong.cM1', 'weightLong.M2', 'IEweights.0',
+       'IEweights.1']
+
+chosenTrial = 0
+
+row = dataFrame[include].iloc[chosenTrial]
+params = {}
+
+params = {
+    col: [minChg * row[col], maxChg * row[col]]
+    for col in include
+}
 
 # --- Define Constants and Common Settings ---
 
@@ -103,7 +101,7 @@ config = {
                 unset DISPLAY
                 conda activate M1_CEBRA
                 {PYTHON_SETUP_CMDS}
-                nrniv -python src/init.py
+                nrniv -python src/init_UMAP.py
             """
         }
     },
@@ -124,7 +122,7 @@ config = {
                 {GPUCONFIG_DOWNSTATE}
                 {IMPORTNEURONGPU}
                 {PYTHON_SETUP_CMDS}
-                mpiexec -n $NSLOTS ./x86_64/special -python -mpi src/init.py
+                mpiexec -n $NSLOTS ./x86_64/special -python -mpi src/init_UMAP.py
             """
         }
     },
@@ -145,7 +143,7 @@ config = {
                 conda activate M1_dev
                 export LD_LIBRARY_PATH="/ddn/rbarav/miniconda3/envs/M1_dev/lib/python3.10/site-packages/mpi4py_mpich.libs"
                 {PYTHON_SETUP_CMDS}
-                mpiexec -n $NSLOTS -hosts $(hostname) nrniv -python -mpi src/init.py
+                mpiexec -n $NSLOTS -hosts $(hostname) nrniv -python -mpi src/init_UMAP.py
             """
         }
     },
@@ -166,7 +164,7 @@ config = {
                 {GPUCONFIG_DOWNSTATE}
                 {IMPORTNEURONGPU}
                 {PYTHON_SETUP_CMDS}
-mpiexec -n $NSLOTS ./x86_64/special -python -mpi src/init.py
+mpiexec -n $NSLOTS ./x86_64/special -python -mpi src/init_UMAP.py
             """
         }
     },
@@ -187,7 +185,7 @@ mpiexec -n $NSLOTS ./x86_64/special -python -mpi src/init.py
                 conda activate M1_dev
                 export LD_LIBRARY_PATH="/ddn/rbarav/miniconda3/envs/M1_dev/lib/python3.10/site-packages/mpi4py_mpich.libs"
                 {PYTHON_SETUP_CMDS}
-mpiexec -n $NSLOTS -hosts $(hostname) nrniv -python -mpi src/init.py
+mpiexec -n $NSLOTS -hosts $(hostname) nrniv -python -mpi src/init_UMAP.py
             """
         }
     },
@@ -211,7 +209,7 @@ mpiexec -n $NSLOTS -hosts $(hostname) nrniv -python -mpi src/init.py
             'command': f"""
                 {CONFIG_EXPANSE_CPU}
                 {PYTHON_SETUP_CMDS}
-time mpirun --bind-to none -n $SLURM_NTASKS ./x86_64/special -mpi -python src/init.py
+time mpirun --bind-to none -n $SLURM_NTASKS ./x86_64/special -mpi -python src/init_UMAP.py
             """
         }
     },
@@ -222,7 +220,7 @@ time mpirun --bind-to none -n $SLURM_NTASKS ./x86_64/special -mpi -python src/in
         'key': SSH_KEY_PATH,  # No key needed for this host
         'remote_dir': '/home/rbaravalle/%s' % directoryExpanse,
         'output_path': './batchData/optuna_batch',
-        'checkpoint_path': "./batchData/ray_expanseGPU_channel_4",
+        'checkpoint_path': "./batchData/ray_expanseUMAP",
         'run_config': {
             'allocation': 'TG-MED240058',
             'realtime': '10:30:00',
@@ -236,7 +234,7 @@ time mpirun --bind-to none -n $SLURM_NTASKS ./x86_64/special -mpi -python src/in
                 {CONFIG_EXPANSE_GPU}
                 {IMPORTNEURONGPU}
                 {PYTHON_SETUP_CMDS}
-time mpirun --bind-to none -n $SLURM_NTASKS ./x86_64/special -mpi -python src/init.py
+time mpirun --bind-to none -n $SLURM_NTASKS ./x86_64/special -mpi -python src/init_UMAP.py
             """
         }
     }
@@ -254,7 +252,7 @@ results = search(
     # --- Search-specific parameters ---
     label='optuna',
     params=params,          # Your search parameters
-    metric='loss_full', # Use 2D full Wasserstein or "loss_sliced" for Sliced Wasserstein (faster-approximation fo the first one)
+    metric='loss', # Use 2D full Wasserstein or "loss_sliced" for Sliced Wasserstein (faster-approximation fo the first one)
     mode='min',
     algorithm="optuna",
     max_concurrent=1,

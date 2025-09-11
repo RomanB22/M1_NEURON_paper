@@ -58,8 +58,9 @@ elif cfg.period == 'scaled_tone':
 	cfg.SimulateBaseline = False
 elif cfg.period == 'full_trial':
 	# Raw Data is concatenation of both
-	cfg.RawData = np.vstack((RawDataPrep[cfg.selected_trial][-501:-1,:], RawDataTone[cfg.selected_trial]))
 	durationPre = 1000.
+	n_binsRawPre = int(durationPre/(1000./cfg.UMAP_params['fs']))
+	cfg.RawData = np.vstack((RawDataPrep[cfg.selected_trial][-n_binsRawPre:,:], RawDataTone[cfg.selected_trial]))
 	durationPost = np.shape(RawDataTone[cfg.selected_trial])[0]/cfg.UMAP_params['fs']*1000
 	cfg.SimulateBaseline = False
 	cfg.preTone = durationPre
@@ -67,7 +68,7 @@ elif cfg.period == 'full_trial':
 else:
 	raise ValueError('cfg.period not recognized')
 	
-cfg.transient = 500
+cfg.transient = 300
 cfg.addInVivoThalamus = True # To add the sampled spike times from in-vivo recordings on TVL
 cfg.duration = cfg.preTone + cfg.postTone
 cfg.dt = 0.025 # For GPU increase the dt to not get precision errors
@@ -353,4 +354,3 @@ if cfg.addInVivoThalamus:
 	cfg.spikeTimesInVivo = trimmedBaseline if cfg.SimulateBaseline else trimmedMovement
 	del baselineSpks, movementAndPostSpks, trimmedBaseline, trimmedMovement
 	gc.collect()
-
