@@ -754,7 +754,8 @@ def load_umap_results(reg='m1', n_components=2, period='scaled_prep'):
         idx = np.argsort(validCellsDepth[i])
         counts = cellPerlayer(validCellsDepth[i][idx])
         M1sampledCells.append(counts)
-        RawData.append(loaded_reds[i]._raw_data[:,idx])
+        # RawData.append(loaded_reds[i]._raw_data[:,idx])
+        RawData.append(loaded_reds[i][:,idx])
     import json
     params = json.load(open(f'./manifolds/UMAP_params.json', 'r'))
 

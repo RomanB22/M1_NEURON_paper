@@ -211,7 +211,7 @@ def save_umap_results(reprs, reds, names, task_progress, reg, n_components, peri
 
     results = {
         'representations': reprs,
-        'reductions': np.zeros_like(names), #reds, # Python 3.11 has an issue saving and loading this info. To use in Expanse, with Python3.11, need tor remove this 
+        'reductions': reds, #reds, # Python 3.11 has an issue saving and loading this info. To use in Expanse, with Python3.11, need tor remove this 
         'folder_names': names,
         'task_progress': task_progress,
         'validCellsDepth': validCells
@@ -271,7 +271,7 @@ def process_umap(period, n_components, folders, reg):
             print(f"Pearson correlation: {pearsonCorr}")
 
             reprs.append(umap_representation)
-            reds.append(umap_reduction)
+            reds.append(umap_reduction._raw_data)
             names.append(folder)
             task_progress.append(task_progr)
             validCellsDepth.append(cellDepths[validCells])
@@ -321,8 +321,8 @@ if __name__ == '__main__':
     # List subfolders
     folders = [f.name for f in dirpath_data.iterdir() if f.is_dir()]
 
-    for reg in ['m1', 'th']:
-        for n_components in [3, 2]:
+    for reg in ['m1']:
+        for n_components in [2]:
 
             # # load and plot
             # reprs, reds, names, task_progress = load_umap_results(reg, n_components, period)
