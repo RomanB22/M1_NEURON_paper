@@ -207,7 +207,7 @@ def plot_umap_representation(repr, names, n_components, task_progress=None, save
     return fig, axes
 
 def save_umap_results(reprs, reds, names, task_progress, reg, n_components, period, validCells):
-    import pickle
+    import joblib
 
     results = {
         'representations': reprs,
@@ -218,9 +218,9 @@ def save_umap_results(reprs, reds, names, task_progress, reg, n_components, peri
     }
 
     filename = filename_base(period, n_components, reg) + '.pkl'
-    with open(filename, 'wb') as f:
-        pickle.dump(results, f)
-    print(f"Saved UMAP representations and folder names to {filename}.pkl")
+    joblib.dump(results, filename)
+
+    print(f"Saved UMAP results to {filename}")
 
 
 def load_umap_results(reg, n_components, period):
@@ -300,7 +300,14 @@ if __name__ == '__main__':
     bin_time = 0.05 # time bin in secs
     fs = 500
     window_size = int(bin_time*fs)
-    n_neighbors, min_dist, metric, randomNumber = 50, 0.25, 'euclidean', None
+    n_neighbors, min_dist, metric, randomNumber = 50, 0.25, 'euclidean', 42
+
+    paramsDict = {'baseline': baseline, 'minRateBaseline': minRateBaseline, 'minRateTrial': minRateTrial, 'bin_time': bin_time, 'fs': fs,
+                  'window_size': window_size, 'n_neighbors': n_neighbors, 'min_dist': min_dist, 'metric': metric, 'randomNumber': randomNumber}
+
+    import json
+    with open("manifolds/UMAP_params.json", "w") as fp:
+        json.dump(paramsDict , fp) 
 
     period = 'scaled_tone' # 'aligned_tone', 'aligned_prep', 'full_unlock', 'scaled_prep', 'scaled_tone'
 
