@@ -1,0 +1,100 @@
+"""
+init.py
+
+Starting script to run NetPyNE-based M1 model.
+
+Usage:
+    python init.py # Run simulation, optionally plot a raster
+
+MPI usage:
+    mpiexec -n 4 nrniv -python -mpi init.py
+
+Contributors: salvadordura@gmail.com
+"""
+
+import matplotlib; matplotlib.use('Agg')  # to avoid graphics error in servers
+from netpyne import sim
+import json
+from netParams_UMAP import netParams, cfg
+from pathlib import Path
+import defs
+
+cwd = str(Path.cwd())
+
+#------------------------------------------------------------------------------
+# This for old batch, but before doing it uninstall batchtk
+# cfg, netParams = sim.readCmdLineArgs(simConfigDefault=cwd+'/src/cfg.py', netParamsDefault=cwd+'/src/netParams.py')
+
+sim.initialize(
+    simConfig = cfg, 	
+    netParams = netParams)  				# create network object and set cfg and net params
+sim.net.createPops()               			# instantiate network populations
+sim.net.createCells()              			# instantiate network cells based on defined populations
+sim.net.connectCells()            			# create connections between cells based on params
+sim.net.addStims() 							# add network stimulation
+sim.setupRecording()
+
+sampled_cells = defs.sampleNeuronsFromModel(sim, cfg, plot=False)
+
+#------------------------------------------------------------------------------
+# Simulation option 1: standard
+sim.runSim()                              # run parallel Neuron simulation (calling func to modify mechs)
+# # Simulation option 2: interval function to modify mechanism params
+#TODO: Check that it works properly on CoreNEURON
+# print(cfg.modifyMechs)
+# sim.runSimWithIntervalFunc(cfg.transient+cfg.preTone, defs.modifyMechsFunc, funcArgs={'cfg': cfg})       # run parallel Neuron simulation (calling func to modify mechs)
+
+sim.gatherData()                  			# gather spiking data and cell info from each node
+# Gather/save data option 2: distributed saving across nodes
+# sim.saveDataInNodes()
+# sim.gatherDataFromFiles()
+
+sim.simData.numSampledCellsPerLayer = cfg.numSampledCellsPerLayer
+sim.simData.norm_layers = cfg.normLayers
+
+sim.saveData()                    			# save params, cell info and sim output to file (pickle,mat,txt,etc)#
+sim.analysis.plotData()         			# plot spike raster etc
+
+print('completed simulation...')
+
+if sim.rank == 0:
+    print('transmitting data...')
+    inputs = cfg.get_mappings()
+    cfg.sampled_cells = defs.sampleNeuronsFromModel(sim, cfg, plot=False)
+
+    ModelRates = defs.binnedRaster(sim.simData, cfg)
+
+    ConcatenatedRates, ConcatenatedLabels = defs.concatenateExpModelRate(cfg.RawData, ModelRates)
+
+    import matplotlib.pyplot as plt
+    import numpy as np
+    plt.figure()
+    plt.imshow(np.transpose(ModelRates), aspect='auto')
+    plt.colorbar(label='Firing rate (Hz)')
+    plt.savefig('ModelRates.png')
+    plt.close()
+    plt.figure()
+    plt.imshow(np.transpose(cfg.RawData), aspect='auto')
+    plt.colorbar(label='Firing rate (Hz)')
+    plt.savefig('ExpRates.png')
+    plt.close()
+    plt.figure()
+    plt.imshow(ConcatenatedRates, aspect='auto')
+    plt.colorbar(label='Firing rate (Hz)')
+    plt.savefig('Concatenated.png')
+    plt.close()
+    # quit()
+
+    # TO DO: CALCULATE THE FITNESS FUNCTION WITH UMAP + LABELS
+    umap_representation, umap_reduction, pearsonCorr, pvalue = defs.calculateUMAP(ConcatenatedRates, cfg)
+    print(np.shape(umap_representation), len(ConcatenatedLabels), pearsonCorr)
+    defs.plot_embedding(umap_representation, ConcatenatedLabels)
+
+    wasserstein_dist, sw_dist = defs.umapFitnessFunc(umap_representation, ConcatenatedLabels)
+    results = {}
+    results['loss_full'] = wasserstein_dist
+    results['loss_sliced'] = sw_dist
+    out_json = json.dumps({**inputs, **results})
+
+    print(out_json)
+    sim.send(out_json)

@@ -46,6 +46,7 @@ def binned_spikes_and_rate_per_cell(events, spikes, period, single_trial=None, r
 
     trial_window = get_window(events, baseline, period)
     cells = np.unique(spikes['cell_id'].values)
+    cellDepths = spikes.attrs['cell_depths']
 
     num_spikes_per_cell = np.zeros(len(cells))
 
@@ -120,7 +121,7 @@ def binned_spikes_and_rate_per_cell(events, spikes, period, single_trial=None, r
         # TODO: implement for single trial
         pass
 
-    return neural_data, time, rate_per_cell, task_progress
+    return neural_data, time, rate_per_cell, task_progress, cellDepths
 
 def overlapping_window(np_array, window_size=25):
     return ndimage.uniform_filter1d(np_array, size=window_size, axis=1, mode='constant')
@@ -205,14 +206,15 @@ def plot_umap_representation(repr, names, n_components, task_progress=None, save
 
     return fig, axes
 
-def save_umap_results(reprs, reds, names, task_progress, reg, n_components, period):
+def save_umap_results(reprs, reds, names, task_progress, reg, n_components, period, validCells):
     import pickle
 
     results = {
         'representations': reprs,
         'reductions': reds,
         'folder_names': names,
-        'task_progress': task_progress
+        'task_progress': task_progress,
+        'validCellsDepth': validCells
     }
 
     filename = filename_base(period, n_components, reg) + '.pkl'
@@ -233,7 +235,7 @@ def load_umap_results(reg, n_components, period):
     return loaded_reprs, loaded_reds, loaded_names, task_progress
 
 def process_umap(period, n_components, folders, reg):
-    reprs, reds, names, task_progress = [], [], [], []
+    reprs, reds, names, task_progress, validCellsDepth = [], [], [], [], []
     from preprocess import create_task_events, epoch_data
     for folder in tqdm(folders):
         try:
@@ -247,11 +249,11 @@ def process_umap(period, n_components, folders, reg):
             continue
 
         # get baseline and trial firing rates to find valid cells (spiking above certain frequency)
-        _, _, meanRateBaseline, _ = binned_spikes_and_rate_per_cell(events, spikes, 'baseline')
-        _, _, meanRateTrial, _ = binned_spikes_and_rate_per_cell(events, spikes, 'trial')
+        _, _, meanRateBaseline, _, _ = binned_spikes_and_rate_per_cell(events, spikes, 'baseline')
+        _, _, meanRateTrial, _, _ = binned_spikes_and_rate_per_cell(events, spikes, 'trial')
 
         # Group spiking results for all trials
-        neural_data, time, rate_per_cell, task_progr  = binned_spikes_and_rate_per_cell(events, spikes, period, single_trial='avg', rescale=True)
+        neural_data, time, rate_per_cell, task_progr, cellDepths  = binned_spikes_and_rate_per_cell(events, spikes, period, single_trial='avg', rescale=True)
 
         # find cells spiking above certain frequency
         validCells = np.argwhere((meanRateBaseline >= minRateBaseline) * (meanRateTrial > minRateTrial)).flatten()
@@ -272,11 +274,12 @@ def process_umap(period, n_components, folders, reg):
             reds.append(umap_reduction)
             names.append(folder)
             task_progress.append(task_progr)
+            validCellsDepth.append(cellDepths[validCells])
         except Exception as e:
             print(f"Error calculating UMAP for {folder}: {e}")
             continue
 
-    save_umap_results(reprs, reds, names, task_progress, reg, n_components, period)
+    save_umap_results(reprs, reds, names, task_progress, reg, n_components, period, validCellsDepth)
 
     fig, axes = plot_umap_representation(reprs, names, n_components, task_progress, saveAt=f'{filename_base(period, n_components, reg)}.png')
     return fig, axes

@@ -1,6 +1,7 @@
 ExpanseKey.txt
 pids.pids
 batchData/
+batchScripts/
 GPUConfig.sh
 GPUExpanseTest.sh
 setupLocal.sh
@@ -9,8 +10,15 @@ optunaGPU_SGE.txt
 optunaGPU_SGE_2.txt
 optunaGPU_Channelopathies*.txt
 #manifolds/
+arm64/
+x86_64/
 *.ai
 *.eps
+Concatenated.png
+ExpRates.png
+ModelRates.png
+movement.png
+UMAP_embedding.png
 
 # VSCode
 .vscode/*
