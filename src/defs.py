@@ -740,11 +740,11 @@ def load_umap_results(reg='m1', n_components=2, period='scaled_prep'):
     # import pickle
     # with open(f'./manifolds/{period}/umap_results_n{n_components}_{reg}.pkl', 'rb') as f:
     #     loaded_results = pickle.load(f)
-    import numpy as np
+    import joblib
     
-    filename = f'./manifolds/{period}/umap_results_n{n_components}_{reg}.npz'
-    loaded_results = np.load(filename, allow_pickle=True)
-
+    filename = f'./manifolds/{period}/umap_results_n{n_components}_{reg}.pkl'
+    loaded_results = joblib.load(filename)
+    
     loaded_reprs = loaded_results['representations']
     loaded_reds = loaded_results['reductions']
     loaded_names = loaded_results['folder_names']
