@@ -254,7 +254,7 @@ results = search(
     # --- Search-specific parameters ---
     label='optuna',
     params=params,          # Your search parameters
-    metric='loss',
+    metric='loss_full', # Use 2D full Wasserstein or "loss_sliced" for Sliced Wasserstein (faster-approximation fo the first one)
     mode='min',
     algorithm="optuna",
     max_concurrent=1,
