@@ -908,6 +908,9 @@ def concatenateExpModelRate(ExpRaster, ModelRaster):
     ExpRaster = ExpRaster.T
     ModelRaster = ModelRaster.T
 
+    target_cols = ModelRaster.shape[1]
+    ExpRaster = ExpRaster[:, -target_cols:]
+
     # Safe row-wise z-normalization
     ExpRaster = (ExpRaster - ExpRaster.mean(axis=1, keepdims=True)) / np.where(ExpRaster.std(axis=1, keepdims=True) == 0, 1, ExpRaster.std(axis=1, keepdims=True))
     ModelRaster = (ModelRaster - ModelRaster.mean(axis=1, keepdims=True)) / np.where(ModelRaster.std(axis=1, keepdims=True) == 0, 1, ModelRaster.std(axis=1, keepdims=True))
