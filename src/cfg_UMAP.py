@@ -103,7 +103,7 @@ cfg.checkErrorsVerbose = False
 cfg.rand123GlobalIndex = None
 cfg.coreneuron = True
 cfg.random123 = True
-# cfg.gpu = True
+cfg.gpu = True
 #------------------------------------------------------------------------------
 # Recording 
 #------------------------------------------------------------------------------
