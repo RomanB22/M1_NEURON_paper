@@ -32,7 +32,7 @@ cfg = specs.SimConfig()
 
 cfg.region = 'm1'
 cfg.n_components = 2
-cfg.period = 'scaled_tone' # 'scaled_tone', 'scaled_prep', 'full_unlock' full_trial
+cfg.period = 'full_trial' # 'scaled_tone', 'scaled_prep', 'full_trial'
 
 # 'scaled_prep'
 reprs, reds, names, task_progress, validCellsDepth, RawDataPrep, params = defs.load_umap_results(reg=cfg.region, n_components=cfg.n_components, period='scaled_prep')
