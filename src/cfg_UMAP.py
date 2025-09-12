@@ -32,14 +32,14 @@ cfg = specs.SimConfig()
 
 cfg.region = 'm1'
 cfg.n_components = 2
-cfg.period = 'full_trial' # 'scaled_tone', 'scaled_prep', 'full_unlock' full_trial
+cfg.period = 'scaled_tone' # 'scaled_tone', 'scaled_prep', 'full_unlock' full_trial
 
 # 'scaled_prep'
 reprs, reds, names, task_progress, validCellsDepth, RawDataPrep, params = defs.load_umap_results(reg=cfg.region, n_components=cfg.n_components, period='scaled_prep')
 # 'scaled_tone'
 reprs, reds, names, task_progress, validCellsDepth, RawDataTone, params = defs.load_umap_results(reg=cfg.region, n_components=cfg.n_components, period='scaled_tone')
 
-cfg.selected_trial = 0
+cfg.selected_trial = 9
 cfg.UMAP_params = params
 
 ihQuiet = 1.0 # Factor for ih gbar in PT cells at quiet state
@@ -76,7 +76,7 @@ else:
 cfg.transient = 300
 cfg.addInVivoThalamus = True # To add the sampled spike times from in-vivo recordings on TVL
 cfg.duration = cfg.preTone + cfg.postTone
-cfg.dt = 0.025 # For GPU increase the dt to not get precision errors
+cfg.dt = 0.5#0.025 # For GPU increase the dt to not get precision errors
 cfg.seeds = {'conn': 4321, 'stim': 1234, 'loc': 4321, 'tvl_sampling': 1234, 'm1_sampling': 4321}  # seeds for randomizers (connectivity, input stimulation, cell locations)
 cfg.hParams = {'celsius': 34, 'v_init': -80}  
 cfg.verbose = False
@@ -103,7 +103,7 @@ cfg.checkErrorsVerbose = False
 cfg.rand123GlobalIndex = None
 cfg.coreneuron = True
 cfg.random123 = True
-cfg.gpu = True
+# cfg.gpu = True
 #------------------------------------------------------------------------------
 # Recording 
 #------------------------------------------------------------------------------
@@ -352,7 +352,7 @@ if cfg.addInVivoThalamus:
 
 	# cfg.numSampledCellsPerLayer is an average of sampled cells per layer across all trials
 	cfg.numSampledCellsPerLayer = validCellsDepth[cfg.selected_trial]#defs.average_dict_entries(validCellsDepth)
-	
+
 	cfg.spikeTimesInVivo = trimmedBaseline if cfg.SimulateBaseline else trimmedMovement
 	del baselineSpks, movementAndPostSpks, trimmedBaseline, trimmedMovement
 	gc.collect()

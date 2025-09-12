@@ -680,12 +680,15 @@ def cellPerlayer(numbers):
     from collections import defaultdict
 
     counts = defaultdict(int)
-
     for num in numbers:
-        for layer, (low, high) in Layers.items():
-            if low <= num < high:
-                counts[layer] += 1
-                break  # Assumes one number belongs to only one layer
+        # Check if value is larger than layer 6's upper bound
+        if num >= 1.0*1350:
+            counts['6'] += 1
+        else:
+            for layer, (low, high) in Layers.items():
+                if low <= num < high:
+                    counts[layer] += 1
+                    break  # Assumes one number belongs to only one layer
 
     return counts
 
@@ -763,6 +766,15 @@ def load_umap_results(reg='m1', n_components=2, period='scaled_prep'):
 
 def overlapping_window(np_array, window_size=25):
     from scipy import ndimage
+    import matplotlib.pyplot as plt
+    plt.figure()
+    plt.imshow(np_array, aspect='auto', origin='lower')
+    plt.colorbar()
+    plt.savefig('before_window.png')
+    plt.figure()
+    plt.imshow(ndimage.uniform_filter1d(np_array, size=window_size, axis=1, mode='constant'), aspect='auto', origin='lower')
+    plt.colorbar()
+    plt.savefig('after_window.png')
     return ndimage.uniform_filter1d(np_array, size=window_size, axis=1, mode='constant')
 
 def non_overlapping_window(np_array, window_size=25):
@@ -866,17 +878,27 @@ def binnedRaster(simData, cfg):
     spike_ids = np.array(simData['spkid'].to_python())
     sampledCells = [j for i in cfg.sampled_cells.values() for j in i]
     sampledCells.sort()
+
+    # Convert transient time to seconds for consistency
+    transient_sec = cfg.transient / 1000.
+
     # print(sampledCells)
     spike_timesAux = []
     for i in sampledCells:
-        spike_timesAux.append(spike_times[spike_ids == i]/1000.)
+        cell_spikes = spike_times[spike_ids == i] / 1000.  # Convert to seconds
+        # Filter out spikes during transient period
+        cell_spikes_filtered = cell_spikes[cell_spikes >= transient_sec]
+        spike_timesAux.append(cell_spikes_filtered)
     spike_times = np.array(spike_timesAux, dtype=object)
 
-    Raster = bin_spikes(spike_times, 1./fs, 0, cfg.duration/1000.+1./fs)
-    Raster = overlapping_window(Raster, window_size=cfg.UMAP_params['window_size'])
+    # Start analysis from transient time, end at original duration
+    start_time = transient_sec
+    end_time = cfg.duration / 1000. + 1./fs
+    Raster = bin_spikes(spike_times, 1./fs, start_time, end_time)
+    Raster = overlapping_window(Raster.T, window_size=cfg.UMAP_params['window_size'])
     # Convert to rate
     Raster /= bin_time
-    return Raster
+    return Raster.T
 
 def concatenateExpModelRate(ExpRaster, ModelRaster):
     # Concatenate the experimental and model rate data to calculate UMAP on the combined data
@@ -886,9 +908,9 @@ def concatenateExpModelRate(ExpRaster, ModelRaster):
     ExpRaster = ExpRaster.T
     ModelRaster = ModelRaster.T
 
-    # z-normalize row-wise
-    ExpRaster = (ExpRaster - ExpRaster.mean(axis=1, keepdims=True)) / ExpRaster.std(axis=1, keepdims=True)
-    ModelRaster = (ModelRaster - ModelRaster.mean(axis=1, keepdims=True)) / ModelRaster.std(axis=1, keepdims=True)
+    # Safe row-wise z-normalization
+    ExpRaster = (ExpRaster - ExpRaster.mean(axis=1, keepdims=True)) / np.where(ExpRaster.std(axis=1, keepdims=True) == 0, 1, ExpRaster.std(axis=1, keepdims=True))
+    ModelRaster = (ModelRaster - ModelRaster.mean(axis=1, keepdims=True)) / np.where(ModelRaster.std(axis=1, keepdims=True) == 0, 1, ModelRaster.std(axis=1, keepdims=True))
 
     # concatenate
     Raster = np.hstack((ExpRaster, ModelRaster))

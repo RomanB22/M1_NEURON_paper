@@ -21,6 +21,8 @@ movement.png
 UMAP_embedding.png
 optuna*.csv
 optuna*.txt
+after_window.png
+before_window.png
 
 # VSCode
 .vscode/*
