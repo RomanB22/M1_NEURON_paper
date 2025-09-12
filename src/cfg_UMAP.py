@@ -76,7 +76,7 @@ else:
 cfg.transient = 300
 cfg.addInVivoThalamus = True # To add the sampled spike times from in-vivo recordings on TVL
 cfg.duration = cfg.preTone + cfg.postTone
-cfg.dt = 0.5#0.025 # For GPU increase the dt to not get precision errors
+cfg.dt = 0.025 # For GPU increase the dt to not get precision errors
 cfg.seeds = {'conn': 4321, 'stim': 1234, 'loc': 4321, 'tvl_sampling': 1234, 'm1_sampling': 4321}  # seeds for randomizers (connectivity, input stimulation, cell locations)
 cfg.hParams = {'celsius': 34, 'v_init': -80}  
 cfg.verbose = False
