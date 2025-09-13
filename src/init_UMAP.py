@@ -81,7 +81,7 @@ if sim.rank == 0:
 
     wasserstein_dist, sw_dist, D_rms, disparity = defs.umapFitnessFunc(umap_representation, ConcatenatedLabels)
     results = {}
-    results['loss'] = disparity # sw_dist
+    results['loss'] = D_rms # sw_dist
     results['wasserstein_dist'] = wasserstein_dist # wasserstein_dist
     results['sw_dist'] = sw_dist # sw_dist
     out_json = json.dumps({**inputs, **results})
