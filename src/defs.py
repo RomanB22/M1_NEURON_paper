@@ -944,6 +944,16 @@ def umapFitnessFunc(umap_representation, ConcatenatedLabels):
     weightExp = np.ones((embeddingExp.shape[0],)) / embeddingExp.shape[0]
     weightMod = np.ones((embeddingMod.shape[0],)) / embeddingMod.shape[0]
 
+    # Loss is the mean distance between the curves, parametrized by the time
+    diff = umap_representation[ConcatenatedLabels==1,:] - umap_representation[ConcatenatedLabels==0,:]    
+    d = np.linalg.norm(diff, axis=1)  # per-time distances, shape (N,)
+    D_rms  = np.sqrt(np.mean(d**2))
+
+    from scipy.spatial import procrustes
+
+    # A, B are (N,2) arrays (need same number of points, same order)
+    mtx1, mtx2, disparity = procrustes(umap_representation[ConcatenatedLabels==0,:], umap_representation[ConcatenatedLabels==1,:])
+
     import ot  # pip install POT
     # Cost matrix = pairwise squared distances
     M = ot.dist(embeddingExp, embeddingMod, metric='euclidean')**2
@@ -956,7 +966,7 @@ def umapFitnessFunc(umap_representation, ConcatenatedLabels):
     print("2D Wasserstein distance:", wasserstein_dist)
     print("Sliced Wasserstein distance:", sw_dist)
 
-    return wasserstein_dist, sw_dist
+    return wasserstein_dist, sw_dist, D_rms, disparity
 
 def plot_embedding(embedding, labels, cfg, colors=("blue", "red"), alpha=0.7, size=50, title="Embedding"):
     """

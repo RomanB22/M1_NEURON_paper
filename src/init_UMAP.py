@@ -79,9 +79,9 @@ if sim.rank == 0:
     # print(np.shape(umap_representation), len(ConcatenatedLabels), pearsonCorr)
     defs.plot_embedding(umap_representation, ConcatenatedLabels, cfg)
 
-    wasserstein_dist, sw_dist = defs.umapFitnessFunc(umap_representation, ConcatenatedLabels)
+    wasserstein_dist, sw_dist, D_rms, disparity = defs.umapFitnessFunc(umap_representation, ConcatenatedLabels)
     results = {}
-    results['loss'] = wasserstein_dist # sw_dist
+    results['loss'] = disparity # sw_dist
     results['wasserstein_dist'] = wasserstein_dist # wasserstein_dist
     results['sw_dist'] = sw_dist # sw_dist
     out_json = json.dumps({**inputs, **results})

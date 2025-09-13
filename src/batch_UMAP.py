@@ -8,8 +8,10 @@ CWD = os.getcwd()
 nameCluster = 'ssh_expanse_gpu'
 directorySGE = 'M1_Manifolds_UMAP' #'ChannelopathiesGPU' M1_Manifolds M1_Manifolds_UMAP
 directoryExpanse = 'M1_Manifolds_UMAP' #'ChannelopathiesGPU_Last' M1_Manifolds M1_Manifolds_UMAP
+CHECKPOINT = "./batchData/ray_UMAPNewDistance"
+
 numSamples = 3000
-PercentageChange = 0.2
+PercentageChange = 0.1
 minChg = (1-PercentageChange)
 maxChg = (1+PercentageChange)
 
@@ -37,15 +39,13 @@ params = {
 with open('ExpanseKey.txt') as f:
     SSH_KEY_PATH = f.readlines()[0]
 
+OUTPUT = "./batchData/optuna_batch"
 # Common shell commands for setting up the Python environment
 PYTHON_SETUP_CMDS = """
 # Add project root and src to PYTHONPATH
 export PYTHONPATH=$PYTHONPATH:$PWD
 export PYTHONPATH=$PYTHONPATH:$PWD/src
 """
-
-CHECKPOINT = "./batchData/ray"
-OUTPUT = "./batchData/optuna_batch"
 
 IMPORTNEURONGPU ="""
 export PATH=$HOME/neuronGPU/bin:$PATH
@@ -133,8 +133,8 @@ config = {
         'host': '###',
         'key': '###',
         'remote_dir': '/ddn/rbarav/M1_Manifolds',
-        'output_path': './batchData/optuna_batch',
-        'checkpoint_path': './batchData/ray',
+        'output_path': OUTPUT,
+        'checkpoint_path': CHECKPOINT,
         'run_config': {
             'queue': 'cpu.q',
             'cores': 50,
@@ -154,8 +154,8 @@ config = {
         'host': 'grid0',
         'key': '###',
         'remote_dir': '/ddn/rbarav/%s' % directorySGE,
-        'output_path': './batchData/optuna_batch',
-        'checkpoint_path': './batchData/ray_SGEGPU_3',
+        'output_path': OUTPUT,
+        'checkpoint_path': CHECKPOINT,
         'run_config': {
             'queue': 'gpu.q',
             'cores': 19,
@@ -175,8 +175,8 @@ mpiexec -n $NSLOTS ./x86_64/special -python -mpi src/init_UMAP.py
         'host': 'grid0',
         'key': '###',
         'remote_dir': '/ddn/rbarav/%s' % directorySGE,
-        'output_path': './batchData/optuna_batch',
-        'checkpoint_path': './batchData/ray',
+        'output_path': OUTPUT,
+        'checkpoint_path': CHECKPOINT,
         'run_config': {
             'queue': 'cpu.q',
             'cores': 50,
@@ -196,8 +196,8 @@ mpiexec -n $NSLOTS -hosts $(hostname) nrniv -python -mpi src/init_UMAP.py
         'host': 'expanse0',
         'key': SSH_KEY_PATH,  # No key needed for this host
         'remote_dir': '/home/rbaravalle/%s' % directoryExpanse,
-        'output_path': './batchData/optuna_batch',
-        'checkpoint_path': "./batchData/ray_expanseCPU",
+        'output_path': OUTPUT,
+        'checkpoint_path': CHECKPOINT,
         'run_config': {
             'allocation': 'TG-MED240058',
             'realtime': '10:30:00',
@@ -220,8 +220,8 @@ time mpirun --bind-to none -n $SLURM_NTASKS ./x86_64/special -mpi -python src/in
         'host': 'expanse0',
         'key': SSH_KEY_PATH,  # No key needed for this host
         'remote_dir': '/home/rbaravalle/%s' % directoryExpanse,
-        'output_path': './batchData/optuna_batch',
-        'checkpoint_path': "./batchData/ray_expanseUMAP",
+        'output_path': OUTPUT,
+        'checkpoint_path': CHECKPOINT,
         'run_config': {
             'allocation': 'TG-MED240058',
             'realtime': '10:30:00',
